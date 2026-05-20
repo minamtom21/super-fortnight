@@ -41,3 +41,13 @@ python3 -m http.server 8000
 - `index.html` — マークアップ
 - `styles.css` — スタイル（ライト/ダーク両対応）
 - `app.js` — メニュー描画・カート・カスタマイズ・クーポン・注文フロー・履歴
+- `powerapps/` — Power Apps でそのまま使えるデータセット（CSV / JSON / Power Fx）
+
+## Power Apps で使う
+
+`powerapps/` に Power Apps 用のデータ一式を同梱しています。詳しくは [powerapps/README.md](powerapps/README.md) を参照してください。
+
+- `powerapps/collections.pfx` を **App.OnStart** に貼り付ければ、商品・サイズ・生地・トッピング・クーポン・配達エリアなど全てのマスターが `colProducts` などのコレクションとして即利用可能
+- `powerapps/data/*.csv` は SharePoint リスト / Excel テーブルとしてそのままインポート可能
+- `powerapps/data.json` で全テーブルを1ファイルにまとめたものも提供
+- `powerapps/formulas.pfx` にカート追加・クーポン適用・注文確定のサンプル Power Fx を収録

@@ -1,0 +1,5 @@
+Code,DiscountType,Value,MinSubtotal,Label
+MM10,Percent,10,1500,10% OFF（小計¥1500以上）
+MIRAI20,Percent,20,3000,20% OFF（小計¥3000以上）
+LANDMARK,Flat,500,2000,¥500 OFF（小計¥2000以上）
+YOKOHAMA,Flat,300,1500,¥300 OFF（小計¥1500以上）
