@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>みなとみらいピッツァ | Minatomirai Pizza</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark">🍕</span>
+      <div class="brand-text">
+        <h1>みなとみらいピッツァ</h1>
+        <p>Minatomirai Pizza Delivery</p>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a href="#menu">メニュー</a>
+      <a href="#area">配達エリア</a>
+      <a href="#history">注文履歴</a>
+      <button id="theme-toggle" class="icon-button" aria-label="テーマ切替" title="ダーク/ライトモード">🌙</button>
+      <button id="cart-button" class="cart-button" aria-label="カートを開く">
+        <span class="cart-icon">🛒</span>
+        <span class="cart-badge" id="cart-badge">0</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-inner">
+      <h2>みなとみらいに、できたてのピッツァを。</h2>
+      <p>横浜・みなとみらいエリア限定で、石窯焼きピッツァを最短30分でお届けします。</p>
+      <a href="#menu" class="cta">メニューを見る</a>
+    </div>
+  </section>
+
+  <section id="menu" class="menu-section">
+    <h2 class="section-title">メニュー</h2>
+    <p class="section-sub">サイズ：S（直径20cm）／M（25cm）／L（30cm）／生地・トッピングをカスタマイズ可能</p>
+
+    <div class="menu-toolbar">
+      <div class="category-tabs" role="tablist">
+        <button class="tab active" data-category="all" role="tab" aria-selected="true">すべて</button>
+        <button class="tab" data-category="pizza" role="tab">🍕 ピッツァ</button>
+        <button class="tab" data-category="side" role="tab">🥗 サイド</button>
+        <button class="tab" data-category="drink" role="tab">🥤 ドリンク</button>
+        <button class="tab" data-category="dessert" role="tab">🍰 デザート</button>
+      </div>
+      <label class="search-box">
+        <span class="search-icon" aria-hidden="true">🔎</span>
+        <input id="menu-search" type="search" placeholder="メニューを検索..." aria-label="メニュー検索" />
+      </label>
+    </div>
+
+    <div id="menu-grid" class="menu-grid"></div>
+    <p id="menu-empty" class="menu-empty" hidden>該当するメニューが見つかりませんでした。</p>
+  </section>
+
+  <section id="area" class="area-section">
+    <h2 class="section-title">配達エリア</h2>
+    <p class="section-sub">みなとみらい21地区を中心に下記エリアへお届けします（配達料 ¥0）</p>
+    <ul class="area-list">
+      <li>ランドマークタワー周辺</li>
+      <li>クイーンズスクエア横浜</li>
+      <li>パシフィコ横浜</li>
+      <li>横浜美術館・グランモール公園</li>
+      <li>よこはまコスモワールド</li>
+      <li>横浜赤レンガ倉庫</li>
+      <li>馬車道・北仲通</li>
+      <li>新高島・高島中央公園</li>
+    </ul>
+    <p class="area-note">※ 上記以外の住所はご注文を承れません。</p>
+  </section>
+
+  <section id="history" class="history-section">
+    <h2 class="section-title">注文履歴</h2>
+    <p class="section-sub">直近のご注文（このブラウザに保存されています）</p>
+    <div id="history-list" class="history-list"></div>
+  </section>
+</main>
+
+<aside id="cart-drawer" class="cart-drawer" aria-hidden="true">
+  <div class="cart-header">
+    <h3>カート</h3>
+    <button id="cart-close" class="cart-close" aria-label="閉じる">×</button>
+  </div>
+  <div id="cart-items" class="cart-items"></div>
+  <div class="cart-footer">
+    <div class="coupon-row">
+      <input id="coupon-input" type="text" placeholder="クーポンコード" autocomplete="off" />
+      <button id="coupon-apply" class="ghost-button" type="button">適用</button>
+    </div>
+    <p id="coupon-message" class="coupon-message" hidden></p>
+    <div class="cart-summary">
+      <div><span>小計</span><span id="cart-subtotal">¥0</span></div>
+      <div id="cart-discount-row" hidden><span>割引</span><span id="cart-discount">-¥0</span></div>
+      <div class="cart-total">
+        <span>合計</span>
+        <span id="cart-total">¥0</span>
+      </div>
+    </div>
+    <button id="checkout-button" class="primary-button" disabled>注文に進む</button>
+  </div>
+</aside>
+<div id="overlay" class="overlay" hidden></div>
+
+<div id="customize-modal" class="modal" hidden>
+  <div class="modal-inner">
+    <div class="modal-header">
+      <h3 id="customize-title">カスタマイズ</h3>
+      <button id="customize-close" class="cart-close" aria-label="閉じる">×</button>
+    </div>
+    <div id="customize-body" class="customize-body"></div>
+    <div class="customize-footer">
+      <div class="customize-total"><span>小計</span><span id="customize-total">¥0</span></div>
+      <button id="customize-add" class="primary-button" type="button">カートに追加</button>
+    </div>
+  </div>
+</div>
+
+<div id="checkout-modal" class="modal" hidden>
+  <div class="modal-inner">
+    <div class="modal-header">
+      <h3>お届け先・お支払い情報</h3>
+      <button id="checkout-close" class="cart-close" aria-label="閉じる">×</button>
+    </div>
+    <form id="checkout-form" novalidate>
+      <label>
+        <span>お名前 <em>必須</em></span>
+        <input type="text" name="name" required autocomplete="name" />
+      </label>
+      <label>
+        <span>電話番号 <em>必須</em></span>
+        <input type="tel" name="phone" required pattern="[0-9\-]{10,13}" placeholder="例: 045-123-4567" />
+      </label>
+      <label>
+        <span>お届け先エリア <em>必須</em></span>
+        <select name="area" required>
+          <option value="">選択してください</option>
+          <option>ランドマークタワー周辺</option>
+          <option>クイーンズスクエア横浜</option>
+          <option>パシフィコ横浜</option>
+          <option>横浜美術館・グランモール公園</option>
+          <option>よこはまコスモワールド</option>
+          <option>横浜赤レンガ倉庫</option>
+          <option>馬車道・北仲通</option>
+          <option>新高島・高島中央公園</option>
+        </select>
+      </label>
+      <label>
+        <span>建物名・部屋番号 <em>必須</em></span>
+        <input type="text" name="address" required placeholder="例: ◯◯タワー 25F 2503号室" />
+      </label>
+      <label>
+        <span>お届け希望時間</span>
+        <select name="time">
+          <option value="asap">最短（約30分後）</option>
+          <option value="60">約60分後</option>
+          <option value="90">約90分後</option>
+          <option value="120">約120分後</option>
+        </select>
+      </label>
+      <fieldset>
+        <legend>お支払い方法</legend>
+        <label class="radio"><input type="radio" name="payment" value="cash" checked /> 現金（代引き）</label>
+        <label class="radio"><input type="radio" name="payment" value="card" /> クレジットカード</label>
+        <label class="radio"><input type="radio" name="payment" value="paypay" /> PayPay</label>
+      </fieldset>
+      <label>
+        <span>備考</span>
+        <textarea name="note" rows="2" placeholder="アレルギーやご要望があればご記入ください"></textarea>
+      </label>
+      <div class="modal-summary">
+        <div><span>小計</span><span id="summary-subtotal">¥0</span></div>
+        <div id="summary-discount-row" hidden><span>割引</span><span id="summary-discount">-¥0</span></div>
+        <div><span>配達料</span><span>¥0</span></div>
+        <div class="modal-summary-total"><span>合計</span><span id="summary-total">¥0</span></div>
+      </div>
+      <button type="submit" class="primary-button">注文を確定する</button>
+    </form>
+  </div>
+</div>
+
+<div id="confirm-modal" class="modal" hidden>
+  <div class="modal-inner confirm-inner">
+    <div class="confirm-icon">🎉</div>
+    <h3>ご注文ありがとうございました！</h3>
+    <p>注文番号: <strong id="order-number"></strong></p>
+    <p id="confirm-eta"></p>
+    <ol id="progress-steps" class="progress-steps">
+      <li data-step="received"><span class="step-icon">📝</span><span class="step-label">ご注文受付</span></li>
+      <li data-step="baking"><span class="step-icon">🔥</span><span class="step-label">石窯で焼成中</span></li>
+      <li data-step="delivering"><span class="step-icon">🛵</span><span class="step-label">配達中</span></li>
+      <li data-step="arrived"><span class="step-icon">🏠</span><span class="step-label">お届け完了</span></li>
+    </ol>
+    <button id="confirm-close" class="primary-button">閉じる</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>© みなとみらいピッツァ / Minatomirai Pizza Delivery</p>
+  <p>営業時間 11:00 - 23:00（年中無休）／電話 045-000-0000</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
