@@ -15,6 +15,7 @@
 ### App.OnStart に組み込み済みのマスターデータ
 | コレクション         | 件数 | 用途                            |
 |----------------------|------|---------------------------------|
+| `colStores`          | 8    | 店舗（みなとみらい21内 8 拠点）  |
 | `colProducts`        | 20   | 商品（Pizza 8 / Side 4 / Drink 5 / Dessert 3）|
 | `colSizes`           | 3    | ピザサイズ S/M/L                |
 | `colCrusts`          | 4    | 生地（通常・薄・厚・グルテンフリー）|
@@ -24,9 +25,10 @@
 | `colPaymentMethods`  | 3    | 現金 / カード / PayPay          |
 | `colDeliveryTimes`   | 4    | 配達時間スロット                |
 
-合計 **54 件のマスターレコード**が App 起動時に自動で `ClearCollect` されます。
+合計 **62 件のマスターレコード**が App 起動時に自動で `ClearCollect` されます。
 
-### 画面構成（3 画面、情報表示のみ）
+### 画面構成（4 画面、情報表示のみ）
+- `StoreSelectScreen` — **8 店舗を一覧表示。最初に開く画面**。Studio で Button + `Set(varSelectedStore, ThisItem); Navigate(HomeScreen)` を組むと店舗選択 → メニューの遷移が完成
 - `HomeScreen` — ブランド・人気商品・サイズ/生地/トッピング/配達エリア/クーポンの一覧
 - `SizesScreen` — サイズ・生地・トッピングの詳細と追加料金
 - `DeliveryScreen` — 配達エリア・お届け時間・支払い方法・クーポン詳細

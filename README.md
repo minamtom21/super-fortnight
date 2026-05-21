@@ -5,7 +5,8 @@
 
 ## 主な機能
 
-- **メニュー（20品以上）**: ピッツァ8種、サイド4種、ドリンク5種、デザート3種
+- **店舗選択（8店舗）**: みなとみらい本店・ランドマーク・パシフィコ・赤レンガ・馬車道・新高島・桜木町・コスモワールド店からボタンで選んで開始。選択した店舗は注文確定・履歴・確認画面にも反映
+- **メニュー（20品以上）**: ピッツァ8種、サイド4種、ドリンク5種、デザート3種（店舗選択後に解放）
 - **カテゴリタブ & 検索**: メニューを瞬時に絞り込み
 - **ピッツァのカスタマイズ**: サイズ（S/M/L）、生地（通常/薄/厚/グルテンフリー）、追加トッピング（8種）
 - **カート**: 追加・数量変更・削除、localStorageで永続化
@@ -48,18 +49,18 @@ python3 -m http.server 8000
 Power Apps への取り込み用に2セット用意しています。
 
 ### A. データのみほしい場合 → [`powerapps/`](powerapps/README.md)
-- `powerapps/collections.pfx` を **App.OnStart** に貼り付け
-- `powerapps/data/*.csv` を SharePoint / Excel データソースとしてインポート
+- `powerapps/collections.pfx` を **App.OnStart** に貼り付け（colStores 含む）
+- `powerapps/data/*.csv` を SharePoint / Excel データソースとしてインポート（`stores.csv` を含む 9 ファイル）
 - `powerapps/data.json` で全テーブル1ファイル統合
 - `powerapps/formulas.pfx` にカート・クーポン・注文確定のサンプル式
 
-### B. `.msapp` を作りたい場合 → [`pac-source/`](pac-source/README.md)
-Power Platform CLI の `pac canvas pack` でそのまま `.msapp` に変換できる Canvas App ソース一式。
+### B. `.msapp` をそのまま使いたい場合 → [`pac-source/`](pac-source/README.md)
+**ビルド済みの `pac-source/MinatomiraiPizza.msapp` を同梱しています。** `make.powerapps.com` → アプリ → インポート から直接取り込めます。
 
 ```bash
-dotnet tool install --global Microsoft.PowerApps.CLI.Tool
-cd pac-source
-./build.sh   # → MinatomiraiPizza.msapp が生成される
+# ソースから再ビルドする場合のみ
+dotnet tool install --global Microsoft.PowerApps.CLI.Tool --version 1.34.4
+cd pac-source && ./build.sh   # → MinatomiraiPizza.msapp 再生成
 ```
 
-5画面（メニュー / カスタマイズ / カート / チェックアウト / 完了）と App.OnStart に全マスターデータを含みます。
+4 画面（StoreSelect / Home / Sizes / Delivery）と App.OnStart に colStores 含む全マスターデータを含みます。

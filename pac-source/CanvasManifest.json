@@ -57,6 +57,7 @@
     "UserLocale": "en-US"
   },
   "ScreenOrder": [
+    "StoreSelectScreen",
     "HomeScreen",
     "SizesScreen",
     "DeliveryScreen"

@@ -68,5 +68,15 @@
     { "TimeID": "60",   "Label": "約60分後",         "Minutes": 60 },
     { "TimeID": "90",   "Label": "約90分後",         "Minutes": 90 },
     { "TimeID": "120",  "Label": "約120分後",        "Minutes": 120 }
+  ],
+  "stores": [
+    { "StoreID": "mm-honten",        "Name": "みなとみらい本店",    "Emoji": "🌊", "Address": "横浜市西区みなとみらい2-3-1 クイーンズタワーA 1F",  "Phone": "045-100-1001", "OpenHours": "11:00-23:00", "Areas": [1, 2, 3, 4], "IsOpen": true },
+    { "StoreID": "mm-landmark",      "Name": "ランドマーク店",      "Emoji": "🗼", "Address": "横浜市西区みなとみらい2-2-1 ランドマークプラザ B1F", "Phone": "045-100-1002", "OpenHours": "10:30-22:30", "Areas": [1, 2, 4],   "IsOpen": true },
+    { "StoreID": "mm-pacifico",      "Name": "パシフィコ店",        "Emoji": "🏢", "Address": "横浜市西区みなとみらい1-1-1 パシフィコ横浜 1F",      "Phone": "045-100-1003", "OpenHours": "11:00-22:00", "Areas": [2, 3],      "IsOpen": true },
+    { "StoreID": "mm-akarenga",      "Name": "赤レンガ店",          "Emoji": "🧱", "Address": "横浜市中区新港1-1-2 赤レンガ倉庫1号館 1F",          "Phone": "045-100-1004", "OpenHours": "11:30-23:00", "Areas": [5, 6, 7],   "IsOpen": true },
+    { "StoreID": "mm-bashamichi",    "Name": "馬車道店",            "Emoji": "🐴", "Address": "横浜市中区南仲通4-43 馬車道アネックス 1F",          "Phone": "045-100-1005", "OpenHours": "11:00-22:00", "Areas": [6, 7],      "IsOpen": true },
+    { "StoreID": "mm-shintakashima", "Name": "新高島店",            "Emoji": "🏙", "Address": "横浜市西区高島1-2-3 ベイクォーター 2F",             "Phone": "045-100-1006", "OpenHours": "10:00-22:00", "Areas": [7, 8],      "IsOpen": true },
+    { "StoreID": "mm-sakuragicho",   "Name": "桜木町店",            "Emoji": "🚉", "Address": "横浜市中区桜木町1-1 CIAL桜木町 1F",                 "Phone": "045-100-1007", "OpenHours": "10:30-22:30", "Areas": [1, 7],      "IsOpen": true },
+    { "StoreID": "mm-cosmo",         "Name": "コスモワールド店",    "Emoji": "🎡", "Address": "横浜市中区新港2-8-1 ワールドポーターズ 1F",         "Phone": "045-100-1008", "OpenHours": "11:00-23:30", "Areas": [4, 5, 6],   "IsOpen": true }
   ]
 }

@@ -17,6 +17,7 @@
       </div>
     </div>
     <nav class="header-nav">
+      <a href="#stores">店舗</a>
       <a href="#menu">メニュー</a>
       <a href="#area">配達エリア</a>
       <a href="#history">注文履歴</a>
@@ -34,11 +35,31 @@
     <div class="hero-inner">
       <h2>みなとみらいに、できたてのピッツァを。</h2>
       <p>横浜・みなとみらいエリア限定で、石窯焼きピッツァを最短30分でお届けします。</p>
-      <a href="#menu" class="cta">メニューを見る</a>
+      <a href="#stores" class="cta">店舗を選んで注文する</a>
     </div>
   </section>
 
-  <section id="menu" class="menu-section">
+  <section id="stores" class="stores-section">
+    <h2 class="section-title">店舗を選ぶ</h2>
+    <p class="section-sub">ご注文先の店舗を1つお選びください。営業中の店舗のみ表示しています。</p>
+    <div id="store-grid" class="store-grid"></div>
+  </section>
+
+  <section id="selected-store-banner" class="selected-store-banner" hidden>
+    <div class="ssb-inner">
+      <div class="ssb-text">
+        <span class="ssb-emoji" id="ssb-emoji">🌊</span>
+        <div>
+          <p class="ssb-label">ご注文先の店舗</p>
+          <p class="ssb-name" id="ssb-name">—</p>
+          <p class="ssb-meta" id="ssb-meta">—</p>
+        </div>
+      </div>
+      <button id="ssb-change" type="button" class="ghost-button">店舗を変更</button>
+    </div>
+  </section>
+
+  <section id="menu" class="menu-section" hidden>
     <h2 class="section-title">メニュー</h2>
     <p class="section-sub">サイズ：S（直径20cm）／M（25cm）／L（30cm）／生地・トッピングをカスタマイズ可能</p>
 
@@ -129,6 +150,7 @@
       <button id="checkout-close" class="cart-close" aria-label="閉じる">×</button>
     </div>
     <form id="checkout-form" novalidate>
+      <p class="checkout-store"><span class="checkout-store-label">店舗：</span><strong id="checkout-store-name">—</strong></p>
       <label>
         <span>お名前 <em>必須</em></span>
         <input type="text" name="name" required autocomplete="name" />

@@ -127,10 +127,22 @@
     YOKOHAMA:   { type: "flat",    value: 300, min: 1500, label: "¥300 OFF（小計¥1,500以上）" },
   };
 
+  const STORES = [
+    { id: "mm-honten",        name: "みなとみらい本店",    emoji: "🌊", address: "横浜市西区みなとみらい2-3-1 クイーンズタワーA 1F",  phone: "045-100-1001", hours: "11:00-23:00", areas: [1, 2, 3, 4], isOpen: true },
+    { id: "mm-landmark",      name: "ランドマーク店",      emoji: "🗼", address: "横浜市西区みなとみらい2-2-1 ランドマークプラザ B1F", phone: "045-100-1002", hours: "10:30-22:30", areas: [1, 2, 4],   isOpen: true },
+    { id: "mm-pacifico",      name: "パシフィコ店",        emoji: "🏢", address: "横浜市西区みなとみらい1-1-1 パシフィコ横浜 1F",     phone: "045-100-1003", hours: "11:00-22:00", areas: [2, 3],      isOpen: true },
+    { id: "mm-akarenga",      name: "赤レンガ店",          emoji: "🧱", address: "横浜市中区新港1-1-2 赤レンガ倉庫1号館 1F",         phone: "045-100-1004", hours: "11:30-23:00", areas: [5, 6, 7],   isOpen: true },
+    { id: "mm-bashamichi",    name: "馬車道店",            emoji: "🐴", address: "横浜市中区南仲通4-43 馬車道アネックス 1F",         phone: "045-100-1005", hours: "11:00-22:00", areas: [6, 7],      isOpen: true },
+    { id: "mm-shintakashima", name: "新高島店",            emoji: "🏙", address: "横浜市西区高島1-2-3 ベイクォーター 2F",            phone: "045-100-1006", hours: "10:00-22:00", areas: [7, 8],      isOpen: true },
+    { id: "mm-sakuragicho",   name: "桜木町店",            emoji: "🚉", address: "横浜市中区桜木町1-1 CIAL桜木町 1F",                phone: "045-100-1007", hours: "10:30-22:30", areas: [1, 7],      isOpen: true },
+    { id: "mm-cosmo",         name: "コスモワールド店",    emoji: "🎡", address: "横浜市中区新港2-8-1 ワールドポーターズ 1F",        phone: "045-100-1008", hours: "11:00-23:30", areas: [4, 5, 6],   isOpen: true },
+  ];
+
   const STORAGE_KEY = "mm-pizza-cart-v2";
   const HISTORY_KEY = "mm-pizza-history-v1";
   const THEME_KEY = "mm-pizza-theme";
   const COUPON_KEY = "mm-pizza-coupon";
+  const STORE_KEY = "mm-pizza-store";
 
   // ---- State --------------------------------------------------------------
 
@@ -152,15 +164,19 @@
   /** @type {{ menuId: string, size: 'S'|'M'|'L', crust: string, toppings: Set<string>, qty: number }} */
   let customizeState = null;
   let progressTimers = [];
+  /** @type {string} */
+  let selectedStoreId = loadStore();
 
   // ---- Init ---------------------------------------------------------------
 
   document.addEventListener("DOMContentLoaded", () => {
     applyInitialTheme();
+    renderStores();
     renderMenu();
     renderHistory();
     bindUI();
     updateCart();
+    applyStoreGating();
   });
 
   // ---- Storage ------------------------------------------------------------
@@ -199,6 +215,104 @@
       if (code) localStorage.setItem(COUPON_KEY, code);
       else localStorage.removeItem(COUPON_KEY);
     } catch {}
+  }
+  function loadStore() {
+    try { return localStorage.getItem(STORE_KEY) || ""; } catch { return ""; }
+  }
+  function saveStore(id) {
+    try {
+      if (id) localStorage.setItem(STORE_KEY, id);
+      else localStorage.removeItem(STORE_KEY);
+    } catch {}
+  }
+
+  // ---- Store selection ----------------------------------------------------
+
+  function findStore(id) { return STORES.find((s) => s.id === id); }
+
+  function renderStores() {
+    const grid = document.getElementById("store-grid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    for (const s of STORES) {
+      const isSelected = s.id === selectedStoreId;
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "store-card" + (isSelected ? " selected" : "") + (s.isOpen ? "" : " closed");
+      card.disabled = !s.isOpen;
+      card.dataset.storeId = s.id;
+      card.innerHTML = `
+        <div class="store-emoji" aria-hidden="true">${s.emoji}</div>
+        <h3 class="store-name">${s.name}${isSelected ? '<span class="store-selected-tag">選択中</span>' : ""}</h3>
+        <p class="store-address">${s.address}</p>
+        <dl class="store-meta">
+          <dt>営業</dt><dd>${s.hours}</dd>
+          <dt>電話</dt><dd>${s.phone}</dd>
+        </dl>
+        <span class="store-cta">${isSelected ? "この店舗で続ける" : "この店舗を選ぶ →"}</span>
+      `;
+      card.addEventListener("click", () => selectStore(s.id));
+      grid.appendChild(card);
+    }
+  }
+
+  function selectStore(id) {
+    const s = findStore(id);
+    if (!s || !s.isOpen) return;
+    selectedStoreId = id;
+    saveStore(id);
+    renderStores();
+    applyStoreGating();
+    const menu = document.getElementById("menu");
+    if (menu) menu.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function changeStore() {
+    selectedStoreId = "";
+    saveStore("");
+    renderStores();
+    applyStoreGating();
+    const stores = document.getElementById("stores");
+    if (stores) stores.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function applyStoreGating() {
+    const s = findStore(selectedStoreId);
+    const banner = document.getElementById("selected-store-banner");
+    const menu = document.getElementById("menu");
+    const checkoutStoreLine = document.getElementById("checkout-store-name");
+    if (s) {
+      if (banner) {
+        banner.hidden = false;
+        document.getElementById("ssb-emoji").textContent = s.emoji;
+        document.getElementById("ssb-name").textContent = s.name;
+        document.getElementById("ssb-meta").textContent = `${s.address}（営業 ${s.hours}）`;
+      }
+      if (menu) menu.hidden = false;
+      if (checkoutStoreLine) checkoutStoreLine.textContent = `${s.emoji} ${s.name}`;
+    } else {
+      if (banner) banner.hidden = true;
+      if (menu) menu.hidden = true;
+      if (checkoutStoreLine) checkoutStoreLine.textContent = "—";
+    }
+    updateCheckoutButton();
+  }
+
+  function updateCheckoutButton() {
+    const btn = document.getElementById("checkout-button");
+    if (!btn) return;
+    const hasStore = !!findStore(selectedStoreId);
+    const hasItems = cart.length > 0;
+    btn.disabled = !(hasStore && hasItems);
+    btn.textContent = !hasStore ? "店舗を選んでください" : !hasItems ? "カートが空です" : "注文に進む";
+  }
+
+  function requireStore() {
+    if (findStore(selectedStoreId)) return true;
+    const stores = document.getElementById("stores");
+    if (stores) stores.scrollIntoView({ behavior: "smooth", block: "start" });
+    alert("先にご注文先の店舗をお選びください。");
+    return false;
   }
 
   // ---- Helpers ------------------------------------------------------------
@@ -293,6 +407,7 @@
   // ---- Customize modal (pizza) -------------------------------------------
 
   function openCustomizeModal(menuId) {
+    if (!requireStore()) return;
     const m = findMenu(menuId);
     if (!m || m.category !== "pizza") return;
     customizeState = {
@@ -430,6 +545,7 @@
   }
 
   function addSimpleItem(menuId) {
+    if (!requireStore()) return;
     const existing = cart.find((it) => it.id === menuId && !it.size);
     if (existing) {
       existing.qty = Math.min(20, existing.qty + 1);
@@ -473,7 +589,7 @@
     } else {
       discRow.hidden = true;
     }
-    document.getElementById("checkout-button").disabled = cart.length === 0;
+    updateCheckoutButton();
 
     // Restore coupon UI state.
     const couponInput = /** @type {HTMLInputElement} */ (document.getElementById("coupon-input"));
@@ -606,8 +722,11 @@
       order.time === "asap"
         ? "最短30分ほどでお届けします。"
         : `約${order.time}分後にお届け予定です。`;
+    const storeLine = order.storeName
+      ? `${order.storeEmoji || ""} ${order.storeName}からのお届けです。 `
+      : "";
     document.getElementById("confirm-eta").textContent =
-      `${etaText} お支払いは「${PAYMENT_LABEL[order.payment]}」です。`;
+      `${storeLine}${etaText} お支払いは「${PAYMENT_LABEL[order.payment]}」です。`;
 
     // Reset progress steps and animate.
     const steps = document.querySelectorAll("#progress-steps li");
@@ -668,8 +787,10 @@
           return `<li>${m.emoji} ${m.name}${meta ? ` <small>(${meta})</small>` : ""} × ${it.qty}</li>`;
         })
         .join("");
+      const storeLine = o.storeName ? `${o.storeEmoji || ""} ${o.storeName}` : "";
       card.innerHTML = `
         <h4>${o.orderNumber}</h4>
+        ${storeLine ? `<div class="history-store">${storeLine}</div>` : ""}
         <div class="history-meta">${dateStr} / ${o.area || "-"} / ${PAYMENT_LABEL[o.payment] || ""}</div>
         <ul class="history-items">${itemsHtml}</ul>
         <div class="history-total">${yen(o.total)}</div>
@@ -711,7 +832,10 @@
     document.getElementById("overlay").addEventListener("click", () => {
       closeCart();
     });
+    const ssbChange = document.getElementById("ssb-change");
+    if (ssbChange) ssbChange.addEventListener("click", changeStore);
     document.getElementById("checkout-button").addEventListener("click", () => {
+      if (!requireStore() || cart.length === 0) return;
       closeCart();
       openCheckout();
     });
@@ -751,6 +875,8 @@
     document.getElementById("checkout-form").addEventListener("submit", (e) => {
       e.preventDefault();
       const form = /** @type {HTMLFormElement} */ (e.currentTarget);
+      const store = findStore(selectedStoreId);
+      if (!store) { requireStore(); return; }
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
@@ -760,6 +886,10 @@
       const discount = discountFor(subtotal);
       const order = {
         orderNumber: makeOrderNumber(),
+        storeId: store.id,
+        storeName: store.name,
+        storeEmoji: store.emoji,
+        storePhone: store.phone,
         name: String(data.get("name") || "").trim(),
         phone: String(data.get("phone") || "").trim(),
         area: String(data.get("area") || ""),

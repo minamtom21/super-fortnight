@@ -1,0 +1,108 @@
+StoreSelectScreen As screen:
+    Fill: =RGBA(255, 248, 240, 1)
+    Height: =Max(App.Height, App.DesignHeight)
+    Width: =Max(App.Width, App.DesignWidth)
+
+    StHeader As label:
+        Height: =72
+        Width: =Parent.Width
+        X: =0
+        Y: =0
+        Fill: =RGBA(200, 57, 47, 1)
+        Text: ="🏪 店舗を選んでください"
+        Color: =RGBA(255, 255, 255, 1)
+        Size: =18
+        FontWeight: =FontWeight.Bold
+        Align: =Align.Center
+
+    StIntro As label:
+        Height: =48
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =84
+        Text: ="ご注文先の店舗を1つお選びください。Power Apps Studio で各カードに『OnSelect』を設定し、Set(varSelectedStore, ThisItem); Navigate(HomeScreen) で連携してください。"
+        Size: =11
+        Color: =RGBA(122, 110, 99, 1)
+
+    StStoresHeading As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =144
+        Text: ="読み込み済み店舗: " & CountRows(colStores) & "件"
+        Size: =14
+        FontWeight: =FontWeight.Bold
+
+    StStore1 As label:
+        Height: =64
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =184
+        Text: =Index(colStores, 1).Emoji & " " & Index(colStores, 1).Name & Char(10) & Index(colStores, 1).Address & "  ☎ " & Index(colStores, 1).Phone & "  ⏰ " & Index(colStores, 1).OpenHours
+        Size: =11
+
+    StStore2 As label:
+        Height: =64
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =252
+        Text: =Index(colStores, 2).Emoji & " " & Index(colStores, 2).Name & Char(10) & Index(colStores, 2).Address & "  ☎ " & Index(colStores, 2).Phone & "  ⏰ " & Index(colStores, 2).OpenHours
+        Size: =11
+
+    StStore3 As label:
+        Height: =64
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =320
+        Text: =Index(colStores, 3).Emoji & " " & Index(colStores, 3).Name & Char(10) & Index(colStores, 3).Address & "  ☎ " & Index(colStores, 3).Phone & "  ⏰ " & Index(colStores, 3).OpenHours
+        Size: =11
+
+    StStore4 As label:
+        Height: =64
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =388
+        Text: =Index(colStores, 4).Emoji & " " & Index(colStores, 4).Name & Char(10) & Index(colStores, 4).Address & "  ☎ " & Index(colStores, 4).Phone & "  ⏰ " & Index(colStores, 4).OpenHours
+        Size: =11
+
+    StStore5 As label:
+        Height: =64
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =456
+        Text: =Index(colStores, 5).Emoji & " " & Index(colStores, 5).Name & Char(10) & Index(colStores, 5).Address & "  ☎ " & Index(colStores, 5).Phone & "  ⏰ " & Index(colStores, 5).OpenHours
+        Size: =11
+
+    StStore6 As label:
+        Height: =64
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =524
+        Text: =Index(colStores, 6).Emoji & " " & Index(colStores, 6).Name & Char(10) & Index(colStores, 6).Address & "  ☎ " & Index(colStores, 6).Phone & "  ⏰ " & Index(colStores, 6).OpenHours
+        Size: =11
+
+    StStore7 As label:
+        Height: =64
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =592
+        Text: =Index(colStores, 7).Emoji & " " & Index(colStores, 7).Name & Char(10) & Index(colStores, 7).Address & "  ☎ " & Index(colStores, 7).Phone & "  ⏰ " & Index(colStores, 7).OpenHours
+        Size: =11
+
+    StStore8 As label:
+        Height: =64
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =660
+        Text: =Index(colStores, 8).Emoji & " " & Index(colStores, 8).Name & Char(10) & Index(colStores, 8).Address & "  ☎ " & Index(colStores, 8).Phone & "  ⏰ " & Index(colStores, 8).OpenHours
+        Size: =11
+
+    StFooter As label:
+        Height: =40
+        Size: =10
+        Text: ="次の画面 → Home（メニュー）→ Cart（カート）→ Checkout（注文確定）"
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =732
+        Align: =Align.Center
+        Color: =RGBA(122, 110, 99, 1)
