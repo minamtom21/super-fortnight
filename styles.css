@@ -1,0 +1,426 @@
+:root {
+  --ink: #1f2a36;
+  --ink-soft: #4a5868;
+  --paper: #f7f4ed;
+  --paper-2: #efeadd;
+  --jade: #2f6f5e;
+  --jade-light: #4a8f7b;
+  --vermilion: #b94a3d;
+  --gold: #c9a14a;
+  --line: #d8d2c2;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", "Songti SC", serif;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(255,255,255,0.55) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(47,111,94,0.25) 0%, transparent 55%),
+    linear-gradient(160deg, #d9e4dd 0%, #b9cfc4 40%, #8eb0a3 100%);
+  color: var(--ink);
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 70% 30%, rgba(255,255,255,0.6) 0 2px, transparent 3px),
+    radial-gradient(circle at 30% 70%, rgba(255,255,255,0.5) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 0 1px, transparent 2px);
+  background-size: 220px 220px, 180px 180px, 140px 140px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.hero::after {
+  content: "杭";
+  position: absolute;
+  right: -4rem; bottom: -6rem;
+  font-size: 32rem;
+  color: rgba(31,42,54,0.06);
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+  letter-spacing: -0.05em;
+}
+
+.nav {
+  position: relative;
+  z-index: 2;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.logo span {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--ink-soft);
+  margin-left: 0.6rem;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+.nav-links {
+  list-style: none; display: flex; gap: 2rem; margin: 0; padding: 0;
+}
+.nav-links a {
+  font-size: 0.95rem;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--vermilion); }
+.nav-links a::after {
+  content: "";
+  position: absolute; left: 0; bottom: 0;
+  width: 0; height: 1px; background: var(--vermilion);
+  transition: width .25s ease;
+}
+.nav-links a:hover::after { width: 100%; }
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 8rem 2rem 6rem;
+}
+.hero-sub {
+  font-size: 0.9rem;
+  letter-spacing: 0.4em;
+  color: var(--vermilion);
+  margin: 0 0 1rem;
+}
+.hero-title {
+  font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+  margin: 0 0 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+}
+.hero-desc {
+  font-size: 1.05rem;
+  max-width: 36rem;
+  color: var(--ink-soft);
+  margin: 0 0 2.5rem;
+}
+.hero-cta {
+  display: inline-block;
+  padding: 0.95rem 2.4rem;
+  background: var(--ink);
+  color: var(--paper);
+  letter-spacing: 0.2em;
+  font-size: 0.95rem;
+  border-radius: 2px;
+  transition: transform .2s, background .2s;
+}
+.hero-cta:hover {
+  background: var(--vermilion);
+  transform: translateY(-2px);
+}
+
+/* ---------- Sections ---------- */
+.section {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 6rem 2rem;
+}
+.section-alt {
+  max-width: none;
+  background: var(--paper-2);
+  padding-left: 0; padding-right: 0;
+}
+.section-alt .section-head,
+.section-alt .food-grid,
+.section-alt .access-grid {
+  max-width: 1180px;
+  margin-left: auto; margin-right: auto;
+  padding-left: 2rem; padding-right: 2rem;
+}
+.section-head {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+.section-head h2 {
+  font-size: 2.2rem;
+  margin: 0 0 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.section-head h2 .en {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.4em;
+  color: var(--vermilion);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  margin-top: 0.5rem;
+  font-weight: 400;
+}
+.section-head p {
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* ---------- Filters ---------- */
+.filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 3rem;
+}
+.filter {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  padding: 0.55rem 1.2rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 2rem;
+  transition: all .2s;
+}
+.filter:hover {
+  border-color: var(--jade);
+  color: var(--jade);
+}
+.filter.is-active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* ---------- Spot Grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 1.8rem 1.6rem;
+  border-radius: 4px;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  background: var(--jade);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform .3s;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(31,42,54,0.08);
+  border-color: var(--jade-light);
+}
+.card:hover::before { transform: scaleY(1); }
+.card-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--vermilion);
+  margin-bottom: 0.5rem;
+}
+.card h3 {
+  font-size: 1.3rem;
+  margin: 0 0 0.4rem;
+  font-weight: 600;
+}
+.card h3 .pin {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.15em;
+  margin-top: 0.3rem;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+}
+.card p {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  margin: 0.8rem 0 0;
+}
+.card-meta {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--line);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  display: flex;
+  justify-content: space-between;
+}
+.card.is-hidden { display: none; }
+
+/* ---------- Food ---------- */
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.2rem;
+}
+.food-card {
+  background: #fff;
+  border-top: 3px solid var(--vermilion);
+  padding: 1.6rem 1.4rem;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 12px rgba(31,42,54,0.04);
+}
+.food-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+}
+.food-card h3 span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.15em;
+  margin-top: 0.2rem;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+}
+.food-card p {
+  margin: 0.6rem 0 0;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+
+/* ---------- Tea ---------- */
+.tea-wrap {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+.tea-text h2 {
+  font-size: 2.2rem;
+  margin: 0 0 1rem;
+}
+.tea-text h2 .en {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.4em;
+  color: var(--vermilion);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  margin-top: 0.5rem;
+}
+.tea-text p { color: var(--ink-soft); }
+.tea-facts {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0 0;
+  border-top: 1px solid var(--line);
+}
+.tea-facts li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.95rem;
+}
+.tea-facts li strong {
+  color: var(--jade);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+.tea-facts li span { color: var(--ink-soft); }
+
+.tea-card {
+  background: linear-gradient(160deg, #f5f0e0 0%, #e8ddc1 100%);
+  padding: 3rem 2.5rem;
+  border-radius: 4px;
+  text-align: center;
+  position: relative;
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+.tea-emblem {
+  width: 90px; height: 90px;
+  background: var(--vermilion);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 8px 20px rgba(185,74,61,0.3);
+}
+.tea-poem {
+  color: var(--ink);
+  font-size: 1.05rem;
+  line-height: 2;
+  margin: 0;
+}
+
+/* ---------- Access ---------- */
+.access-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+}
+.access-card {
+  background: #fff;
+  padding: 1.6rem 1.4rem;
+  border-left: 3px solid var(--jade);
+  border-radius: 0 4px 4px 0;
+}
+.access-card h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.1rem;
+  color: var(--jade);
+}
+.access-card p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 720px) {
+  .nav { padding: 1rem; }
+  .nav-links { gap: 1rem; }
+  .nav-links a { font-size: 0.85rem; }
+  .hero-inner { padding: 5rem 1.5rem 4rem; }
+  .section { padding: 4rem 1.5rem; }
+  .section-alt .section-head,
+  .section-alt .food-grid,
+  .section-alt .access-grid { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .tea-wrap { grid-template-columns: 1fr; gap: 2rem; }
+  .hero::after { font-size: 22rem; right: -2rem; bottom: -3rem; }
+}
