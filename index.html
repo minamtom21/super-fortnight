@@ -3,141 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>杭州ガイド | 西湖と詩情の街へ</title>
+  <title>PowerUps｜杭工事管理システム</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="hero">
-    <nav class="nav">
-      <a href="#" class="logo">杭州 <span>HANGZHOU</span></a>
-      <ul class="nav-links">
-        <li><a href="#spots">観光地</a></li>
-        <li><a href="#food">グルメ</a></li>
-        <li><a href="#tea">龍井茶</a></li>
-        <li><a href="#access">アクセス</a></li>
-      </ul>
-    </nav>
-    <div class="hero-inner">
-      <p class="hero-sub">中国・浙江省</p>
-      <h1 class="hero-title">西湖に映る、千年の詩情</h1>
-      <p class="hero-desc">
-        「上有天堂、下有蘇杭」と讃えられた美しき水郷の街。<br />
-        歴史と自然、お茶の香りに包まれる杭州を旅しよう。
-      </p>
-      <a href="#spots" class="hero-cta">旅をはじめる</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="#/" class="brand">
+        <span class="brand-mark">P</span>
+        <span class="brand-text">
+          <strong>PowerUps</strong>
+          <small>杭工事管理システム</small>
+        </span>
+      </a>
+      <div class="topbar-right">
+        <span id="currentProjectLabel" class="current-project"></span>
+        <span class="user-chip">管理者</span>
+      </div>
     </div>
   </header>
 
-  <main>
-    <section id="spots" class="section">
-      <div class="section-head">
-        <h2>観光地 <span class="en">Sightseeing Spots</span></h2>
-        <p>世界遺産・西湖を中心に、訪れたい名所を厳選してご紹介。</p>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="sidenav">
+        <a href="#/" data-nav="dashboard"><span class="ico">●</span>ダッシュボード</a>
+        <a href="#/projects" data-nav="projects"><span class="ico">■</span>案件管理</a>
+        <a href="#/piles" data-nav="piles"><span class="ico">▣</span>杭一覧</a>
+        <a href="#/records" data-nav="records"><span class="ico">▤</span>施工記録</a>
+        <a href="#/layout" data-nav="layout"><span class="ico">◇</span>杭芯配置図</a>
+        <a href="#/reports" data-nav="reports"><span class="ico">≡</span>帳票出力</a>
+        <a href="#/settings" data-nav="settings"><span class="ico">⚙</span>設定</a>
+      </nav>
+      <div class="sidebar-foot">
+        <small>v0.1.0 internal</small>
       </div>
+    </aside>
 
-      <div class="filters" role="tablist" aria-label="観光地カテゴリー">
-        <button class="filter is-active" data-filter="all">すべて</button>
-        <button class="filter" data-filter="lake">西湖</button>
-        <button class="filter" data-filter="temple">寺院・塔</button>
-        <button class="filter" data-filter="street">街並み</button>
-        <button class="filter" data-filter="nature">自然</button>
-      </div>
-
-      <div class="grid" id="spotGrid">
-        <!-- カードはJSで生成 -->
-      </div>
-    </section>
-
-    <section id="food" class="section section-alt">
-      <div class="section-head">
-        <h2>杭州グルメ <span class="en">Local Cuisine</span></h2>
-        <p>浙江料理を代表する、繊細で奥深い味わいの数々。</p>
-      </div>
-      <div class="food-grid">
-        <article class="food-card">
-          <h3>東坡肉 <span>Dongpo Rou</span></h3>
-          <p>北宋の詩人・蘇東坡にちなむ、とろける角煮。醤油と紹興酒で長時間煮込んだ豚バラ肉。</p>
-        </article>
-        <article class="food-card">
-          <h3>西湖醋魚 <span>Xihu Cuyu</span></h3>
-          <p>西湖で育った草魚を、甘酢餡で仕上げた一品。さっぱりとした酸味が魚の旨味を引き立てる。</p>
-        </article>
-        <article class="food-card">
-          <h3>龍井蝦仁 <span>Longjing Xiaren</span></h3>
-          <p>龍井茶の新芽と川海老を炒めた、香り高い春の味覚。お茶の渋みと海老の甘み。</p>
-        </article>
-        <article class="food-card">
-          <h3>叫化鶏 <span>Jiaohua Ji</span></h3>
-          <p>蓮の葉と泥で丸鶏を包み焼きにする豪快な料理。叩き割ると芳香が立ち上る。</p>
-        </article>
-        <article class="food-card">
-          <h3>小籠包 <span>Xiaolongbao</span></h3>
-          <p>江南名物の小ぶりな蒸し餃子。皮を破ると熱々のスープが溢れ出す。</p>
-        </article>
-        <article class="food-card">
-          <h3>片儿川 <span>Pianerchuan</span></h3>
-          <p>豚肉・タケノコ・高菜が入った杭州式ラーメン。素朴で滋味深い杭州人のソウルフード。</p>
-        </article>
-      </div>
-    </section>
-
-    <section id="tea" class="section">
-      <div class="tea-wrap">
-        <div class="tea-text">
-          <h2>龍井茶 <span class="en">Longjing Tea</span></h2>
-          <p>
-            中国十大銘茶の筆頭に数えられる緑茶、龍井茶。<br />
-            西湖の西、獅峰山周辺で栽培される茶葉は、清明節前に摘まれる「明前」が最高級とされます。
-          </p>
-          <ul class="tea-facts">
-            <li><strong>色</strong><span>澄んだ淡い黄緑</span></li>
-            <li><strong>香り</strong><span>蘭の花のような清冽な香気</span></li>
-            <li><strong>味わい</strong><span>甘味と旨味、心地よい余韻</span></li>
-            <li><strong>四絶</strong><span>色緑・香郁・味甘・形美</span></li>
-          </ul>
-        </div>
-        <div class="tea-card">
-          <div class="tea-emblem">茶</div>
-          <p class="tea-poem">
-            「龍井問茶」<br />
-            ——西湖十景の一<br /><br />
-            山に分け入り、泉のほとりで一服。<br />
-            杭州の人々が古くから愛してきた、茶の時間。
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section id="access" class="section section-alt">
-      <div class="section-head">
-        <h2>アクセス <span class="en">Access</span></h2>
-        <p>上海から高速鉄道で約1時間。日本からも便利な距離です。</p>
-      </div>
-      <div class="access-grid">
-        <div class="access-card">
-          <h3>飛行機</h3>
-          <p>杭州蕭山国際空港(HGH)へ、東京・大阪から直行便あり。市街まで地下鉄1号線で約60分。</p>
-        </div>
-        <div class="access-card">
-          <h3>高速鉄道</h3>
-          <p>上海虹橋駅から「滬杭高鉄」で約45〜60分。北京・広州・南京などからもアクセス良好。</p>
-        </div>
-        <div class="access-card">
-          <h3>市内交通</h3>
-          <p>地下鉄が主要観光地を網羅。西湖周辺は徒歩・レンタサイクル・遊覧船が楽しい。</p>
-        </div>
-        <div class="access-card">
-          <h3>ベストシーズン</h3>
-          <p>春(3〜5月)と秋(9〜11月)が快適。3月下旬の桜と、10月の金木犀の香りが絶景。</p>
-        </div>
-      </div>
-    </section>
-  </main>
+    <main id="app" class="main"><!-- rendered by app.js --></main>
+  </div>
 
   <footer class="footer">
-    <p>© Hangzhou Travel Guide — 西湖の風に誘われて</p>
+    <small>PowerUps — 自社内 杭工事管理ツール</small>
   </footer>
 
-  <script src="script.js"></script>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
 </body>
 </html>
