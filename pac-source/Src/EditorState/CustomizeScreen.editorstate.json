@@ -1,0 +1,38 @@
+{
+  "ControlStates": {
+    "CustomizeScreen":  { "TopParentName": "CustomizeScreen" },
+    "HeaderRect":       { "TopParentName": "CustomizeScreen" },
+    "BackButton":       { "TopParentName": "CustomizeScreen" },
+    "TitleLabel":       { "TopParentName": "CustomizeScreen" },
+    "SizeHeading":      { "TopParentName": "CustomizeScreen" },
+    "SizeRadio":        { "TopParentName": "CustomizeScreen" },
+    "CrustHeading":     { "TopParentName": "CustomizeScreen" },
+    "CrustDropdown":    { "TopParentName": "CustomizeScreen" },
+    "ToppingsHeading":  { "TopParentName": "CustomizeScreen" },
+    "ToppingsGallery":  { "TopParentName": "CustomizeScreen" },
+    "QtyHeading":       { "TopParentName": "CustomizeScreen" },
+    "QtyMinus":         { "TopParentName": "CustomizeScreen" },
+    "QtyLabel":         { "TopParentName": "CustomizeScreen" },
+    "QtyPlus":          { "TopParentName": "CustomizeScreen" },
+    "UnitPriceLabel":   { "TopParentName": "CustomizeScreen" },
+    "AddToCartButton":  { "TopParentName": "CustomizeScreen" }
+  },
+  "OrderedControlNames": [
+    "CustomizeScreen",
+    "HeaderRect",
+    "BackButton",
+    "TitleLabel",
+    "SizeHeading",
+    "SizeRadio",
+    "CrustHeading",
+    "CrustDropdown",
+    "ToppingsHeading",
+    "ToppingsGallery",
+    "QtyHeading",
+    "QtyMinus",
+    "QtyLabel",
+    "QtyPlus",
+    "UnitPriceLabel",
+    "AddToCartButton"
+  ]
+}

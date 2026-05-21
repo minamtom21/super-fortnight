@@ -45,9 +45,21 @@ python3 -m http.server 8000
 
 ## Power Apps で使う
 
-`powerapps/` に Power Apps 用のデータ一式を同梱しています。詳しくは [powerapps/README.md](powerapps/README.md) を参照してください。
+Power Apps への取り込み用に2セット用意しています。
 
-- `powerapps/collections.pfx` を **App.OnStart** に貼り付ければ、商品・サイズ・生地・トッピング・クーポン・配達エリアなど全てのマスターが `colProducts` などのコレクションとして即利用可能
-- `powerapps/data/*.csv` は SharePoint リスト / Excel テーブルとしてそのままインポート可能
-- `powerapps/data.json` で全テーブルを1ファイルにまとめたものも提供
-- `powerapps/formulas.pfx` にカート追加・クーポン適用・注文確定のサンプル Power Fx を収録
+### A. データのみほしい場合 → [`powerapps/`](powerapps/README.md)
+- `powerapps/collections.pfx` を **App.OnStart** に貼り付け
+- `powerapps/data/*.csv` を SharePoint / Excel データソースとしてインポート
+- `powerapps/data.json` で全テーブル1ファイル統合
+- `powerapps/formulas.pfx` にカート・クーポン・注文確定のサンプル式
+
+### B. `.msapp` を作りたい場合 → [`pac-source/`](pac-source/README.md)
+Power Platform CLI の `pac canvas pack` でそのまま `.msapp` に変換できる Canvas App ソース一式。
+
+```bash
+dotnet tool install --global Microsoft.PowerApps.CLI.Tool
+cd pac-source
+./build.sh   # → MinatomiraiPizza.msapp が生成される
+```
+
+5画面（メニュー / カスタマイズ / カート / チェックアウト / 完了）と App.OnStart に全マスターデータを含みます。

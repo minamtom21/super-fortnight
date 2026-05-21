@@ -1,0 +1,36 @@
+{
+  "ControlStates": {
+    "CheckoutScreen":   { "TopParentName": "CheckoutScreen" },
+    "HeaderRect":       { "TopParentName": "CheckoutScreen" },
+    "BackButton":       { "TopParentName": "CheckoutScreen" },
+    "TitleLabel":       { "TopParentName": "CheckoutScreen" },
+    "NameInput":        { "TopParentName": "CheckoutScreen" },
+    "PhoneInput":       { "TopParentName": "CheckoutScreen" },
+    "AreaDropdown":     { "TopParentName": "CheckoutScreen" },
+    "AddressInput":     { "TopParentName": "CheckoutScreen" },
+    "TimeDropdown":     { "TopParentName": "CheckoutScreen" },
+    "PaymentDropdown":  { "TopParentName": "CheckoutScreen" },
+    "NoteInput":        { "TopParentName": "CheckoutScreen" },
+    "SubtotalLabel":    { "TopParentName": "CheckoutScreen" },
+    "DiscountLabel":    { "TopParentName": "CheckoutScreen" },
+    "TotalLabel":       { "TopParentName": "CheckoutScreen" },
+    "SubmitButton":     { "TopParentName": "CheckoutScreen" }
+  },
+  "OrderedControlNames": [
+    "CheckoutScreen",
+    "HeaderRect",
+    "BackButton",
+    "TitleLabel",
+    "NameInput",
+    "PhoneInput",
+    "AreaDropdown",
+    "AddressInput",
+    "TimeDropdown",
+    "PaymentDropdown",
+    "NoteInput",
+    "SubtotalLabel",
+    "DiscountLabel",
+    "TotalLabel",
+    "SubmitButton"
+  ]
+}

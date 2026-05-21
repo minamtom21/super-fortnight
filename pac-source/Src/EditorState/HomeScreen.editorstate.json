@@ -1,0 +1,20 @@
+{
+  "ControlStates": {
+    "HomeScreen": { "TopParentName": "HomeScreen" },
+    "HeaderRect":  { "TopParentName": "HomeScreen" },
+    "BrandLabel":  { "TopParentName": "HomeScreen" },
+    "CartButton":  { "TopParentName": "HomeScreen" },
+    "SearchInput": { "TopParentName": "HomeScreen" },
+    "CategoryDropdown": { "TopParentName": "HomeScreen" },
+    "MenuGallery": { "TopParentName": "HomeScreen" }
+  },
+  "OrderedControlNames": [
+    "HomeScreen",
+    "HeaderRect",
+    "BrandLabel",
+    "CartButton",
+    "SearchInput",
+    "CategoryDropdown",
+    "MenuGallery"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "ControlStates": {
+    "CartScreen":      { "TopParentName": "CartScreen" },
+    "HeaderRect":      { "TopParentName": "CartScreen" },
+    "BackButton":      { "TopParentName": "CartScreen" },
+    "TitleLabel":      { "TopParentName": "CartScreen" },
+    "EmptyLabel":      { "TopParentName": "CartScreen" },
+    "CartGallery":     { "TopParentName": "CartScreen" },
+    "CouponInput":     { "TopParentName": "CartScreen" },
+    "CouponApply":     { "TopParentName": "CartScreen" },
+    "CouponMessage":   { "TopParentName": "CartScreen" },
+    "SubtotalLabel":   { "TopParentName": "CartScreen" },
+    "DiscountLabel":   { "TopParentName": "CartScreen" },
+    "TotalLabel":      { "TopParentName": "CartScreen" },
+    "CheckoutButton":  { "TopParentName": "CartScreen" }
+  },
+  "OrderedControlNames": [
+    "CartScreen",
+    "HeaderRect",
+    "BackButton",
+    "TitleLabel",
+    "EmptyLabel",
+    "CartGallery",
+    "CouponInput",
+    "CouponApply",
+    "CouponMessage",
+    "SubtotalLabel",
+    "DiscountLabel",
+    "TotalLabel",
+    "CheckoutButton"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "CurrentTheme": "PowerAppsTheme",
+  "CustomThemes": [
+    {
+      "name": "MinatomiraiTheme",
+      "Color1": "RGBA(200, 57, 47, 1)",
+      "Color2": "RGBA(245, 181, 74, 1)",
+      "Color3": "RGBA(255, 248, 240, 1)",
+      "Color4": "RGBA(43, 33, 24, 1)"
+    }
+  ]
+}

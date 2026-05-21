@@ -1,0 +1,142 @@
+HomeScreen As screen:
+    Fill: =RGBA(255, 248, 240, 1)
+
+    HeaderRect As rectangle:
+        X: =0
+        Y: =0
+        Width: =Parent.Width
+        Height: =72
+        Fill: =RGBA(200, 57, 47, 1)
+
+    BrandLabel As label:
+        X: =16
+        Y: =18
+        Width: =Parent.Width - 80
+        Height: =36
+        Text: ="🍕 みなとみらいピッツァ"
+        Color: =RGBA(255, 255, 255, 1)
+        Size: =18
+        FontWeight: =FontWeight.Bold
+        Align: =Align.Left
+
+    CartButton As button:
+        X: =Parent.Width - 60
+        Y: =16
+        Width: =44
+        Height: =40
+        Text: =Concatenate("🛒 ", Text(Sum(colCart, Quantity)))
+        Fill: =RGBA(245, 181, 74, 1)
+        Color: =RGBA(43, 33, 24, 1)
+        OnSelect: =Navigate(CartScreen, ScreenTransition.Cover)
+
+    SearchInput As text:
+        X: =16
+        Y: =84
+        Width: =Parent.Width - 32
+        Height: =40
+        HintText: ="メニューを検索..."
+        Default: =""
+        OnChange: =Set(varSearch, Self.Text)
+
+    CategoryDropdown As dropdown:
+        X: =16
+        Y: =132
+        Width: =Parent.Width - 32
+        Height: =40
+        Items: =["All", "Pizza", "Side", "Drink", "Dessert"]
+        Default: ="All"
+        OnChange: =Set(varCategoryFilter, Self.Selected.Value)
+
+    MenuGallery As gallery.galleryVertical:
+        X: =0
+        Y: =180
+        Width: =Parent.Width
+        Height: =Parent.Height - 180
+        TemplateSize: =120
+        Items: =Filter(
+            colProducts,
+            (varCategoryFilter = "All" Or Category = varCategoryFilter)
+            && (
+                IsBlank(varSearch)
+                Or varSearch in Name
+                Or varSearch in Description
+            )
+        )
+
+        ItemBg As rectangle:
+            X: =12
+            Y: =6
+            Width: =Parent.TemplateWidth - 24
+            Height: =108
+            Fill: =RGBA(255, 255, 255, 1)
+            BorderColor: =RGBA(233, 220, 203, 1)
+            BorderThickness: =1
+
+        EmojiLabel As label:
+            X: =24
+            Y: =16
+            Width: =60
+            Height: =60
+            Text: =ThisItem.Emoji
+            Size: =32
+            Align: =Align.Center
+
+        NameLabel As label:
+            X: =96
+            Y: =14
+            Width: =Parent.TemplateWidth - 220
+            Height: =24
+            Text: =ThisItem.Name
+            Size: =14
+            FontWeight: =FontWeight.Bold
+
+        DescLabel As label:
+            X: =96
+            Y: =40
+            Width: =Parent.TemplateWidth - 220
+            Height: =40
+            Text: =ThisItem.Description
+            Size: =10
+            Color: =RGBA(122, 110, 99, 1)
+
+        PriceLabel As label:
+            X: =96
+            Y: =80
+            Width: =Parent.TemplateWidth - 220
+            Height: =20
+            Text: =If(
+                ThisItem.Category = "Pizza",
+                Concatenate("S〜 ¥", Text(ThisItem.PriceS, "[$-ja-JP]#,##0")),
+                Concatenate("¥", Text(ThisItem.Price, "[$-ja-JP]#,##0"))
+            )
+            Size: =12
+            FontWeight: =FontWeight.Bold
+            Color: =RGBA(200, 57, 47, 1)
+
+        AddButton As button:
+            X: =Parent.TemplateWidth - 110
+            Y: =40
+            Width: =92
+            Height: =40
+            Text: =If(ThisItem.Category = "Pizza", "カスタマイズ", "追加")
+            Fill: =RGBA(200, 57, 47, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Size: =12
+            OnSelect: =If(
+                ThisItem.Category = "Pizza",
+                Set(varSelectedProduct, ThisItem) ;; Set(varSelectedSize, "M") ;; Set(varSelectedCrustId, "regular") ;; Clear(colSelectedToppings) ;; Set(varSelectedQty, 1) ;; Navigate(CustomizeScreen, ScreenTransition.Cover),
+                Collect(
+                    colCart,
+                    {
+                        ProductID: ThisItem.ProductID,
+                        Name: ThisItem.Name,
+                        Emoji: ThisItem.Emoji,
+                        Category: ThisItem.Category,
+                        SizeID: "",
+                        CrustID: "",
+                        UnitPrice: ThisItem.Price,
+                        Quantity: 1,
+                        LineTotal: ThisItem.Price
+                    }
+                )
+            )

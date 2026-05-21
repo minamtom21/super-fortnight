@@ -1,0 +1,80 @@
+ConfirmScreen As screen:
+    Fill: =RGBA(255, 248, 240, 1)
+
+    BgRect As rectangle:
+        X: =16
+        Y: =80
+        Width: =Parent.Width - 32
+        Height: =Parent.Height - 160
+        Fill: =RGBA(255, 255, 255, 1)
+        BorderColor: =RGBA(233, 220, 203, 1)
+        BorderThickness: =1
+
+    IconLabel As label:
+        X: =16
+        Y: =120
+        Width: =Parent.Width - 32
+        Height: =64
+        Text: ="🎉"
+        Size: =40
+        Align: =Align.Center
+
+    HeadingLabel As label:
+        X: =16
+        Y: =192
+        Width: =Parent.Width - 32
+        Height: =40
+        Text: ="ご注文ありがとうございました！"
+        Size: =16
+        FontWeight: =FontWeight.Bold
+        Align: =Align.Center
+        Color: =RGBA(200, 57, 47, 1)
+
+    OrderNumberLabel As label:
+        X: =16
+        Y: =236
+        Width: =Parent.Width - 32
+        Height: =28
+        Text: =Concatenate("注文番号: ", varLastOrder.OrderNumber)
+        Align: =Align.Center
+        FontWeight: =FontWeight.Bold
+
+    EtaLabel As label:
+        X: =16
+        Y: =268
+        Width: =Parent.Width - 32
+        Height: =40
+        Text: =Concatenate(varLastOrder.DeliveryTime, " にお届け予定です。お支払い: ", varLastOrder.Payment)
+        Align: =Align.Center
+        Color: =RGBA(122, 110, 99, 1)
+
+    AreaLabel As label:
+        X: =16
+        Y: =316
+        Width: =Parent.Width - 32
+        Height: =28
+        Text: =Concatenate("お届け先: ", varLastOrder.Area)
+        Align: =Align.Center
+        Size: =11
+
+    TotalLabel As label:
+        X: =16
+        Y: =356
+        Width: =Parent.Width - 32
+        Height: =32
+        Text: =Concatenate("ご請求 ¥", Text(varLastOrder.Total, "[$-ja-JP]#,##0"))
+        Align: =Align.Center
+        Size: =16
+        FontWeight: =FontWeight.Bold
+
+    CloseButton As button:
+        X: =16
+        Y: =Parent.Height - 88
+        Width: =Parent.Width - 32
+        Height: =56
+        Text: ="ホームに戻る"
+        Fill: =RGBA(200, 57, 47, 1)
+        Color: =RGBA(255, 255, 255, 1)
+        Size: =16
+        FontWeight: =FontWeight.Bold
+        OnSelect: =Navigate(HomeScreen, ScreenTransition.Fade)

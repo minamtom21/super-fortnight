@@ -1,0 +1,24 @@
+{
+  "ControlStates": {
+    "ConfirmScreen":      { "TopParentName": "ConfirmScreen" },
+    "BgRect":             { "TopParentName": "ConfirmScreen" },
+    "IconLabel":          { "TopParentName": "ConfirmScreen" },
+    "HeadingLabel":       { "TopParentName": "ConfirmScreen" },
+    "OrderNumberLabel":   { "TopParentName": "ConfirmScreen" },
+    "EtaLabel":           { "TopParentName": "ConfirmScreen" },
+    "AreaLabel":          { "TopParentName": "ConfirmScreen" },
+    "TotalLabel":         { "TopParentName": "ConfirmScreen" },
+    "CloseButton":        { "TopParentName": "ConfirmScreen" }
+  },
+  "OrderedControlNames": [
+    "ConfirmScreen",
+    "BgRect",
+    "IconLabel",
+    "HeadingLabel",
+    "OrderNumberLabel",
+    "EtaLabel",
+    "AreaLabel",
+    "TotalLabel",
+    "CloseButton"
+  ]
+}

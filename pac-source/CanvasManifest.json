@@ -1,0 +1,40 @@
+{
+  "FormatVersion": "1.337",
+  "Properties": {
+    "Id": "0c8e7c6c-8d7e-4d8e-9c0a-mm1pizza0000",
+    "Name": "MinatomiraiPizza",
+    "AppDescription": "みなとみらいエリア限定のピザ注文アプリ",
+    "DocumentLayoutWidth": 640.0,
+    "DocumentLayoutHeight": 1136.0,
+    "DocumentLayoutOrientation": "Portrait",
+    "DocumentLayoutScaleMethod": "Fit",
+    "DocumentAppType": "Phone",
+    "EnableInstrumentation": false,
+    "BypassConsent": false,
+    "AppPreviewFlagsKey": "delayloadscreens,blockmovingcontrol,projectionmapping,partialappresponsiveness,unifiedcontrolfontmetrics",
+    "SupportsModernRuntime": true,
+    "InstrumentationKey": ""
+  },
+  "PublishInfo": {
+    "AppName": "MinatomiraiPizza",
+    "BackgroundColor": "RGBA(255,248,240,1)",
+    "LogoFileName": "",
+    "LogoBackgroundColor": "RGBA(200,57,47,1)"
+  },
+  "ScreenOrder": [
+    "HomeScreen",
+    "CartScreen",
+    "CheckoutScreen",
+    "ConfirmScreen"
+  ],
+  "Header": {
+    "DocVersion": "1.337",
+    "MinVersionToLoad": "0.0.0",
+    "Name": "MinatomiraiPizza",
+    "LastSavedDateTimeUTC": "2026-05-21T00:00:00.000Z",
+    "FileID": "mmpizza-fileid-0001",
+    "AppCreatorVersion": "3.24080.0",
+    "MSAppStructureVersion": "0.93",
+    "AppDescription": "みなとみらいエリア限定のピザ注文アプリ"
+  }
+}
