@@ -1,0 +1,96 @@
+ReportsScreen As screen:
+    Fill: =RGBA(244, 246, 249, 1)
+
+    PageTitle As label:
+        Text: ="帳票出力"
+        Size: =22
+        FontWeight: =FontWeight.Semibold
+        X: =250
+        Y: =84
+        Width: =400
+        Height: =40
+
+    BackBtn As button:
+        Text: ="← ダッシュボード"
+        X: =1180
+        Y: =84
+        Width: =150
+        Height: =36
+        OnSelect: =Navigate(DashboardScreen)
+
+    DescLabel As label:
+        Text: ="案件単位で杭一覧と施工記録をCSV出力できます（Power Apps では Office365Outlook.SendEmail などを利用）"
+        Color: =RGBA(90, 104, 120, 1)
+        Size: =10
+        X: =250
+        Y: =130
+        Width: =1080
+        Height: =22
+
+    ReportsGallery As gallery:
+        TemplateSize: =76
+        Items: =colProjects
+        X: =250
+        Y: =170
+        Width: =1080
+        Height: =550
+        Fill: =RGBA(255, 255, 255, 1)
+        BorderColor: =RGBA(226, 231, 238, 1)
+        BorderThickness: =1
+
+        ProjNameLabel As label:
+            Text: =ThisItem.Name
+            X: =16
+            Y: =14
+            Width: =500
+            Height: =24
+            FontWeight: =FontWeight.Semibold
+
+        PileCountLabel As label:
+            Text: ="杭 " & CountRows(Filter(colPiles, ProjectId = ThisItem.ProjectId)) & " 本"
+            X: =16
+            Y: =42
+            Width: =200
+            Height: =22
+            Color: =RGBA(90, 104, 120, 1)
+
+        RecordCountLabel As label:
+            Text: |
+                ="記録 " &
+                CountRows(
+                    Filter(
+                        colRecords,
+                        LookUp(colPiles, PileId = PileId, ProjectId) = ThisItem.ProjectId
+                    )
+                ) & " 件"
+            X: =220
+            Y: =42
+            Width: =200
+            Height: =22
+            Color: =RGBA(90, 104, 120, 1)
+
+        ExportPilesBtn As button:
+            Text: ="杭一覧CSV"
+            X: =700
+            Y: =20
+            Width: =160
+            Height: =36
+            OnSelect: |
+                =Notify(
+                    "杭一覧CSVを生成しました（実装サンプル）",
+                    NotificationType.Success
+                )
+
+        ExportRecordsBtn As button:
+            Text: ="施工記録CSV"
+            X: =870
+            Y: =20
+            Width: =160
+            Height: =36
+            Fill: =RGBA(30, 96, 145, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            OnSelect: |
+                =Notify(
+                    "施工記録CSVを生成しました（実装サンプル）",
+                    NotificationType.Success
+                )

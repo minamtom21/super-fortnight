@@ -41,6 +41,12 @@ python3 -m http.server 8000
 index.html   レイアウト（topbar / sidebar / main）
 styles.css   デザイントークン・コンポーネント・印刷スタイル
 app.js       ハッシュルーティング・Store(localStorage)・各画面ビュー
+
+powerapps/   Microsoft Power Apps 版（.msapp 形式）
+├── src/                   Power Fx YAML ソース（7画面）
+├── build/PowerUps.msapp   ビルド済み .msapp ファイル
+├── pack.py                ソースを .msapp にパックする Python スクリプト
+└── README.md              Power Apps Studio インポート手順
 ```
 
 ## 運用フロー

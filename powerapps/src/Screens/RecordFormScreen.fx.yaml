@@ -1,0 +1,467 @@
+RecordFormScreen As screen:
+    Fill: =RGBA(244, 246, 249, 1)
+
+    PageTitle As label:
+        Text: |
+            ="施工記録 " & If(IsBlank(varEditingRecord), "登録", "編集") &
+            "  ／  杭 " & varCurrentPile.No
+        Size: =20
+        FontWeight: =FontWeight.Semibold
+        X: =250
+        Y: =84
+        Width: =900
+        Height: =40
+
+    BackBtn As button:
+        Text: ="← 戻る"
+        X: =1230
+        Y: =84
+        Width: =100
+        Height: =36
+        OnSelect: =Navigate(PileDetailScreen)
+
+    SectionBasic As label:
+        Text: ="基本情報"
+        Size: =12
+        FontWeight: =FontWeight.Semibold
+        Color: =RGBA(156, 52, 22, 1)
+        X: =250
+        Y: =140
+        Width: =200
+        Height: =24
+
+    DateLabel As label:
+        Text: ="施工日 *"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =250
+        Y: =170
+        Width: =200
+        Height: =20
+    DatePicker As date_picker:
+        DefaultDate: =Coalesce(varEditingRecord.Date, Today())
+        X: =250
+        Y: =192
+        Width: =200
+        Height: =36
+
+    StartTimeLabel As label:
+        Text: ="開始時刻"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =470
+        Y: =170
+        Width: =160
+        Height: =20
+    StartTimeInput As text_input:
+        Default: =Coalesce(varEditingRecord.StartTime, "08:30")
+        X: =470
+        Y: =192
+        Width: =160
+        Height: =36
+
+    EndTimeLabel As label:
+        Text: ="終了時刻"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =650
+        Y: =170
+        Width: =160
+        Height: =20
+    EndTimeInput As text_input:
+        Default: =Coalesce(varEditingRecord.EndTime, "11:45")
+        X: =650
+        Y: =192
+        Width: =160
+        Height: =36
+
+    WeatherLabel As label:
+        Text: ="天候"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =830
+        Y: =170
+        Width: =100
+        Height: =20
+    WeatherDropdown As dropdown:
+        Items: =["晴","曇","雨","雪"]
+        Default: =Coalesce(varEditingRecord.Weather, "晴")
+        X: =830
+        Y: =192
+        Width: =100
+        Height: =36
+
+    TempLabel As label:
+        Text: ="気温 (℃)"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =950
+        Y: =170
+        Width: =120
+        Height: =20
+    TempInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(Coalesce(varEditingRecord.Temperature, 20))
+        X: =950
+        Y: =192
+        Width: =120
+        Height: =36
+
+    SectionDrill As label:
+        Text: ="削孔・根固め"
+        Size: =12
+        FontWeight: =FontWeight.Semibold
+        Color: =RGBA(156, 52, 22, 1)
+        X: =250
+        Y: =248
+        Width: =200
+        Height: =24
+
+    DrillDepthLabel As label:
+        Text: ="削孔深度 (m)"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =250
+        Y: =278
+        Width: =160
+        Height: =20
+    DrillDepthInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(Coalesce(varEditingRecord.DrillDepth, varCurrentPile.BearingDepth + 0.5))
+        X: =250
+        Y: =300
+        Width: =160
+        Height: =36
+
+    GravelDepthLabel As label:
+        Text: ="根固め深度 (m)"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =430
+        Y: =278
+        Width: =160
+        Height: =20
+    GravelDepthInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(Coalesce(varEditingRecord.GravelDepth, varCurrentPile.BearingDepth + 1.0))
+        X: =430
+        Y: =300
+        Width: =160
+        Height: =36
+
+    MilkAmountLabel As label:
+        Text: ="セメントミルク量 (L)"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =610
+        Y: =278
+        Width: =160
+        Height: =20
+    MilkAmountInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(Coalesce(varEditingRecord.CementMilkAmount, 850))
+        X: =610
+        Y: =300
+        Width: =160
+        Height: =36
+
+    MilkRatioLabel As label:
+        Text: ="W/C比 (%)"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =790
+        Y: =278
+        Width: =140
+        Height: =20
+    MilkRatioInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(Coalesce(varEditingRecord.CementMilkRatio, 60))
+        X: =790
+        Y: =300
+        Width: =140
+        Height: =36
+
+    SectionDeviation As label:
+        Text: ="杭芯位置・精度"
+        Size: =12
+        FontWeight: =FontWeight.Semibold
+        Color: =RGBA(156, 52, 22, 1)
+        X: =250
+        Y: =356
+        Width: =200
+        Height: =24
+
+    DevXLabel As label:
+        Text: ="ΔX (mm)"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =250
+        Y: =386
+        Width: =140
+        Height: =20
+    DevXInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(Coalesce(varEditingRecord.DeviationX, 0))
+        X: =250
+        Y: =408
+        Width: =140
+        Height: =36
+
+    DevYLabel As label:
+        Text: ="ΔY (mm)"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =410
+        Y: =386
+        Width: =140
+        Height: =20
+    DevYInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(Coalesce(varEditingRecord.DeviationY, 0))
+        X: =410
+        Y: =408
+        Width: =140
+        Height: =36
+
+    DevCompositeLabel As label:
+        Text: |
+            ="合成ズレ: " &
+            Round(
+                Sqrt(
+                    Value(DevXInput.Text)*Value(DevXInput.Text) +
+                    Value(DevYInput.Text)*Value(DevYInput.Text)
+                ), 0
+            ) & " mm  (許容 ±" & varDeviationTolerance & " mm)"
+        Size: =10
+        FontWeight: =FontWeight.Semibold
+        X: =570
+        Y: =400
+        Width: =360
+        Height: =40
+        Color: |
+            =If(
+                Sqrt(
+                    Value(DevXInput.Text)*Value(DevXInput.Text) +
+                    Value(DevYInput.Text)*Value(DevYInput.Text)
+                ) > varDeviationTolerance,
+                RGBA(192, 57, 43, 1),
+                RGBA(31, 110, 62, 1)
+            )
+
+    VerticalityNLabel As label:
+        Text: ="鉛直度 1/n"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =950
+        Y: =386
+        Width: =120
+        Height: =20
+    VerticalityNInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(If(IsBlank(varEditingRecord.Verticality), 250, Round(1/varEditingRecord.Verticality, 0)))
+        X: =950
+        Y: =408
+        Width: =120
+        Height: =36
+
+    SectionMgmt As label:
+        Text: ="施工管理"
+        Size: =12
+        FontWeight: =FontWeight.Semibold
+        Color: =RGBA(156, 52, 22, 1)
+        X: =250
+        Y: =464
+        Width: =200
+        Height: =24
+
+    CurrentLabel As label:
+        Text: ="電流値 (A)"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =250
+        Y: =494
+        Width: =140
+        Height: =20
+    CurrentInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(Coalesce(varEditingRecord.Current, 120))
+        X: =250
+        Y: =516
+        Width: =140
+        Height: =36
+
+    IntegratedCurrentLabel As label:
+        Text: ="積分電流値"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =410
+        Y: =494
+        Width: =140
+        Height: =20
+    IntegratedCurrentInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(Coalesce(varEditingRecord.IntegratedCurrent, 18000))
+        X: =410
+        Y: =516
+        Width: =140
+        Height: =36
+
+    HeadLevelLabel As label:
+        Text: ="杭頭レベル (m)"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =570
+        Y: =494
+        Width: =160
+        Height: =20
+    HeadLevelInput As text_input:
+        Format: =TextFormat.Number
+        Default: =Text(Coalesce(varEditingRecord.PileHeadLevel, varCurrentPile.DesignLevel))
+        X: =570
+        Y: =516
+        Width: =160
+        Height: =36
+
+    OperatorLabel As label:
+        Text: ="担当者"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =750
+        Y: =494
+        Width: =160
+        Height: =20
+    OperatorInput As text_input:
+        Default: =Coalesce(varEditingRecord.Operator, "")
+        X: =750
+        Y: =516
+        Width: =160
+        Height: =36
+
+    MachineOpLabel As label:
+        Text: ="機長"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =930
+        Y: =494
+        Width: =140
+        Height: =20
+    MachineOpInput As text_input:
+        Default: =Coalesce(varEditingRecord.MachineOperator, "")
+        X: =930
+        Y: =516
+        Width: =140
+        Height: =36
+
+    WitnessLabel As label:
+        Text: ="立会者"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =1090
+        Y: =494
+        Width: =140
+        Height: =20
+    WitnessInput As text_input:
+        Default: =Coalesce(varEditingRecord.Witness, "")
+        X: =1090
+        Y: =516
+        Width: =140
+        Height: =36
+
+    NoteLabel As label:
+        Text: ="備考"
+        Size: =10
+        Color: =RGBA(90, 104, 120, 1)
+        X: =250
+        Y: =572
+        Width: =200
+        Height: =20
+    NoteInput As text_input:
+        Mode: =TextMode.MultiLine
+        Default: =Coalesce(varEditingRecord.Note, "")
+        X: =250
+        Y: =594
+        Width: =980
+        Height: =72
+
+    CompletedCheckbox As checkbox:
+        Text: ="この記録で杭施工を完了とする"
+        Default: =Coalesce(varEditingRecord.Completed, false)
+        X: =250
+        Y: =682
+        Width: =400
+        Height: =30
+
+    CancelBtn As button:
+        Text: ="キャンセル"
+        X: =970
+        Y: =680
+        Width: =120
+        Height: =40
+        OnSelect: =Navigate(PileDetailScreen)
+
+    SaveBtn As button:
+        Text: ="保存"
+        X: =1100
+        Y: =680
+        Width: =130
+        Height: =40
+        Fill: =RGBA(200, 69, 31, 1)
+        Color: =RGBA(255, 255, 255, 1)
+        OnSelect: |
+            =If(
+                IsBlank(varEditingRecord),
+                Collect(
+                    colRecords,
+                    {
+                        RecordId: GUID(),
+                        PileId: varCurrentPileId,
+                        Date: DatePicker.SelectedDate,
+                        StartTime: StartTimeInput.Text,
+                        EndTime: EndTimeInput.Text,
+                        Weather: WeatherDropdown.Selected.Value,
+                        Temperature: Value(TempInput.Text),
+                        DrillDepth: Value(DrillDepthInput.Text),
+                        GravelDepth: Value(GravelDepthInput.Text),
+                        DeviationX: Value(DevXInput.Text),
+                        DeviationY: Value(DevYInput.Text),
+                        Verticality: 1 / Value(VerticalityNInput.Text),
+                        Current: Value(CurrentInput.Text),
+                        IntegratedCurrent: Value(IntegratedCurrentInput.Text),
+                        CementMilkAmount: Value(MilkAmountInput.Text),
+                        CementMilkRatio: Value(MilkRatioInput.Text),
+                        PileHeadLevel: Value(HeadLevelInput.Text),
+                        Operator: OperatorInput.Text,
+                        MachineOperator: MachineOpInput.Text,
+                        Witness: WitnessInput.Text,
+                        Note: NoteInput.Text,
+                        Completed: CompletedCheckbox.Value
+                    }
+                ),
+                Patch(
+                    colRecords,
+                    LookUp(colRecords, RecordId = varEditingRecord.RecordId),
+                    {
+                        Date: DatePicker.SelectedDate,
+                        StartTime: StartTimeInput.Text,
+                        EndTime: EndTimeInput.Text,
+                        Weather: WeatherDropdown.Selected.Value,
+                        Temperature: Value(TempInput.Text),
+                        DrillDepth: Value(DrillDepthInput.Text),
+                        GravelDepth: Value(GravelDepthInput.Text),
+                        DeviationX: Value(DevXInput.Text),
+                        DeviationY: Value(DevYInput.Text),
+                        Verticality: 1 / Value(VerticalityNInput.Text),
+                        Current: Value(CurrentInput.Text),
+                        IntegratedCurrent: Value(IntegratedCurrentInput.Text),
+                        CementMilkAmount: Value(MilkAmountInput.Text),
+                        CementMilkRatio: Value(MilkRatioInput.Text),
+                        PileHeadLevel: Value(HeadLevelInput.Text),
+                        Operator: OperatorInput.Text,
+                        MachineOperator: MachineOpInput.Text,
+                        Witness: WitnessInput.Text,
+                        Note: NoteInput.Text,
+                        Completed: CompletedCheckbox.Value
+                    }
+                )
+            );
+            Navigate(PileDetailScreen)

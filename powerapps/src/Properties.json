@@ -1,0 +1,18 @@
+{
+  "Id": "powerups-canvas-app",
+  "Name": "PowerUps",
+  "FileID": "PowerUps",
+  "DocumentAppType": "DesktopOrTablet",
+  "DocumentLayoutWidth": 1366,
+  "DocumentLayoutHeight": 768,
+  "DocumentLayoutOrientation": "landscape",
+  "DocumentLayoutScaleMethod": "fit",
+  "DocumentLayoutLockOrientation": true,
+  "OriginatingVersion": "3.24000.0",
+  "AppCreationSource": "AppFromBlank",
+  "AppDescription": "杭工事管理システム（社内向け）",
+  "InstrumentationKey": "",
+  "EnableInstrumentation": false,
+  "BypassConsent": false,
+  "EnableExpressionShortcircuiting": true
+}

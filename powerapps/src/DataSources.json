@@ -1,0 +1,34 @@
+{
+  "DataSources": [
+    {
+      "Name": "colProjects",
+      "Type": "ClientDataSourceInfo",
+      "Schema": "*[ProjectId:s, Name:s, Address:s, Client:s, Contractor:s, Method:s, Foreman:s, StartDate:d, EndDate:d, Note:s]"
+    },
+    {
+      "Name": "colPiles",
+      "Type": "ClientDataSourceInfo",
+      "Schema": "*[PileId:s, ProjectId:s, No:s, Type:s, Diameter:n, Length:n, BearingDepth:n, DesignLevel:n, X:n, Y:n]"
+    },
+    {
+      "Name": "colRecords",
+      "Type": "ClientDataSourceInfo",
+      "Schema": "*[RecordId:s, PileId:s, Date:d, StartTime:s, EndTime:s, Weather:s, Temperature:n, DrillDepth:n, GravelDepth:n, DeviationX:n, DeviationY:n, Verticality:n, Current:n, IntegratedCurrent:n, CementMilkAmount:n, CementMilkRatio:n, PileHeadLevel:n, Operator:s, MachineOperator:s, Witness:s, Note:s, Completed:b]"
+    },
+    {
+      "Name": "colPileTypes",
+      "Type": "ClientDataSourceInfo",
+      "Schema": "*[Value:s]"
+    },
+    {
+      "Name": "colPileMethods",
+      "Type": "ClientDataSourceInfo",
+      "Schema": "*[Value:s]"
+    },
+    {
+      "Name": "colStatusOptions",
+      "Type": "ClientDataSourceInfo",
+      "Schema": "*[Code:s, Label:s]"
+    }
+  ]
+}

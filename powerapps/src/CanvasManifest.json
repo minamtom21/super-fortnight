@@ -1,0 +1,27 @@
+{
+  "FormatVersion": "1.0",
+  "ScreenOrder": [
+    "DashboardScreen",
+    "ProjectsScreen",
+    "PilesScreen",
+    "PileDetailScreen",
+    "RecordFormScreen",
+    "LayoutScreen",
+    "ReportsScreen"
+  ],
+  "PublishInfo": {
+    "AppName": "PowerUps",
+    "AppDescription": "杭工事管理システム（社内向け）",
+    "AppVersion": "0.1.0",
+    "BackgroundColor": "#F4F6F9"
+  },
+  "Properties": {
+    "DocumentLayoutWidth": 1366,
+    "DocumentLayoutHeight": 768,
+    "DocumentLayoutOrientation": "landscape",
+    "EnableInstrumentation": false,
+    "EnableModernRuntime": true,
+    "AppPreviewFlagsKey": [],
+    "Theme": "PowerUpsTheme"
+  }
+}

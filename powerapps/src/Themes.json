@@ -1,0 +1,22 @@
+{
+  "CurrentTheme": "PowerUpsTheme",
+  "CustomThemes": [
+    {
+      "name": "PowerUpsTheme",
+      "displayName": "PowerUps",
+      "colors": {
+        "Background": "#F4F6F9",
+        "Surface": "#FFFFFF",
+        "Ink": "#1C2733",
+        "InkSoft": "#5A6878",
+        "Line": "#E2E7EE",
+        "Brand": "#C8451F",
+        "BrandDark": "#9C3416",
+        "Accent": "#1E6091",
+        "Ok": "#2E8B57",
+        "Warn": "#D49A18",
+        "Bad": "#C0392B"
+      }
+    }
+  ]
+}

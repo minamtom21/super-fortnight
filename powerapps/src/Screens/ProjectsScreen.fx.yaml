@@ -1,0 +1,132 @@
+ProjectsScreen As screen:
+    Fill: =RGBA(244, 246, 249, 1)
+
+    PageTitle As label:
+        Text: ="案件管理"
+        Size: =22
+        FontWeight: =FontWeight.Semibold
+        X: =250
+        Y: =84
+        Width: =400
+        Height: =40
+
+    BackToDashboardBtn As button:
+        Text: ="← ダッシュボード"
+        X: =1180
+        Y: =84
+        Width: =150
+        Height: =36
+        OnSelect: =Navigate(DashboardScreen)
+
+    SearchBox As text_input:
+        Default: =""
+        HintText: ="現場名で検索…"
+        X: =250
+        Y: =140
+        Width: =400
+        Height: =36
+
+    NewProjectButton As button:
+        Text: ="＋ 新規案件"
+        OnSelect: |
+            =Set(varEditingProject, Blank());
+            Navigate(ProjectFormScreen)
+        X: =1230
+        Y: =140
+        Width: =100
+        Height: =36
+        Fill: =RGBA(200, 69, 31, 1)
+        Color: =RGBA(255, 255, 255, 1)
+
+    ProjectsGallery As gallery:
+        TemplateSize: =80
+        Items: |
+            =Filter(
+                colProjects,
+                IsBlank(SearchBox.Text) Or
+                SearchBox.Text in Name Or
+                SearchBox.Text in Address
+            )
+        X: =250
+        Y: =190
+        Width: =1080
+        Height: =530
+        Fill: =RGBA(255, 255, 255, 1)
+        BorderColor: =RGBA(226, 231, 238, 1)
+        BorderThickness: =1
+
+        ProjectNameLabel As label:
+            Text: =ThisItem.Name
+            X: =16
+            Y: =10
+            Width: =500
+            Height: =26
+            FontWeight: =FontWeight.Semibold
+            Size: =14
+
+        ProjectAddressLabel As label:
+            Text: =ThisItem.Address
+            X: =16
+            Y: =40
+            Width: =500
+            Height: =24
+            Color: =RGBA(90, 104, 120, 1)
+            Size: =11
+
+        PileCountLabel As label:
+            Text: |
+                ="杭 " & CountRows(Filter(colPiles, ProjectId = ThisItem.ProjectId)) & " 本"
+            X: =540
+            Y: =14
+            Width: =160
+            Height: =24
+
+        CompletionLabel As label:
+            Text: |
+                =With(
+                    {
+                        total: CountRows(Filter(colPiles, ProjectId = ThisItem.ProjectId)),
+                        done: CountRows(
+                            Filter(
+                                colRecords,
+                                Completed And
+                                LookUp(colPiles, PileId = PileId, ProjectId) = ThisItem.ProjectId
+                            )
+                        )
+                    },
+                    "完了率 " & If(total = 0, "—", Text(Round(done / total * 100, 0)) & "%")
+                )
+            X: =700
+            Y: =14
+            Width: =180
+            Height: =24
+
+        PeriodLabel As label:
+            Text: |
+                =Text(ThisItem.StartDate,"yyyy/mm/dd") & " 〜 " & Text(ThisItem.EndDate,"yyyy/mm/dd")
+            X: =540
+            Y: =42
+            Width: =340
+            Height: =22
+            Color: =RGBA(90, 104, 120, 1)
+            Size: =10
+
+        OpenProjectBtn As button:
+            Text: ="詳細"
+            X: =900
+            Y: =22
+            Width: =72
+            Height: =36
+            OnSelect: |
+                =Set(varCurrentProjectId, ThisItem.ProjectId);
+                Navigate(PilesScreen)
+
+        EditProjectBtn As button:
+            Text: ="編集"
+            X: =980
+            Y: =22
+            Width: =72
+            Height: =36
+            OnSelect: |
+                =Set(varEditingProject, ThisItem);
+                Navigate(ProjectFormScreen)

@@ -1,0 +1,147 @@
+App As appinfo:
+    BackEnabled: =false
+    Theme: =PowerAppsTheme
+    StartScreen: =DashboardScreen
+    OnStart: |
+        =// ---------- 杭種・工法マスタ ----------
+        ClearCollect(
+            colPileTypes,
+            "PHC杭","鋼管杭","場所打ちコンクリート杭","SC杭",
+            "鋼管ソイルセメント杭","節杭","既製コンクリート杭"
+        );
+        ClearCollect(
+            colPileMethods,
+            "セメントミルク工法（プレボーリング）",
+            "中堀り工法",
+            "打撃工法",
+            "アースドリル工法",
+            "リバース工法",
+            "オールケーシング工法",
+            "鋼管ソイルセメント工法"
+        );
+        ClearCollect(
+            colStatusOptions,
+            { Code: "pending",     Label: "未着手" },
+            { Code: "in_progress", Label: "施工中" },
+            { Code: "completed",   Label: "完了"   }
+        );
+        // 杭芯許容ズレ (mm)
+        Set(varDeviationTolerance, 100);
+
+        // ---------- サンプル案件 ----------
+        ClearCollect(
+            colProjects,
+            {
+                ProjectId: "P001",
+                Name: "東京都港区 ○○ビル新築工事",
+                Address: "東京都港区芝浦4-1-1",
+                Client: "○○不動産株式会社",
+                Contractor: "大手ゼネコン株式会社",
+                Method: First(colPileMethods).Value,
+                Foreman: "田中 一郎",
+                StartDate: Date(2025,4,1),
+                EndDate: Date(2027,3,31),
+                Note: "地下3階・地上18階建。支持層はN値50以上の砂礫層（GL-28m前後）。"
+            },
+            {
+                ProjectId: "P002",
+                Name: "横浜市西区 物流センター基礎工事",
+                Address: "横浜市西区みなとみらい6-2",
+                Client: "△△物流株式会社",
+                Contractor: "中堅建設株式会社",
+                Method: "中堀り工法",
+                Foreman: "佐藤 健",
+                StartDate: Date(2025,9,15),
+                EndDate: Date(2026,8,31),
+                Note: "鋼管杭φ800、L=32m、本数120本。"
+            }
+        );
+
+        // ---------- サンプル杭情報 (P001: 5x4=20本 PHC) ----------
+        Clear(colPiles);
+        ForAll(
+            Sequence(20),
+            With(
+                { row: Int((Value-1)/5), col: Mod(Value-1, 5) },
+                Collect(
+                    colPiles,
+                    {
+                        PileId: "P001-" & Text(Value,"[$-en-US]000"),
+                        ProjectId: "P001",
+                        No: "A-" & Text(Value,"[$-en-US]000"),
+                        Type: "PHC杭",
+                        Diameter: 600,
+                        Length: 28,
+                        BearingDepth: 28.5,
+                        DesignLevel: -2.5,
+                        X: 5000 + col*6000,
+                        Y: 5000 + row*5000
+                    }
+                )
+            )
+        );
+        // ---------- サンプル杭情報 (P002: 3x4=12本 鋼管) ----------
+        ForAll(
+            Sequence(12),
+            With(
+                { row: Int((Value-1)/4), col: Mod(Value-1, 4) },
+                Collect(
+                    colPiles,
+                    {
+                        PileId: "P002-" & Text(Value,"[$-en-US]000"),
+                        ProjectId: "P002",
+                        No: "S-" & Text(Value,"[$-en-US]000"),
+                        Type: "鋼管杭",
+                        Diameter: 800,
+                        Length: 32,
+                        BearingDepth: 32.0,
+                        DesignLevel: -3.0,
+                        X: 4000 + col*7000,
+                        Y: 4000 + row*6000
+                    }
+                )
+            )
+        );
+
+        // ---------- サンプル施工記録 (P001先頭6本) ----------
+        Clear(colRecords);
+        ForAll(
+            Sequence(6),
+            With(
+                {
+                    pile: LookUp(colPiles, PileId = "P001-" & Text(Value,"[$-en-US]000")),
+                    isOver: Value = 6
+                },
+                Collect(
+                    colRecords,
+                    {
+                        RecordId: GUID(),
+                        PileId: pile.PileId,
+                        Date: DateAdd(Date(2025,4,9), Value, Days),
+                        StartTime: "08:30",
+                        EndTime: "11:45",
+                        Weather: If(Mod(Value,2)=1, "晴", "曇"),
+                        Temperature: 18 + Value,
+                        DrillDepth: pile.BearingDepth + 0.5,
+                        GravelDepth: pile.BearingDepth + 1.0,
+                        DeviationX: If(isOver, 80, RandBetween(-40, 40)),
+                        DeviationY: If(isOver, 70, RandBetween(-40, 40)),
+                        Verticality: 1 / (200 + RandBetween(0,100)),
+                        Current: 120 + Value*2,
+                        IntegratedCurrent: 18000 + Value*200,
+                        CementMilkAmount: 850,
+                        CementMilkRatio: 60,
+                        PileHeadLevel: pile.DesignLevel + (Rand() - 0.5) * 0.05,
+                        Operator: "山本 太郎",
+                        MachineOperator: "鈴木 次郎",
+                        Witness: "監理者 高橋",
+                        Note: If(isOver, "杭芯位置のズレが大きい。要再測量・是正検討。", "良好。"),
+                        Completed: Value < 6
+                    }
+                )
+            )
+        );
+
+        // 現在選択中の案件・杭
+        Set(varCurrentProjectId, "P001");
+        Set(varCurrentPileId, Blank());

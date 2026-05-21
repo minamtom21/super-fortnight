@@ -1,0 +1,145 @@
+PilesScreen As screen:
+    Fill: =RGBA(244, 246, 249, 1)
+
+    PageTitle As label:
+        Text: |
+            ="杭一覧  ／  " &
+            Coalesce(LookUp(colProjects, ProjectId = varCurrentProjectId).Name, "（全案件）")
+        Size: =20
+        FontWeight: =FontWeight.Semibold
+        X: =250
+        Y: =84
+        Width: =800
+        Height: =40
+
+    BackToProjectsBtn As button:
+        Text: ="← 案件一覧"
+        X: =1180
+        Y: =84
+        Width: =150
+        Height: =36
+        OnSelect: =Navigate(ProjectsScreen)
+
+    ProjectDropdown As dropdown:
+        Items: =["（全案件）"] & ShowColumns(colProjects, "Name")
+        Default: |
+            =Coalesce(LookUp(colProjects, ProjectId = varCurrentProjectId).Name, "（全案件）")
+        OnChange: |
+            =Set(
+                varCurrentProjectId,
+                LookUp(colProjects, Name = Self.Selected.Value, ProjectId)
+            )
+        X: =250
+        Y: =140
+        Width: =400
+        Height: =36
+
+    AddPileBtn As button:
+        Text: ="＋ 杭追加"
+        OnSelect: |
+            =Set(varEditingPile, Blank());
+            Navigate(PileFormScreen)
+        X: =1230
+        Y: =140
+        Width: =100
+        Height: =36
+        Fill: =RGBA(200, 69, 31, 1)
+        Color: =RGBA(255, 255, 255, 1)
+
+    PilesGallery As gallery:
+        TemplateSize: =48
+        Items: |
+            =If(
+                IsBlank(varCurrentProjectId),
+                colPiles,
+                Filter(colPiles, ProjectId = varCurrentProjectId)
+            )
+        X: =250
+        Y: =190
+        Width: =1080
+        Height: =530
+        Fill: =RGBA(255, 255, 255, 1)
+        BorderColor: =RGBA(226, 231, 238, 1)
+        BorderThickness: =1
+
+        PileNoLabel As label:
+            Text: =ThisItem.No
+            X: =16
+            Y: =10
+            Width: =100
+            Height: =28
+            FontWeight: =FontWeight.Semibold
+
+        PileTypeLabel As label:
+            Text: =ThisItem.Type
+            X: =116
+            Y: =10
+            Width: =160
+            Height: =28
+
+        PileSpecLabel As label:
+            Text: =ThisItem.Diameter & "mm × " & ThisItem.Length & "m"
+            X: =276
+            Y: =10
+            Width: =160
+            Height: =28
+
+        PileCoordLabel As label:
+            Text: ="(" & ThisItem.X & ", " & ThisItem.Y & ")"
+            X: =436
+            Y: =10
+            Width: =180
+            Height: =28
+            Color: =RGBA(90, 104, 120, 1)
+
+        PileStatusLabel As label:
+            Text: |
+                =With(
+                    { recs: Filter(colRecords, PileId = ThisItem.PileId) },
+                    If(CountRows(recs) = 0, "未着手",
+                       If(CountRows(Filter(recs, Completed)) > 0, "完了", "施工中"))
+                )
+            X: =616
+            Y: =10
+            Width: =80
+            Height: =28
+            FontWeight: =FontWeight.Semibold
+
+        PileDeviationLabel As label:
+            Text: |
+                =With(
+                    { last: Last(Sort(Filter(colRecords, PileId = ThisItem.PileId), Date)) },
+                    If(IsBlank(last), "未測定",
+                        With(
+                            { d: Sqrt(last.DeviationX*last.DeviationX + last.DeviationY*last.DeviationY) },
+                            "ズレ " & Round(d,0) & "mm" &
+                            If(d > varDeviationTolerance, " ⚠", "")
+                        )
+                    )
+                )
+            X: =696
+            Y: =10
+            Width: =180
+            Height: =28
+            Color: |
+                =With(
+                    { last: Last(Sort(Filter(colRecords, PileId = ThisItem.PileId), Date)) },
+                    If(
+                        IsBlank(last), RGBA(138,150,163,1),
+                        If(
+                            Sqrt(last.DeviationX*last.DeviationX + last.DeviationY*last.DeviationY) > varDeviationTolerance,
+                            RGBA(192, 57, 43, 1),
+                            RGBA(31, 110, 62, 1)
+                        )
+                    )
+                )
+
+        OpenPileBtn As button:
+            Text: ="詳細"
+            X: =980
+            Y: =6
+            Width: =80
+            Height: =36
+            OnSelect: |
+                =Set(varCurrentPileId, ThisItem.PileId);
+                Navigate(PileDetailScreen)

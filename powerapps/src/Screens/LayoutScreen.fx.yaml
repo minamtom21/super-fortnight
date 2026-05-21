@@ -1,0 +1,103 @@
+LayoutScreen As screen:
+    Fill: =RGBA(244, 246, 249, 1)
+
+    PageTitle As label:
+        Text: |
+            ="杭芯配置図  ／  " &
+            Coalesce(LookUp(colProjects, ProjectId = varCurrentProjectId).Name, "（案件未選択）")
+        Size: =20
+        FontWeight: =FontWeight.Semibold
+        X: =250
+        Y: =84
+        Width: =900
+        Height: =40
+
+    BackBtn As button:
+        Text: ="← ダッシュボード"
+        X: =1180
+        Y: =84
+        Width: =150
+        Height: =36
+        OnSelect: =Navigate(DashboardScreen)
+
+    ProjectDropdown As dropdown:
+        Items: =ShowColumns(colProjects, "Name")
+        Default: =LookUp(colProjects, ProjectId = varCurrentProjectId).Name
+        OnChange: |
+            =Set(
+                varCurrentProjectId,
+                LookUp(colProjects, Name = Self.Selected.Value, ProjectId)
+            )
+        X: =250
+        Y: =140
+        Width: =400
+        Height: =36
+
+    LegendLabel As label:
+        Text: ="● 未着手    ● 施工中    ● 完了    ● 許容超過"
+        Size: =10
+        X: =670
+        Y: =146
+        Width: =500
+        Height: =24
+
+    CanvasContainer As rectangle:
+        Fill: =RGBA(250, 251, 253, 1)
+        BorderColor: =RGBA(226, 231, 238, 1)
+        BorderThickness: =1
+        X: =250
+        Y: =190
+        Width: =1080
+        Height: =530
+
+    PilesGallery As gallery:
+        Layout: =Layout.Horizontal
+        TemplateSize: =80
+        Items: =Filter(colPiles, ProjectId = varCurrentProjectId)
+        X: =250
+        Y: =190
+        Width: =1080
+        Height: =530
+        Transparent: =true
+
+        PileDot As icon:
+            Icon: =Icon.CircleFill
+            Color: |
+                =With(
+                    {
+                        recs: Filter(colRecords, PileId = ThisItem.PileId),
+                        last: Last(Sort(Filter(colRecords, PileId = ThisItem.PileId), Date))
+                    },
+                    If(
+                        IsBlank(last), RGBA(255, 255, 255, 1),
+                        If(
+                            Sqrt(last.DeviationX*last.DeviationX + last.DeviationY*last.DeviationY) > varDeviationTolerance,
+                            RGBA(192, 57, 43, 1),
+                            If(last.Completed, RGBA(46, 139, 87, 1), RGBA(212, 154, 24, 1))
+                        )
+                    )
+                )
+            X: =20
+            Y: =20
+            Width: =40
+            Height: =40
+
+        PileNoLabel As label:
+            Text: =ThisItem.No
+            X: =0
+            Y: =60
+            Width: =80
+            Height: =18
+            Size: =9
+            Align: =Align.Center
+
+        OpenPileBtn As button:
+            Text: ="開く"
+            X: =10
+            Y: =0
+            Width: =60
+            Height: =18
+            Size: =8
+            OnSelect: |
+                =Set(varCurrentPileId, ThisItem.PileId);
+                Navigate(PileDetailScreen)
