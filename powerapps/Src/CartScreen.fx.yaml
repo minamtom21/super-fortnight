@@ -1,0 +1,307 @@
+
+# =====================================================================
+# CartScreen (カート画面)
+# カートの内容確認・数量変更・削除 → 注文確認へ
+# =====================================================================
+
+CartScreen As screen.screen:
+  Fill: =RGBA(245, 247, 250, 1)
+
+  # ---- ヘッダー ----
+  rectHeader As rectangle:
+    Fill: =RGBA(41, 128, 185, 1)
+    X: =0
+    Y: =0
+    Width: =Parent.Width
+    Height: =80
+
+  btnBackCart As button:
+    Text: ="← メニュー"
+    Fill: =RGBA(0, 0, 0, 0)
+    Color: =RGBA(255, 255, 255, 1)
+    BorderThickness: =0
+    FontSize: =14
+    X: =5
+    Y: =22
+    Width: =100
+    Height: =36
+    OnSelect: =Navigate(MenuScreen, ScreenTransition.Fade)
+
+  lblCartTitle As label:
+    Text: ="🛒 カート"
+    FontSize: =20
+    FontWeight: =FontWeight.Bold
+    Color: =RGBA(255, 255, 255, 1)
+    X: =110
+    Y: =22
+    Width: =200
+    Height: =36
+
+  btnClearCart As button:
+    Text: ="クリア"
+    Fill: =RGBA(231, 76, 60, 0.8)
+    Color: =RGBA(255, 255, 255, 1)
+    BorderThickness: =0
+    BorderRadiusTopLeft: =6
+    BorderRadiusTopRight: =6
+    BorderRadiusBottomLeft: =6
+    BorderRadiusBottomRight: =6
+    FontSize: =12
+    X: =Parent.Width - 75
+    Y: =27
+    Width: =65
+    Height: =28
+    OnSelect: |
+      =Clear(colCart);
+      Set(gblTotalAmount, 0)
+
+  # ---- 店舗名表示 ----
+  lblCartStoreName As label:
+    Text: =gblCurrentStore.StoreName & " からの注文"
+    FontSize: =14
+    Color: =RGBA(80, 80, 80, 1)
+    X: =15
+    Y: =88
+    Width: =Parent.Width - 30
+    Height: =28
+
+  # ---- カートアイテム Gallery ----
+  galCartItems As gallery.BrowseLayout:
+    Items: =colCart
+    Layout: =Layout.Vertical
+    TemplateHeight: =78
+    X: =0
+    Y: =118
+    Width: =Parent.Width
+    Height: =Parent.Height - 310
+
+    rectCartItemCard As rectangle:
+      Fill: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(235, 235, 235, 1)
+      BorderThickness: =1
+      BorderRadiusTopLeft: =8
+      BorderRadiusTopRight: =8
+      BorderRadiusBottomLeft: =8
+      BorderRadiusBottomRight: =8
+      X: =10
+      Y: =4
+      Width: =Parent.Width - 20
+      Height: =68
+
+    lblCartItemName As label:
+      Text: =ThisItem.ItemName
+      FontSize: =14
+      FontWeight: =FontWeight.Bold
+      Color: =RGBA(30, 30, 30, 1)
+      X: =20
+      Y: =10
+      Width: =Parent.Width - 180
+      Height: =24
+
+    lblCartUnitPrice As label:
+      Text: ="¥" & Text(ThisItem.UnitPrice, "#,##0") & " × "
+      FontSize: =13
+      Color: =RGBA(100, 100, 100, 1)
+      X: =20
+      Y: =38
+      Width: =100
+      Height: =22
+
+    # 数量減少ボタン
+    btnDecQty As button:
+      Text: ="−"
+      Fill: =RGBA(200, 200, 200, 1)
+      Color: =RGBA(50, 50, 50, 1)
+      BorderThickness: =0
+      BorderRadiusTopLeft: =14
+      BorderRadiusTopRight: =14
+      BorderRadiusBottomLeft: =14
+      BorderRadiusBottomRight: =14
+      FontSize: =16
+      X: =120
+      Y: =38
+      Width: =28
+      Height: =28
+      OnSelect: |
+        =If(
+          ThisItem.Quantity <= 1,
+          RemoveIf(colCart, ItemID = ThisItem.ItemID),
+          UpdateIf(colCart, ItemID = ThisItem.ItemID,
+            {Quantity: Quantity - 1, Subtotal: (Quantity - 1) * UnitPrice}
+          )
+        );
+        Set(gblTotalAmount, Sum(colCart, Subtotal))
+
+    lblQty As label:
+      Text: =Text(ThisItem.Quantity)
+      FontSize: =16
+      FontWeight: =FontWeight.Bold
+      Color: =RGBA(30, 30, 30, 1)
+      Align: =Align.Center
+      X: =152
+      Y: =38
+      Width: =28
+      Height: =28
+
+    # 数量増加ボタン
+    btnIncQty As button:
+      Text: ="＋"
+      Fill: =RGBA(41, 128, 185, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      BorderThickness: =0
+      BorderRadiusTopLeft: =14
+      BorderRadiusTopRight: =14
+      BorderRadiusBottomLeft: =14
+      BorderRadiusBottomRight: =14
+      FontSize: =16
+      X: =184
+      Y: =38
+      Width: =28
+      Height: =28
+      OnSelect: |
+        =UpdateIf(colCart, ItemID = ThisItem.ItemID,
+          {Quantity: Quantity + 1, Subtotal: (Quantity + 1) * UnitPrice}
+        );
+        Set(gblTotalAmount, Sum(colCart, Subtotal))
+
+    lblSubtotal As label:
+      Text: ="¥" & Text(ThisItem.Subtotal, "#,##0")
+      FontSize: =15
+      FontWeight: =FontWeight.Bold
+      Color: =RGBA(41, 128, 185, 1)
+      Align: =Align.Right
+      X: =Parent.Width - 110
+      Y: =10
+      Width: =90
+      Height: =28
+
+    # 削除ボタン
+    btnDeleteItem As button:
+      Text: ="🗑"
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(200, 80, 80, 1)
+      BorderThickness: =0
+      FontSize: =16
+      X: =Parent.Width - 55
+      Y: =38
+      Width: =40
+      Height: =28
+      OnSelect: |
+        =RemoveIf(colCart, ItemID = ThisItem.ItemID);
+        Set(gblTotalAmount, Sum(colCart, Subtotal))
+
+  # ---- 金額サマリー ----
+  rectSummary As rectangle:
+    Fill: =RGBA(255, 255, 255, 1)
+    BorderColor: =RGBA(220, 220, 220, 1)
+    BorderThickness: =1
+    X: =10
+    Y: =Parent.Height - 285
+    Width: =Parent.Width - 20
+    Height: =145
+
+  lblSummaryTitle As label:
+    Text: ="金額内訳"
+    FontSize: =14
+    FontWeight: =FontWeight.Bold
+    Color: =RGBA(50, 50, 50, 1)
+    X: =20
+    Y: =Parent.Height - 278
+    Width: =200
+    Height: =26
+
+  lblSummaryItems As label:
+    Text: ="商品代金合計"
+    FontSize: =13
+    Color: =RGBA(80, 80, 80, 1)
+    X: =20
+    Y: =Parent.Height - 248
+    Width: =200
+    Height: =24
+
+  lblSummaryItemsAmt As label:
+    Text: ="¥" & Text(gblTotalAmount, "#,##0")
+    FontSize: =13
+    Color: =RGBA(50, 50, 50, 1)
+    Align: =Align.Right
+    X: =Parent.Width - 120
+    Y: =Parent.Height - 248
+    Width: =100
+    Height: =24
+
+  lblSummaryFee As label:
+    Text: ="配達料"
+    FontSize: =13
+    Color: =RGBA(80, 80, 80, 1)
+    X: =20
+    Y: =Parent.Height - 220
+    Width: =200
+    Height: =24
+
+  lblSummaryFeeAmt As label:
+    Text: =If(gblCurrentStore.DeliveryFee = 0, "無料", "¥" & Text(gblCurrentStore.DeliveryFee, "#,##0"))
+    FontSize: =13
+    Color: =If(gblCurrentStore.DeliveryFee = 0, RGBA(46, 204, 113, 1), RGBA(50, 50, 50, 1))
+    Align: =Align.Right
+    X: =Parent.Width - 120
+    Y: =Parent.Height - 220
+    Width: =100
+    Height: =24
+
+  lblSummaryMinOrder As label:
+    Text: =If(gblTotalAmount < gblCurrentStore.MinimumOrder,
+              "⚠️ 最低注文金額まであと ¥" & Text(gblCurrentStore.MinimumOrder - gblTotalAmount, "#,##0"),
+              "✅ 最低注文金額クリア！")
+    FontSize: =12
+    Color: =If(gblTotalAmount < gblCurrentStore.MinimumOrder, RGBA(231, 76, 60, 1), RGBA(46, 204, 113, 1))
+    X: =20
+    Y: =Parent.Height - 192
+    Width: =Parent.Width - 40
+    Height: =22
+
+  rectDivider As rectangle:
+    Fill: =RGBA(220, 220, 220, 1)
+    X: =20
+    Y: =Parent.Height - 166
+    Width: =Parent.Width - 40
+    Height: =1
+
+  lblTotal As label:
+    Text: ="合計（税込）"
+    FontSize: =16
+    FontWeight: =FontWeight.Bold
+    Color: =RGBA(30, 30, 30, 1)
+    X: =20
+    Y: =Parent.Height - 158
+    Width: =200
+    Height: =30
+
+  lblTotalAmt As label:
+    Text: ="¥" & Text(gblTotalAmount + gblCurrentStore.DeliveryFee, "#,##0")
+    FontSize: =20
+    FontWeight: =FontWeight.Bold
+    Color: =RGBA(41, 128, 185, 1)
+    Align: =Align.Right
+    X: =Parent.Width - 160
+    Y: =Parent.Height - 162
+    Width: =140
+    Height: =34
+
+  # ---- 注文確認ボタン ----
+  btnProceedToOrder As button:
+    Text: ="注文内容を確認する →"
+    Fill: =If(gblTotalAmount >= gblCurrentStore.MinimumOrder, RGBA(41, 128, 185, 1), RGBA(190, 190, 190, 1))
+    Color: =RGBA(255, 255, 255, 1)
+    BorderThickness: =0
+    BorderRadiusTopLeft: =10
+    BorderRadiusTopRight: =10
+    BorderRadiusBottomLeft: =10
+    BorderRadiusBottomRight: =10
+    FontSize: =15
+    FontWeight: =FontWeight.Bold
+    X: =15
+    Y: =Parent.Height - 118
+    Width: =Parent.Width - 30
+    Height: =50
+    Disabled: =gblTotalAmount < gblCurrentStore.MinimumOrder
+    OnSelect: =Navigate(OrderConfirmScreen, ScreenTransition.Fade)

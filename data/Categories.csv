@@ -1,0 +1,9 @@
+CategoryID,CategoryName,CategoryNameEn,Icon,SortOrder
+1,海鮮・寿司,Seafood & Sushi,🐟,1
+2,定食・弁当,Set Meals & Bento,🍱,2
+3,ラーメン・麺類,Ramen & Noodles,🍜,3
+4,焼肉・BBQ,Yakiniku & BBQ,🥩,4
+5,中華料理,Chinese,🥢,5
+6,洋食・カフェ,Western & Cafe,☕,6
+7,天ぷら・揚げ物,Tempura & Fried,🍤,7
+8,その他,Others,🍽️,8

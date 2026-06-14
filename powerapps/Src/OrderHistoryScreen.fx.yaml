@@ -1,0 +1,162 @@
+
+# =====================================================================
+# OrderHistoryScreen (注文履歴画面)
+# 過去の注文一覧を表示（Excelの Orders テーブルから読み込み）
+# =====================================================================
+
+OrderHistoryScreen As screen.screen:
+  Fill: =RGBA(245, 247, 250, 1)
+
+  # ---- ヘッダー ----
+  rectHeader As rectangle:
+    Fill: =RGBA(41, 128, 185, 1)
+    X: =0
+    Y: =0
+    Width: =Parent.Width
+    Height: =80
+
+  btnBackHistory As button:
+    Text: ="← ホーム"
+    Fill: =RGBA(0, 0, 0, 0)
+    Color: =RGBA(255, 255, 255, 1)
+    BorderThickness: =0
+    FontSize: =14
+    X: =5
+    Y: =22
+    Width: =90
+    Height: =36
+    OnSelect: =Navigate(HomeScreen, ScreenTransition.Fade)
+
+  lblHistoryTitle As label:
+    Text: ="📋 注文履歴"
+    FontSize: =20
+    FontWeight: =FontWeight.Bold
+    Color: =RGBA(255, 255, 255, 1)
+    X: =100
+    Y: =22
+    Width: =200
+    Height: =36
+
+  # ---- 注文一覧 Gallery ----
+  galOrders As gallery.BrowseLayout:
+    Items: =Sort(Orders, OrderDate, SortOrder.Descending)
+    Layout: =Layout.Vertical
+    TemplateHeight: =130
+    X: =0
+    Y: =88
+    Width: =Parent.Width
+    Height: =Parent.Height - 88
+
+    rectOrderCard As rectangle:
+      Fill: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(230, 230, 230, 1)
+      BorderThickness: =1
+      BorderRadiusTopLeft: =10
+      BorderRadiusTopRight: =10
+      BorderRadiusBottomLeft: =10
+      BorderRadiusBottomRight: =10
+      X: =10
+      Y: =5
+      Width: =Parent.Width - 20
+      Height: =118
+
+    # ステータスバッジ
+    rectStatus As rectangle:
+      Fill: =Switch(
+        ThisItem.Status,
+        "注文受付",    RGBA(41, 128, 185, 0.15),
+        "準備中",      RGBA(230, 126, 34, 0.15),
+        "配達中",      RGBA(46, 204, 113, 0.15),
+        "配達完了",    RGBA(100, 100, 100, 0.1),
+        RGBA(200, 200, 200, 0.2)
+      )
+      BorderColor: =Switch(
+        ThisItem.Status,
+        "注文受付",    RGBA(41, 128, 185, 1),
+        "準備中",      RGBA(230, 126, 34, 1),
+        "配達中",      RGBA(46, 204, 113, 1),
+        "配達完了",    RGBA(100, 100, 100, 1),
+        RGBA(180, 180, 180, 1)
+      )
+      BorderThickness: =1
+      BorderRadiusTopLeft: =12
+      BorderRadiusTopRight: =12
+      BorderRadiusBottomLeft: =12
+      BorderRadiusBottomRight: =12
+      X: =Parent.Width - 100
+      Y: =12
+      Width: =80
+      Height: =24
+
+    lblStatus As label:
+      Text: =Switch(
+        ThisItem.Status,
+        "注文受付", "📝 受付中",
+        "準備中",   "👨‍🍳 準備中",
+        "配達中",   "🛵 配達中",
+        "配達完了", "✅ 完了",
+        ThisItem.Status
+      )
+      FontSize: =11
+      FontWeight: =FontWeight.Bold
+      Color: =Switch(
+        ThisItem.Status,
+        "注文受付",  RGBA(41, 128, 185, 1),
+        "準備中",    RGBA(230, 126, 34, 1),
+        "配達中",    RGBA(46, 204, 113, 1),
+        "配達完了",  RGBA(80, 80, 80, 1),
+        RGBA(100, 100, 100, 1)
+      )
+      Align: =Align.Center
+      X: =Parent.Width - 100
+      Y: =13
+      Width: =80
+      Height: =22
+
+    lblOrderStoreName As label:
+      Text: =ThisItem.StoreName
+      FontSize: =15
+      FontWeight: =FontWeight.Bold
+      Color: =RGBA(30, 30, 30, 1)
+      X: =20
+      Y: =12
+      Width: =Parent.Width - 130
+      Height: =26
+
+    lblOrderID As label:
+      Text: ="注文No. " & ThisItem.OrderID
+      FontSize: =11
+      Color: =RGBA(130, 130, 130, 1)
+      X: =20
+      Y: =40
+      Width: =Parent.Width - 40
+      Height: =20
+
+    lblOrderDate As label:
+      Text: ="📅 " & ThisItem.OrderDate
+      FontSize: =12
+      Color: =RGBA(100, 100, 100, 1)
+      X: =20
+      Y: =62
+      Width: =Parent.Width - 40
+      Height: =20
+
+    lblOrderAmount As label:
+      Text: ="💴 ¥" & Text(ThisItem.TotalAmount, "#,##0") & "  (" & ThisItem.PaymentMethod & ")"
+      FontSize: =13
+      FontWeight: =FontWeight.Bold
+      Color: =RGBA(41, 128, 185, 1)
+      X: =20
+      Y: =84
+      Width: =Parent.Width - 40
+      Height: =24
+
+    lblOrderAddress As label:
+      Text: ="📍 " & ThisItem.DeliveryAddress
+      FontSize: =11
+      Color: =RGBA(120, 120, 120, 1)
+      Overflow: =Overflow.Hidden
+      X: =20
+      Y: =106
+      Width: =Parent.Width - 40
+      Height: =16
