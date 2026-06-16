@@ -1,0 +1,58 @@
+
+# =====================================================================
+# 南部市場エリア 出前アプリ - Power Apps Canvas App 定義
+# 対象エリア: 横浜市金沢区 南部市場駅周辺
+# =====================================================================
+# 使い方:
+#   1. Power Apps Studio を開く
+#   2. 新しいキャンバスアプリを作成（電話レイアウト推奨）
+#   3. このYAMLの各スクリーン定義を参照してアプリを構築
+#   4. data/ フォルダのCSVを OneDrive/SharePoint にアップロードし
+#      Excel テーブルとして接続する
+# =====================================================================
+
+App:
+  Properties:
+    StartScreen: =HomeScreen
+    Theme: =RGBA(41, 128, 185, 1)
+    Title: ="南部市場 出前アプリ"
+
+  # ----- グローバル変数 -----
+  # OnStart で初期化する変数一覧
+  #   gblCurrentStore: 選択中の店舗レコード
+  #   gblCart:         カートアイテムコレクション
+  #   gblOrderID:      注文ID
+  #   gblUser:         ユーザー情報レコード
+
+  OnStart: |
+    =ClearCollect(
+      colCart,
+      {ItemID:"", ItemName:"", UnitPrice:0, Quantity:0, Subtotal:0, StoreID:"", StoreName:""}
+    );
+    Clear(colCart);
+    Set(gblCurrentStore, Blank());
+    Set(gblOrderID, "");
+    Set(gblTotalAmount, 0)
+
+DataSources:
+  # --- Excel ファイル (OneDrive / SharePoint にアップロード) ---
+  # テーブル名はExcelファイル内で定義したテーブル名と一致させること
+  - Name: Stores
+    Type: Excel
+    Description: 店舗マスタ (data/Stores.csv を Excel に変換)
+
+  - Name: MenuItems
+    Type: Excel
+    Description: メニューマスタ (data/MenuItems.csv を Excel に変換)
+
+  - Name: Categories
+    Type: Excel
+    Description: カテゴリマスタ (data/Categories.csv を Excel に変換)
+
+  - Name: Orders
+    Type: Excel
+    Description: 注文テーブル (data/Orders.csv を Excel に変換)
+
+  - Name: OrderItems
+    Type: Excel
+    Description: 注文明細テーブル (data/OrderItems.csv を Excel に変換)

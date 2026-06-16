@@ -1,0 +1,224 @@
+
+# =====================================================================
+# MenuScreen (メニュー画面)
+# 選択した店舗のメニュー一覧 → カートに追加
+# =====================================================================
+
+MenuScreen As screen.screen:
+  Fill: =RGBA(245, 247, 250, 1)
+
+  # ---- ヘッダー ----
+  rectHeader As rectangle:
+    Fill: =RGBA(41, 128, 185, 1)
+    X: =0
+    Y: =0
+    Width: =Parent.Width
+    Height: =100
+
+  btnBackMenu As button:
+    Text: ="← 戻る"
+    Fill: =RGBA(0, 0, 0, 0)
+    Color: =RGBA(255, 255, 255, 1)
+    BorderThickness: =0
+    FontSize: =14
+    X: =5
+    Y: =15
+    Width: =80
+    Height: =36
+    OnSelect: =Navigate(StoreListScreen, ScreenTransition.Fade)
+
+  lblMenuStoreName As label:
+    Text: =gblCurrentStore.StoreName
+    FontSize: =17
+    FontWeight: =FontWeight.Bold
+    Color: =RGBA(255, 255, 255, 1)
+    X: =90
+    Y: =12
+    Width: =Parent.Width - 100
+    Height: =32
+
+  lblMenuMeta As label:
+    Text: ="🚚 " & gblCurrentStore.DeliveryTimeMin & "〜" & gblCurrentStore.DeliveryTimeMax & "分  ⭐ " & Text(gblCurrentStore.Rating, "0.0") & "  最低" & Text(gblCurrentStore.MinimumOrder, "#,##0") & "円〜"
+    FontSize: =12
+    Color: =RGBA(200, 230, 255, 1)
+    X: =90
+    Y: =48
+    Width: =Parent.Width - 100
+    Height: =22
+
+  lblMenuOpenStatus As label:
+    Text: =If(gblCurrentStore.IsOpen, "🟢 営業中  " & gblCurrentStore.OpenTime & " 〜 " & gblCurrentStore.CloseTime, "🔴 準備中")
+    FontSize: =12
+    Color: =RGBA(200, 255, 200, 1)
+    X: =90
+    Y: =72
+    Width: =Parent.Width - 100
+    Height: =22
+
+  # ---- メニュー Gallery ----
+  galMenu As gallery.BrowseLayout:
+    Items: =Filter(MenuItems, StoreID = gblCurrentStore.StoreID, IsAvailable = true)
+    Layout: =Layout.Vertical
+    TemplateHeight: =115
+    X: =0
+    Y: =100
+    Width: =Parent.Width
+    Height: =Parent.Height - 175
+
+    rectMenuCard As rectangle:
+      Fill: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(235, 235, 235, 1)
+      BorderThickness: =1
+      BorderRadiusTopLeft: =10
+      BorderRadiusTopRight: =10
+      BorderRadiusBottomLeft: =10
+      BorderRadiusBottomRight: =10
+      X: =10
+      Y: =5
+      Width: =Parent.Width - 20
+      Height: =103
+
+    imgMenuItem As image:
+      Image: =ThisItem.ImageURL
+      X: =10
+      Y: =5
+      Width: =90
+      Height: =103
+      BorderRadiusTopLeft: =10
+      BorderRadiusBottomLeft: =10
+
+    # 人気バッジ
+    rectBadge As rectangle:
+      Visible: =ThisItem.IsPopular
+      Fill: =RGBA(231, 76, 60, 1)
+      BorderRadiusTopLeft: =4
+      BorderRadiusTopRight: =4
+      BorderRadiusBottomLeft: =4
+      BorderRadiusBottomRight: =4
+      X: =10
+      Y: =5
+      Width: =46
+      Height: =20
+
+    lblBadge As label:
+      Visible: =ThisItem.IsPopular
+      Text: ="人気🔥"
+      FontSize: =10
+      Color: =RGBA(255, 255, 255, 1)
+      X: =10
+      Y: =6
+      Width: =46
+      Height: =18
+      Align: =Align.Center
+
+    lblItemName As label:
+      Text: =ThisItem.ItemName
+      FontSize: =14
+      FontWeight: =FontWeight.Bold
+      Color: =RGBA(30, 30, 30, 1)
+      X: =110
+      Y: =10
+      Width: =Parent.Width - 130
+      Height: =24
+
+    lblItemDesc As label:
+      Text: =ThisItem.Description
+      FontSize: =11
+      Color: =RGBA(110, 110, 110, 1)
+      Overflow: =Overflow.Hidden
+      X: =110
+      Y: =36
+      Width: =Parent.Width - 130
+      Height: =32
+
+    lblItemCategory As label:
+      Text: =ThisItem.CategoryName & "  🔥 " & ThisItem.CalorieKcal & "kcal"
+      FontSize: =11
+      Color: =RGBA(150, 150, 150, 1)
+      X: =110
+      Y: =70
+      Width: =Parent.Width - 180
+      Height: =18
+
+    lblItemPrice As label:
+      Text: ="¥" & Text(ThisItem.Price, "#,##0")
+      FontSize: =16
+      FontWeight: =FontWeight.Bold
+      Color: =RGBA(41, 128, 185, 1)
+      X: =110
+      Y: =86
+      Width: =100
+      Height: =24
+
+    # カートに追加ボタン
+    btnAddToCart As button:
+      Text: ="＋ カートへ"
+      Fill: =RGBA(41, 128, 185, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      BorderThickness: =0
+      BorderRadiusTopLeft: =20
+      BorderRadiusTopRight: =20
+      BorderRadiusBottomLeft: =20
+      BorderRadiusBottomRight: =20
+      FontSize: =12
+      X: =Parent.Width - 108
+      Y: =86
+      Width: =95
+      Height: =28
+      OnSelect: |
+        =If(
+          CountIf(colCart, ItemID = ThisItem.ItemID) > 0,
+          UpdateIf(colCart, ItemID = ThisItem.ItemID,
+            {Quantity: Quantity + 1, Subtotal: (Quantity + 1) * UnitPrice}
+          ),
+          Collect(colCart,
+            {
+              ItemID:    ThisItem.ItemID,
+              ItemName:  ThisItem.ItemName,
+              UnitPrice: ThisItem.Price,
+              Quantity:  1,
+              Subtotal:  ThisItem.Price,
+              StoreID:   ThisItem.StoreID,
+              StoreName: gblCurrentStore.StoreName
+            }
+          )
+        );
+        Set(gblTotalAmount, Sum(colCart, Subtotal))
+
+  # ---- カートバー (下部固定) ----
+  rectCartBar As rectangle:
+    Visible: =CountRows(colCart) > 0
+    Fill: =RGBA(41, 128, 185, 1)
+    X: =0
+    Y: =Parent.Height - 75
+    Width: =Parent.Width
+    Height: =75
+
+  lblCartSummary As label:
+    Visible: =CountRows(colCart) > 0
+    Text: ="🛒 " & CountRows(colCart) & "種類  合計 ¥" & Text(gblTotalAmount + gblCurrentStore.DeliveryFee, "#,##0") & "（送料¥" & Text(gblCurrentStore.DeliveryFee, "#,##0") & "含む）"
+    FontSize: =13
+    Color: =RGBA(255, 255, 255, 1)
+    X: =15
+    Y: =Parent.Height - 70
+    Width: =Parent.Width - 30
+    Height: =28
+    Align: =Align.Center
+
+  btnGoToCart As button:
+    Visible: =CountRows(colCart) > 0
+    Text: ="カートを確認する →"
+    Fill: =RGBA(255, 255, 255, 1)
+    Color: =RGBA(41, 128, 185, 1)
+    BorderThickness: =0
+    BorderRadiusTopLeft: =8
+    BorderRadiusTopRight: =8
+    BorderRadiusBottomLeft: =8
+    BorderRadiusBottomRight: =8
+    FontSize: =14
+    FontWeight: =FontWeight.Bold
+    X: =15
+    Y: =Parent.Height - 42
+    Width: =Parent.Width - 30
+    Height: =35
+    OnSelect: =Navigate(CartScreen, ScreenTransition.Fade)

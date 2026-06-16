@@ -1,0 +1,105 @@
+{
+  "appName": "南部市場エリア 出前アプリ",
+  "version": "1.0.0",
+  "targetArea": "横浜市金沢区 南部市場駅周辺",
+  "description": "Power Apps キャンバスアプリ用データスキーマ定義",
+  "tables": {
+    "Categories": {
+      "description": "料理カテゴリマスタ",
+      "primaryKey": "CategoryID",
+      "columns": [
+        { "name": "CategoryID",     "type": "Number",  "required": true,  "description": "カテゴリID (1〜)" },
+        { "name": "CategoryName",   "type": "Text",    "required": true,  "description": "カテゴリ名（日本語）" },
+        { "name": "CategoryNameEn", "type": "Text",    "required": false, "description": "カテゴリ名（英語）" },
+        { "name": "Icon",           "type": "Text",    "required": true,  "description": "絵文字アイコン" },
+        { "name": "SortOrder",      "type": "Number",  "required": true,  "description": "表示順" }
+      ]
+    },
+    "Stores": {
+      "description": "店舗マスタ（南部市場周辺の出前対応店舗）",
+      "primaryKey": "StoreID",
+      "columns": [
+        { "name": "StoreID",         "type": "Text",    "required": true,  "description": "店舗ID (S001〜)" },
+        { "name": "StoreName",       "type": "Text",    "required": true,  "description": "店舗名" },
+        { "name": "CategoryID",      "type": "Number",  "required": true,  "description": "カテゴリID（Categoriesと結合）" },
+        { "name": "CategoryName",    "type": "Text",    "required": true,  "description": "カテゴリ名（非正規化コピー）" },
+        { "name": "PostalCode",      "type": "Text",    "required": true,  "description": "郵便番号" },
+        { "name": "Address",         "type": "Text",    "required": true,  "description": "住所" },
+        { "name": "Phone",           "type": "Text",    "required": true,  "description": "電話番号" },
+        { "name": "Rating",          "type": "Decimal", "required": true,  "description": "評価（0.0〜5.0）" },
+        { "name": "ReviewCount",     "type": "Number",  "required": true,  "description": "レビュー件数" },
+        { "name": "DeliveryTimeMin", "type": "Number",  "required": true,  "description": "最短配達時間（分）" },
+        { "name": "DeliveryTimeMax", "type": "Number",  "required": true,  "description": "最長配達時間（分）" },
+        { "name": "MinimumOrder",    "type": "Number",  "required": true,  "description": "最低注文金額（円）" },
+        { "name": "DeliveryFee",     "type": "Number",  "required": true,  "description": "配達料（円）0=無料" },
+        { "name": "ImageURL",        "type": "Text",    "required": false, "description": "店舗画像URL" },
+        { "name": "IsOpen",          "type": "Boolean", "required": true,  "description": "営業中か" },
+        { "name": "OpenTime",        "type": "Text",    "required": true,  "description": "開店時間 (HH:mm)" },
+        { "name": "CloseTime",       "type": "Text",    "required": true,  "description": "閉店時間 (HH:mm)" },
+        { "name": "Description",     "type": "Text",    "required": false, "description": "店舗説明" },
+        { "name": "Tags",            "type": "Text",    "required": false, "description": "検索タグ（;区切り）" }
+      ]
+    },
+    "MenuItems": {
+      "description": "メニューマスタ",
+      "primaryKey": "ItemID",
+      "columns": [
+        { "name": "ItemID",        "type": "Text",    "required": true,  "description": "メニューID (M001〜)" },
+        { "name": "StoreID",       "type": "Text",    "required": true,  "description": "店舗ID（Storesと結合）" },
+        { "name": "CategoryName",  "type": "Text",    "required": true,  "description": "メニューカテゴリ（店舗内分類）" },
+        { "name": "ItemName",      "type": "Text",    "required": true,  "description": "メニュー名" },
+        { "name": "Description",   "type": "Text",    "required": false, "description": "メニュー説明" },
+        { "name": "Price",         "type": "Number",  "required": true,  "description": "価格（円・税込）" },
+        { "name": "ImageURL",      "type": "Text",    "required": false, "description": "メニュー画像URL" },
+        { "name": "IsAvailable",   "type": "Boolean", "required": true,  "description": "提供可能か" },
+        { "name": "IsPopular",     "type": "Boolean", "required": true,  "description": "人気メニューか" },
+        { "name": "IsRecommended", "type": "Boolean", "required": true,  "description": "おすすめか" },
+        { "name": "Allergens",     "type": "Text",    "required": false, "description": "アレルゲン（・区切り）" },
+        { "name": "CalorieKcal",   "type": "Number",  "required": false, "description": "カロリー（kcal）" }
+      ]
+    },
+    "Orders": {
+      "description": "注文テーブル（注文ごとに1レコード）",
+      "primaryKey": "OrderID",
+      "columns": [
+        { "name": "OrderID",              "type": "Text",    "required": true,  "description": "注文ID (ORD+timestamp)" },
+        { "name": "CustomerName",         "type": "Text",    "required": true,  "description": "注文者名" },
+        { "name": "CustomerPhone",        "type": "Text",    "required": true,  "description": "電話番号" },
+        { "name": "DeliveryAddress",      "type": "Text",    "required": true,  "description": "配達先住所" },
+        { "name": "DeliveryPostalCode",   "type": "Text",    "required": false, "description": "郵便番号" },
+        { "name": "StoreID",              "type": "Text",    "required": true,  "description": "店舗ID" },
+        { "name": "StoreName",            "type": "Text",    "required": true,  "description": "店舗名（非正規化コピー）" },
+        { "name": "OrderDate",            "type": "DateTime","required": true,  "description": "注文日時" },
+        { "name": "DeliveryRequestedTime","type": "Text",    "required": false, "description": "希望配達時間" },
+        { "name": "TotalItemAmount",      "type": "Number",  "required": true,  "description": "商品合計金額" },
+        { "name": "DeliveryFee",          "type": "Number",  "required": true,  "description": "配達料" },
+        { "name": "TotalAmount",          "type": "Number",  "required": true,  "description": "支払合計金額" },
+        { "name": "Status",               "type": "Text",    "required": true,  "description": "注文受付 / 準備中 / 配達中 / 配達完了" },
+        { "name": "PaymentMethod",        "type": "Text",    "required": true,  "description": "クレジットカード / PayPay / LINE Pay / 現金" },
+        { "name": "Note",                 "type": "Text",    "required": false, "description": "備考・アレルギー情報" },
+        { "name": "EstimatedDeliveryTime","type": "DateTime","required": false, "description": "配達予定時刻" }
+      ]
+    },
+    "OrderItems": {
+      "description": "注文明細テーブル（注文内の各メニューアイテム）",
+      "primaryKey": "OrderItemID",
+      "columns": [
+        { "name": "OrderItemID", "type": "Text",   "required": true, "description": "明細ID (OrderID_ItemID)" },
+        { "name": "OrderID",     "type": "Text",   "required": true, "description": "注文ID（Ordersと結合）" },
+        { "name": "ItemID",      "type": "Text",   "required": true, "description": "メニューID（MenuItemsと結合）" },
+        { "name": "ItemName",    "type": "Text",   "required": true, "description": "メニュー名（非正規化コピー）" },
+        { "name": "StoreID",     "type": "Text",   "required": true, "description": "店舗ID" },
+        { "name": "Quantity",    "type": "Number", "required": true, "description": "注文数量" },
+        { "name": "UnitPrice",   "type": "Number", "required": true, "description": "単価（円）" },
+        { "name": "Subtotal",    "type": "Number", "required": true, "description": "小計 = 単価 × 数量" }
+      ]
+    }
+  },
+  "relationships": [
+    { "from": "Stores.CategoryID",   "to": "Categories.CategoryID", "type": "ManyToOne" },
+    { "from": "MenuItems.StoreID",   "to": "Stores.StoreID",        "type": "ManyToOne" },
+    { "from": "Orders.StoreID",      "to": "Stores.StoreID",        "type": "ManyToOne" },
+    { "from": "OrderItems.OrderID",  "to": "Orders.OrderID",        "type": "ManyToOne" },
+    { "from": "OrderItems.ItemID",   "to": "MenuItems.ItemID",      "type": "ManyToOne" }
+  ]
+}
