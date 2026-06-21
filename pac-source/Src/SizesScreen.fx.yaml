@@ -1,0 +1,106 @@
+SizesScreen As screen:
+    Fill: =RGBA(255, 248, 240, 1)
+    Height: =Max(App.Height, App.DesignHeight)
+    Width: =Max(App.Width, App.DesignWidth)
+
+    SzHeader As label:
+        Height: =56
+        Width: =Parent.Width
+        X: =0
+        Y: =0
+        Fill: =RGBA(200, 57, 47, 1)
+        Text: ="📏 サイズ・生地・トッピング"
+        Color: =RGBA(255, 255, 255, 1)
+        Size: =16
+        FontWeight: =FontWeight.Bold
+
+    SzSizesH As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =72
+        Text: ="サイズ"
+        Size: =14
+        FontWeight: =FontWeight.Bold
+
+    SzSize1 As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =104
+        Text: ="• " & First(Filter(colSizes, SizeID="S")).Label & "（直径 " & First(Filter(colSizes, SizeID="S")).Diameter & "cm）"
+        Size: =12
+
+    SzSize2 As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =132
+        Text: ="• " & First(Filter(colSizes, SizeID="M")).Label & "（直径 " & First(Filter(colSizes, SizeID="M")).Diameter & "cm）"
+        Size: =12
+
+    SzSize3 As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =160
+        Text: ="• " & First(Filter(colSizes, SizeID="L")).Label & "（直径 " & First(Filter(colSizes, SizeID="L")).Diameter & "cm）"
+        Size: =12
+
+    SzCrustsH As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =200
+        Text: ="生地"
+        Size: =14
+        FontWeight: =FontWeight.Bold
+
+    SzCrust1 As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =232
+        Text: ="• " & First(Filter(colCrusts, CrustID="regular")).Name & "（追加料金 ¥" & First(Filter(colCrusts, CrustID="regular")).ExtraPrice & "）"
+        Size: =12
+
+    SzCrust2 As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =260
+        Text: ="• " & First(Filter(colCrusts, CrustID="thin")).Name & "（追加料金 ¥" & First(Filter(colCrusts, CrustID="thin")).ExtraPrice & "）"
+        Size: =12
+
+    SzCrust3 As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =288
+        Text: ="• " & First(Filter(colCrusts, CrustID="thick")).Name & "（追加料金 ¥" & First(Filter(colCrusts, CrustID="thick")).ExtraPrice & "）"
+        Size: =12
+
+    SzCrust4 As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =316
+        Text: ="• " & First(Filter(colCrusts, CrustID="gluten-free")).Name & "（追加料金 ¥" & First(Filter(colCrusts, CrustID="gluten-free")).ExtraPrice & "）"
+        Size: =12
+
+    SzToppingsH As label:
+        Height: =28
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =356
+        Text: ="追加トッピング"
+        Size: =14
+        FontWeight: =FontWeight.Bold
+
+    SzToppings As label:
+        Height: =120
+        Width: =Parent.Width - 32
+        X: =16
+        Y: =388
+        Text: =Concat(colToppings, "• " & Name & "（+¥" & ExtraPrice & "）", Char(10))
+        Size: =12

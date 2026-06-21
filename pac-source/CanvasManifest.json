@@ -1,0 +1,65 @@
+{
+  "FormatVersion": "0.24",
+  "Header": {
+    "DocVersion": "1.290",
+    "MinVersionToLoad": "1.290",
+    "MSAppStructureVersion": "2.0"
+  },
+  "Properties": {
+    "AppCreationSource": "AppFromScratch",
+    "AppDescription": "",
+    "AppPreviewFlagsKey": [
+      "delayloadscreens",
+      "errorhandling",
+      "projectionmapping",
+      "usedisplaynamemetadata",
+      "usenonblockingonstartrule",
+      "useguiddatatypes",
+      "useexperimentalcdsconnector",
+      "useenforcesavedatalimits",
+      "componentauthoring",
+      "reliableconcurrent",
+      "dataTableV2Control",
+      "nativecdsexperimental",
+      "useexperimentalsqlconnector",
+      "enablecdsfileandlargeimage",
+      "formuladataprefetch",
+      "enhanceddelegation",
+      "aibuilderserviceenrollment"
+    ],
+    "Author": "",
+    "ContainsThirdPartyPcfControls": false,
+    "DefaultConnectedDataSourceMaxGetRowsCount": 500,
+    "DocumentAppType": "Phone",
+    "DocumentLayoutHeight": 1136,
+    "DocumentLayoutLockOrientation": true,
+    "DocumentLayoutMaintainAspectRatio": true,
+    "DocumentLayoutOrientation": "portrait",
+    "DocumentLayoutScaleToFit": true,
+    "DocumentLayoutWidth": 640,
+    "DocumentType": "App",
+    "EnableInstrumentation": false,
+    "FileID": "2f360676-2f2d-4b32-871b-444843840926",
+    "Id": "7a37aad7-d891-4f93-b616-8f1fd5750b65",
+    "InstrumentationKey": "",
+    "LastControlUniqueId": 5,
+    "LocalDatabaseReferences": "{}",
+    "Name": "MinatomiraiPizza.msapp",
+    "OriginatingVersion": "1.290"
+  },
+  "PublishInfo": {
+    "AppName": "MinatomiraiPizza",
+    "BackgroundColor": "RGBA(0,176,240,1)",
+    "LogoFileName": "",
+    "PublishDataLocally": false,
+    "PublishResourcesLocally": false,
+    "PublishTarget": "player",
+    "UserLocale": "en-US"
+  },
+  "ScreenOrder": [
+    "StoreSelectScreen",
+    "HomeScreen",
+    "SizesScreen",
+    "DeliveryScreen"
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "products": [
+    { "ProductID": "margherita",   "Category": "Pizza",   "Name": "マルゲリータ",             "Emoji": "🍕", "Description": "トマトソース・モッツァレラ・フレッシュバジル。定番の王道。",                       "PriceS": 1280, "PriceM": 1780, "PriceL": 2280, "Price": 0,   "Tag": "定番" },
+    { "ProductID": "marinara",     "Category": "Pizza",   "Name": "マリナーラ",               "Emoji": "🍅", "Description": "ナポリ伝統。トマト・ガーリック・オレガノ・EXVオリーブオイル。",                  "PriceS": 1180, "PriceM": 1680, "PriceL": 2180, "Price": 0,   "Tag": "ヴィーガン可" },
+    { "ProductID": "quattro",      "Category": "Pizza",   "Name": "クアトロフォルマッジ",     "Emoji": "🧀", "Description": "4種のチーズと蜂蜜。濃厚な味わい。",                                                "PriceS": 1580, "PriceM": 2180, "PriceL": 2780, "Price": 0,   "Tag": "" },
+    { "ProductID": "diavola",      "Category": "Pizza",   "Name": "ディアボラ",               "Emoji": "🌶️", "Description": "スパイシーサラミと唐辛子で大人の辛さ。",                                          "PriceS": 1480, "PriceM": 1980, "PriceL": 2580, "Price": 0,   "Tag": "ピリ辛" },
+    { "ProductID": "prosciutto",   "Category": "Pizza",   "Name": "プロシュート・ルッコラ",   "Emoji": "🥬", "Description": "生ハムとルッコラ・パルミジャーノを贅沢に。",                                       "PriceS": 1680, "PriceM": 2280, "PriceL": 2880, "Price": 0,   "Tag": "" },
+    { "ProductID": "seafood",      "Category": "Pizza",   "Name": "横浜シーフード",           "Emoji": "🦐", "Description": "海老・帆立・イカと自家製トマトソース。横浜港から直送。",                          "PriceS": 1780, "PriceM": 2380, "PriceL": 2980, "Price": 0,   "Tag": "人気" },
+    { "ProductID": "bianca",       "Category": "Pizza",   "Name": "ビアンカ",                 "Emoji": "🤍", "Description": "リコッタ・モッツァレラ・ローズマリー。白いピッツァ。",                             "PriceS": 1380, "PriceM": 1880, "PriceL": 2380, "Price": 0,   "Tag": "" },
+    { "ProductID": "minato",       "Category": "Pizza",   "Name": "みなとみらい特製",         "Emoji": "🌊", "Description": "ベイブリッジに浮かぶ夕焼けをイメージしたシェフのおまかせ。",                      "PriceS": 1880, "PriceM": 2480, "PriceL": 3080, "Price": 0,   "Tag": "限定" },
+    { "ProductID": "garlic-bread", "Category": "Side",    "Name": "ガーリックブレッド",       "Emoji": "🥖", "Description": "自家製パンに香ばしいガーリックバター。",                                          "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 580, "Tag": "" },
+    { "ProductID": "caesar-salad", "Category": "Side",    "Name": "シーザーサラダ",           "Emoji": "🥗", "Description": "ロメインレタス・クルトン・パルミジャーノ。",                                       "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 780, "Tag": "" },
+    { "ProductID": "fries",        "Category": "Side",    "Name": "ローズマリーポテト",       "Emoji": "🍟", "Description": "ローズマリーと岩塩で味付けしたフライドポテト。",                                  "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 580, "Tag": "" },
+    { "ProductID": "wings",        "Category": "Side",    "Name": "スパイシーチキンウィング", "Emoji": "🍗", "Description": "ピリ辛味付けの骨付きチキン6本。",                                                 "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 880, "Tag": "" },
+    { "ProductID": "cola",         "Category": "Drink",   "Name": "コカ・コーラ",             "Emoji": "🥤", "Description": "500mlペットボトル。",                                                              "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 280, "Tag": "" },
+    { "ProductID": "ginger",       "Category": "Drink",   "Name": "ジンジャーエール",         "Emoji": "🍹", "Description": "辛口ジンジャー。",                                                                 "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 320, "Tag": "" },
+    { "ProductID": "beer",         "Category": "Drink",   "Name": "ハートランドビール",       "Emoji": "🍺", "Description": "330ml瓶。20歳以上限定。",                                                          "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 580, "Tag": "20歳以上" },
+    { "ProductID": "wine",         "Category": "Drink",   "Name": "ハウスワイン（赤）",       "Emoji": "🍷", "Description": "グラス150ml。20歳以上限定。",                                                      "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 680, "Tag": "20歳以上" },
+    { "ProductID": "lemonade",     "Category": "Drink",   "Name": "湘南レモネード",           "Emoji": "🍋", "Description": "ノンアルコール・無添加レモネード。",                                              "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 420, "Tag": "" },
+    { "ProductID": "tiramisu",     "Category": "Dessert", "Name": "ティラミス",               "Emoji": "🍰", "Description": "本格マスカルポーネ使用。",                                                         "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 680, "Tag": "" },
+    { "ProductID": "panna-cotta",  "Category": "Dessert", "Name": "パンナコッタ",             "Emoji": "🍮", "Description": "ベリーソース添え。",                                                               "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 580, "Tag": "" },
+    { "ProductID": "gelato",       "Category": "Dessert", "Name": "ジェラート（バニラ）",     "Emoji": "🍨", "Description": "イタリア産バニラビーンズ使用。",                                                  "PriceS": 0,    "PriceM": 0,    "PriceL": 0,    "Price": 480, "Tag": "" }
+  ],
+  "sizes": [
+    { "SizeID": "S", "Label": "S (20cm)", "Diameter": 20 },
+    { "SizeID": "M", "Label": "M (25cm)", "Diameter": 25 },
+    { "SizeID": "L", "Label": "L (30cm)", "Diameter": 30 }
+  ],
+  "crusts": [
+    { "CrustID": "regular",     "Name": "通常生地",         "ExtraPrice": 0 },
+    { "CrustID": "thin",        "Name": "薄生地クリスピー", "ExtraPrice": 0 },
+    { "CrustID": "thick",       "Name": "厚生地パン",       "ExtraPrice": 200 },
+    { "CrustID": "gluten-free", "Name": "グルテンフリー",   "ExtraPrice": 300 }
+  ],
+  "toppings": [
+    { "ToppingID": "mozzarella", "Name": "モッツァレラ追加", "ExtraPrice": 200 },
+    { "ToppingID": "basil",      "Name": "バジル",           "ExtraPrice": 100 },
+    { "ToppingID": "mushroom",   "Name": "マッシュルーム",   "ExtraPrice": 150 },
+    { "ToppingID": "olive",      "Name": "ブラックオリーブ", "ExtraPrice": 150 },
+    { "ToppingID": "anchovy",    "Name": "アンチョビ",       "ExtraPrice": 250 },
+    { "ToppingID": "jalapeno",   "Name": "ハラペーニョ",     "ExtraPrice": 150 },
+    { "ToppingID": "pineapple",  "Name": "パイナップル",     "ExtraPrice": 150 },
+    { "ToppingID": "corn",       "Name": "スイートコーン",   "ExtraPrice": 100 }
+  ],
+  "coupons": [
+    { "Code": "MM10",     "DiscountType": "Percent", "Value": 10,  "MinSubtotal": 1500, "Label": "10% OFF（小計¥1,500以上）" },
+    { "Code": "MIRAI20",  "DiscountType": "Percent", "Value": 20,  "MinSubtotal": 3000, "Label": "20% OFF（小計¥3,000以上）" },
+    { "Code": "LANDMARK", "DiscountType": "Flat",    "Value": 500, "MinSubtotal": 2000, "Label": "¥500 OFF（小計¥2,000以上）" },
+    { "Code": "YOKOHAMA", "DiscountType": "Flat",    "Value": 300, "MinSubtotal": 1500, "Label": "¥300 OFF（小計¥1,500以上）" }
+  ],
+  "deliveryAreas": [
+    { "AreaID": 1, "AreaName": "ランドマークタワー周辺" },
+    { "AreaID": 2, "AreaName": "クイーンズスクエア横浜" },
+    { "AreaID": 3, "AreaName": "パシフィコ横浜" },
+    { "AreaID": 4, "AreaName": "横浜美術館・グランモール公園" },
+    { "AreaID": 5, "AreaName": "よこはまコスモワールド" },
+    { "AreaID": 6, "AreaName": "横浜赤レンガ倉庫" },
+    { "AreaID": 7, "AreaName": "馬車道・北仲通" },
+    { "AreaID": 8, "AreaName": "新高島・高島中央公園" }
+  ],
+  "paymentMethods": [
+    { "PaymentID": "cash",   "Label": "現金（代引き）" },
+    { "PaymentID": "card",   "Label": "クレジットカード" },
+    { "PaymentID": "paypay", "Label": "PayPay" }
+  ],
+  "deliveryTimes": [
+    { "TimeID": "asap", "Label": "最短（約30分後）", "Minutes": 30 },
+    { "TimeID": "60",   "Label": "約60分後",         "Minutes": 60 },
+    { "TimeID": "90",   "Label": "約90分後",         "Minutes": 90 },
+    { "TimeID": "120",  "Label": "約120分後",        "Minutes": 120 }
+  ],
+  "stores": [
+    { "StoreID": "mm-honten",        "Name": "みなとみらい本店",    "Emoji": "🌊", "Address": "横浜市西区みなとみらい2-3-1 クイーンズタワーA 1F",  "Phone": "045-100-1001", "OpenHours": "11:00-23:00", "Areas": [1, 2, 3, 4], "IsOpen": true },
+    { "StoreID": "mm-landmark",      "Name": "ランドマーク店",      "Emoji": "🗼", "Address": "横浜市西区みなとみらい2-2-1 ランドマークプラザ B1F", "Phone": "045-100-1002", "OpenHours": "10:30-22:30", "Areas": [1, 2, 4],   "IsOpen": true },
+    { "StoreID": "mm-pacifico",      "Name": "パシフィコ店",        "Emoji": "🏢", "Address": "横浜市西区みなとみらい1-1-1 パシフィコ横浜 1F",      "Phone": "045-100-1003", "OpenHours": "11:00-22:00", "Areas": [2, 3],      "IsOpen": true },
+    { "StoreID": "mm-akarenga",      "Name": "赤レンガ店",          "Emoji": "🧱", "Address": "横浜市中区新港1-1-2 赤レンガ倉庫1号館 1F",          "Phone": "045-100-1004", "OpenHours": "11:30-23:00", "Areas": [5, 6, 7],   "IsOpen": true },
+    { "StoreID": "mm-bashamichi",    "Name": "馬車道店",            "Emoji": "🐴", "Address": "横浜市中区南仲通4-43 馬車道アネックス 1F",          "Phone": "045-100-1005", "OpenHours": "11:00-22:00", "Areas": [6, 7],      "IsOpen": true },
+    { "StoreID": "mm-shintakashima", "Name": "新高島店",            "Emoji": "🏙", "Address": "横浜市西区高島1-2-3 ベイクォーター 2F",             "Phone": "045-100-1006", "OpenHours": "10:00-22:00", "Areas": [7, 8],      "IsOpen": true },
+    { "StoreID": "mm-sakuragicho",   "Name": "桜木町店",            "Emoji": "🚉", "Address": "横浜市中区桜木町1-1 CIAL桜木町 1F",                 "Phone": "045-100-1007", "OpenHours": "10:30-22:30", "Areas": [1, 7],      "IsOpen": true },
+    { "StoreID": "mm-cosmo",         "Name": "コスモワールド店",    "Emoji": "🎡", "Address": "横浜市中区新港2-8-1 ワールドポーターズ 1F",         "Phone": "045-100-1008", "OpenHours": "11:00-23:30", "Areas": [4, 5, 6],   "IsOpen": true }
+  ]
+}
