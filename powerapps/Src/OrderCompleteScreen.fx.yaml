@@ -1,0 +1,154 @@
+
+# =====================================================================
+# OrderCompleteScreen (注文完了画面)
+# 注文ID・配達予定時間を表示してカートをクリア
+# =====================================================================
+
+OrderCompleteScreen As screen.screen:
+  Fill: =RGBA(245, 247, 250, 1)
+
+  OnVisible: |
+    =Clear(colCart);
+    Set(gblTotalAmount, 0)
+
+  # ---- 成功アイコン ----
+  lblSuccessIcon As label:
+    Text: ="✅"
+    FontSize: =72
+    Align: =Align.Center
+    X: =0
+    Y: =80
+    Width: =Parent.Width
+    Height: =90
+
+  lblCompleteTitle As label:
+    Text: ="ご注文ありがとうございます！"
+    FontSize: =20
+    FontWeight: =FontWeight.Bold
+    Color: =RGBA(46, 204, 113, 1)
+    Align: =Align.Center
+    X: =0
+    Y: =180
+    Width: =Parent.Width
+    Height: =36
+
+  lblOrderIDLabel As label:
+    Text: ="注文番号"
+    FontSize: =14
+    Color: =RGBA(100, 100, 100, 1)
+    Align: =Align.Center
+    X: =0
+    Y: =230
+    Width: =Parent.Width
+    Height: =24
+
+  lblOrderID As label:
+    Text: =gblOrderID
+    FontSize: =18
+    FontWeight: =FontWeight.Bold
+    Color: =RGBA(41, 128, 185, 1)
+    Align: =Align.Center
+    X: =0
+    Y: =258
+    Width: =Parent.Width
+    Height: =32
+
+  # ---- 店舗・配達情報 ----
+  rectInfoCard As rectangle:
+    Fill: =RGBA(255, 255, 255, 1)
+    BorderColor: =RGBA(220, 220, 220, 1)
+    BorderThickness: =1
+    BorderRadiusTopLeft: =12
+    BorderRadiusTopRight: =12
+    BorderRadiusBottomLeft: =12
+    BorderRadiusBottomRight: =12
+    X: =20
+    Y: =304
+    Width: =Parent.Width - 40
+    Height: =200
+
+  lblOrderedStore As label:
+    Text: ="🏪 " & gblCurrentStore.StoreName
+    FontSize: =16
+    FontWeight: =FontWeight.Bold
+    Color: =RGBA(30, 30, 30, 1)
+    X: =30
+    Y: =318
+    Width: =Parent.Width - 60
+    Height: =28
+
+  lblEstimatedTime As label:
+    Text: ="🚵 配達予定時間: 約 " & gblCurrentStore.DeliveryTimeMax & " 分"
+    FontSize: =15
+    Color: =RGBA(80, 80, 80, 1)
+    X: =30
+    Y: =354
+    Width: =Parent.Width - 60
+    Height: =28
+
+  lblOrderAmount As label:
+    Text: ="💴 お支払い合計: ¥" & Text(gblTotalAmount + gblCurrentStore.DeliveryFee, "#,##0")
+    FontSize: =15
+    Color: =RGBA(80, 80, 80, 1)
+    X: =30
+    Y: =390
+    Width: =Parent.Width - 60
+    Height: =28
+
+  lblStatusNote As label:
+    Text: ="お店が注文を確認次第、調理を開始します。"
+    FontSize: =13
+    Color: =RGBA(120, 120, 120, 1)
+    X: =30
+    Y: =430
+    Width: =Parent.Width - 60
+    Height: =24
+    Align: =Align.Center
+
+  lblStatusNote2 As label:
+    Text: ="ご登録の電話番号にSMSでお知らせします。"
+    FontSize: =13
+    Color: =RGBA(120, 120, 120, 1)
+    X: =30
+    Y: =454
+    Width: =Parent.Width - 60
+    Height: =24
+    Align: =Align.Center
+
+  # ---- 注文履歴ボタン ----
+  btnViewHistory As button:
+    Text: ="📋 注文履歴を確認する"
+    Fill: =RGBA(255, 255, 255, 1)
+    Color: =RGBA(41, 128, 185, 1)
+    BorderColor: =RGBA(41, 128, 185, 1)
+    BorderThickness: =2
+    BorderRadiusTopLeft: =10
+    BorderRadiusTopRight: =10
+    BorderRadiusBottomLeft: =10
+    BorderRadiusBottomRight: =10
+    FontSize: =15
+    X: =20
+    Y: =530
+    Width: =Parent.Width - 40
+    Height: =50
+    OnSelect: =Navigate(OrderHistoryScreen, ScreenTransition.Fade)
+
+  # ---- トップに戻るボタン ----
+  btnBackToHome As button:
+    Text: ="🏠 ホームに戻る"
+    Fill: =RGBA(41, 128, 185, 1)
+    Color: =RGBA(255, 255, 255, 1)
+    BorderThickness: =0
+    BorderRadiusTopLeft: =10
+    BorderRadiusTopRight: =10
+    BorderRadiusBottomLeft: =10
+    BorderRadiusBottomRight: =10
+    FontSize: =16
+    FontWeight: =FontWeight.Bold
+    X: =20
+    Y: =592
+    Width: =Parent.Width - 40
+    Height: =50
+    OnSelect: |
+      =Set(gblCurrentStore, Blank());
+      Navigate(HomeScreen, ScreenTransition.Fade)
