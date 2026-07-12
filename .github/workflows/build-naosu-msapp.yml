@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - agent/naosu-powerapps
+  pull_request:
   workflow_dispatch:
 
 jobs:
