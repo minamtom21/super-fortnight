@@ -3,7 +3,7 @@ name: Build NAOSU msapp
 on:
   push:
     branches:
-      - agent/naosu-powerapps
+      - agent/correction-photo-manager
   pull_request:
   workflow_dispatch:
 
