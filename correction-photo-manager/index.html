@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#b3261e">
+  <meta name="description" content="建設現場の是正前・是正後写真を端末内で安全に管理するアプリ">
+  <title>NAOSU｜是正写真管理</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ移動</a>
+
+  <header class="app-header">
+    <div class="header-inner">
+      <a class="brand" href="#" aria-label="NAOSU ホーム">
+        <span class="brand-mark" aria-hidden="true">N</span>
+        <span>
+          <strong>NAOSU</strong>
+          <small>是正写真管理</small>
+        </span>
+      </a>
+      <div class="header-actions">
+        <span class="save-state" id="save-state"><i></i>端末内に自動保存</span>
+        <button class="button button-primary compact" id="new-item-button" type="button">
+          <span aria-hidden="true">＋</span> 新しい是正
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="view-tabs" aria-label="表示切替">
+    <div class="header-inner tab-inner">
+      <button class="view-tab active" type="button" data-view="active" aria-current="page">
+        対応中 <span id="active-tab-count">0</span>
+      </button>
+      <button class="view-tab" type="button" data-view="archive">
+        完了保管 <span id="archive-tab-count">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <main id="main" class="main-shell">
+    <section class="overview" aria-labelledby="overview-title">
+      <div>
+        <p class="eyebrow">CORRECTION BOARD</p>
+        <h1 id="overview-title">是正状況を、ひと目で。</h1>
+        <p class="lead">是正前を登録し、是正後を確認。完了した案件は一覧から消えて、別の保管庫へ移動します。</p>
+      </div>
+      <div class="overview-actions">
+        <button class="button button-secondary" id="bulk-button" type="button">写真をまとめて登録</button>
+        <button class="button button-quiet" id="install-button" type="button" hidden>端末に追加</button>
+      </div>
+    </section>
+
+    <section class="stats-grid" aria-label="是正状況集計">
+      <article class="stat-card stat-alert">
+        <span class="stat-icon" aria-hidden="true">!</span>
+        <div><strong id="open-count">0</strong><span>未是正</span></div>
+      </article>
+      <article class="stat-card stat-review">
+        <span class="stat-icon" aria-hidden="true">✓</span>
+        <div><strong id="review-count">0</strong><span>確認待ち</span></div>
+      </article>
+      <article class="stat-card stat-done">
+        <span class="stat-icon" aria-hidden="true">✓</span>
+        <div><strong id="completed-count">0</strong><span>完了保管</span></div>
+      </article>
+      <article class="stat-card stat-storage">
+        <span class="stat-icon" aria-hidden="true">▣</span>
+        <div><strong id="storage-used">—</strong><span>端末使用量</span></div>
+      </article>
+    </section>
+
+    <section id="active-view" class="data-view" aria-labelledby="active-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="active-title">対応中の是正</h2>
+          <p>是正完了すると、ここから自動で消えます。</p>
+        </div>
+        <button class="button button-quiet" id="active-report-button" type="button">4枚帳票</button>
+      </div>
+
+      <div class="toolbar" role="search">
+        <label class="search-field">
+          <span aria-hidden="true">⌕</span>
+          <input id="active-search" type="search" placeholder="場所・工種・内容・番号で検索" autocomplete="off">
+        </label>
+        <label>
+          <span class="sr-only">状態</span>
+          <select id="status-filter">
+            <option value="all">すべての状態</option>
+            <option value="open">未是正</option>
+            <option value="review">確認待ち</option>
+          </select>
+        </label>
+        <label>
+          <span class="sr-only">工種</span>
+          <select id="trade-filter">
+            <option value="all">すべての工種</option>
+          </select>
+        </label>
+        <label>
+          <span class="sr-only">並び順</span>
+          <select id="sort-filter">
+            <option value="updated">更新が新しい順</option>
+            <option value="due">期限が近い順</option>
+            <option value="created">登録が新しい順</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="active-list" class="item-grid" aria-live="polite"></div>
+      <div id="active-empty" class="empty-state" hidden>
+        <span class="empty-illustration" aria-hidden="true">◎</span>
+        <h3>対応中の是正はありません</h3>
+        <p>是正前写真を登録すると、ここに表示されます。</p>
+        <button class="button button-primary" type="button" data-open-new>最初の是正を登録</button>
+      </div>
+    </section>
+
+    <section id="archive-view" class="data-view" aria-labelledby="archive-title" hidden>
+      <div class="section-heading">
+        <div>
+          <h2 id="archive-title">完了保管庫</h2>
+          <p>完了案件は対応中と分けて保存。復元や一括保管ができます。</p>
+        </div>
+        <div class="inline-actions">
+          <button class="button button-quiet" id="archive-report-button" type="button">4枚帳票</button>
+          <button class="button button-secondary" id="archive-export-button" type="button">選択をZIP保管</button>
+        </div>
+      </div>
+
+      <div class="toolbar archive-toolbar" role="search">
+        <label class="search-field">
+          <span aria-hidden="true">⌕</span>
+          <input id="archive-search" type="search" placeholder="完了データを検索" autocomplete="off">
+        </label>
+        <label>
+          <span class="sr-only">工種</span>
+          <select id="archive-trade-filter">
+            <option value="all">すべての工種</option>
+          </select>
+        </label>
+        <button class="text-button" id="select-all-archive" type="button">すべて選択</button>
+        <span class="selection-count" id="archive-selection-count">0件選択</span>
+      </div>
+
+      <div id="archive-list" class="item-grid" aria-live="polite"></div>
+      <div id="archive-empty" class="empty-state" hidden>
+        <span class="empty-illustration done" aria-hidden="true">✓</span>
+        <h3>完了データはまだありません</h3>
+        <p>是正を完了すると、自動でこちらへ移動します。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div>
+      <strong>写真はこの端末内だけに保存されます</strong>
+      <span>定期的にZIP保管してください。共有端末では端末の利用ルールに従ってください。</span>
+    </div>
+    <button class="text-button" id="storage-button" type="button">保存設定</button>
+  </footer>
+
+  <dialog id="item-dialog" class="app-dialog form-dialog">
+    <form id="item-form" method="dialog" novalidate>
+      <div class="dialog-header">
+        <div><p class="eyebrow">NEW CORRECTION</p><h2>是正前を登録</h2></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="閉じる">×</button>
+      </div>
+      <div class="dialog-body">
+        <input id="item-id" name="id" type="hidden">
+        <div class="form-grid two-cols">
+          <label class="field"><span>工事名 <em>必須</em></span><input name="projectName" required maxlength="80" placeholder="例：○○ビル新築工事"></label>
+          <label class="field"><span>撮影場所 <em>必須</em></span><input name="area" required maxlength="80" placeholder="例：基礎1工区"></label>
+          <label class="field"><span>工種 <em>必須</em></span><input name="trade" required list="trade-list" maxlength="40" placeholder="例：鉄筋工事"></label>
+          <label class="field"><span>撮影項目</span><input name="category" maxlength="60" value="配筋検査指摘・是正"></label>
+          <label class="field"><span>撮影日</span><input name="beforeDate" type="date"></label>
+          <label class="field"><span>立会者</span><input name="beforeWitness" maxlength="40" placeholder="氏名または会社名"></label>
+          <label class="field"><span>是正期限</span><input name="dueDate" type="date"></label>
+          <label class="field"><span>優先度</span><select name="priority"><option value="normal">通常</option><option value="high">高</option><option value="urgent">至急</option></select></label>
+        </div>
+        <label class="field"><span>是正前の指摘内容 <em>必須</em></span><textarea name="beforeDescription" rows="3" required maxlength="300" placeholder="例：2段筋（上端）のあきが広い"></textarea><small><b data-char-count="beforeDescription">0</b>/300文字</small></label>
+        <div class="photo-dropzone" id="before-dropzone">
+          <input id="before-files" name="beforeFiles" type="file" accept="image/*" multiple>
+          <span class="drop-icon" aria-hidden="true">＋</span>
+          <strong>是正前写真を選択 <em>必須</em></strong>
+          <span>複数枚可／JPG・PNG・HEIC（端末対応時）</span>
+        </div>
+        <div id="before-preview" class="photo-preview-grid"></div>
+        <p class="form-error" id="item-form-error" role="alert" hidden></p>
+      </div>
+      <div class="dialog-footer">
+        <button class="button button-quiet" type="button" data-close-dialog>キャンセル</button>
+        <button class="button button-primary" id="item-save-button" type="submit">登録する</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="bulk-dialog" class="app-dialog form-dialog">
+    <form id="bulk-form" method="dialog" novalidate>
+      <div class="dialog-header">
+        <div><p class="eyebrow">BULK IMPORT</p><h2>是正前写真をまとめて登録</h2></div>
+        <button class="icon-button" type="button" data-close-dialog aria-label="閉じる">×</button>
+      </div>
+      <div class="dialog-body">
+        <p class="info-banner">写真1枚につき是正1件を作成します。指摘内容は写真ファイル名から入り、あとで個別に変更できます。</p>
+        <div class="form-grid two-cols">
+          <label class="field"><span>工事名 <em>必須</em></span><input name="projectName" required maxlength="80" placeholder="例：○○ビル新築工事"></label>
+          <label class="field"><span>撮影場所 <em>必須</em></span><input name="area" required maxlength="80" placeholder="例：基礎1工区"></label>
+          <label class="field"><span>工種 <em>必須</em></span><input name="trade" required list="trade-list" maxlength="40" placeholder="例：鉄筋工事"></label>
+          <label class="field"><span>撮影項目</span><input name="category" maxlength="60" value="検査指摘・是正"></label>
+          <label class="field"><span>撮影日</span><input name="beforeDate" type="date"></label>
+          <label class="field"><span>立会者</span><input name="beforeWitness" maxlength="40" placeholder="氏名または会社名"></label>
+          <label class="field"><span>是正期限</span><input name="dueDate" type="date"></label>
+          <label class="field"><span>優先度</span><select name="priority"><option value="normal">通常</option><option value="high">高</option><option value="urgent">至急</option></select></label>
+        </div>
+        <div class="photo-dropzone">
+          <input id="bulk-files" name="files" type="file" accept="image/*" multiple required>
+          <span class="drop-icon" aria-hidden="true">＋</span>
+          <strong>写真をまとめて選択 <em>必須</em></strong>
+          <span id="bulk-file-label">まだ選択されていません</span>
+        </div>
+        <div class="progress-box" id="bulk-progress" hidden>
+          <div><span id="bulk-progress-label">写真を処理中</span><strong id="bulk-progress-percent">0%</strong></div>
+          <progress id="bulk-progress-bar" max="100" value="0"></progress>
+        </div>
+        <p class="form-error" id="bulk-form-error" role="alert" hidden></p>
+      </div>
+      <div class="dialog-footer">
+        <button class="button button-quiet" type="button" data-close-dialog>キャンセル</button>
+        <button class="button button-primary" id="bulk-save-button" type="submit">まとめて登録</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="detail-dialog" class="app-dialog detail-dialog">
+    <div id="detail-content"></div>
+  </dialog>
+
+  <dialog id="report-dialog" class="app-dialog report-dialog">
+    <div class="dialog-header">
+      <div><p class="eyebrow">4-PHOTO REPORT</p><h2>4枚帳票を作成</h2></div>
+      <button class="icon-button" type="button" data-close-dialog aria-label="閉じる">×</button>
+    </div>
+    <div class="dialog-body">
+      <p class="info-banner">是正前・是正後が揃った案件を2件まで選ぶと、添付様式に合わせた4枚帳票を印刷／PDF保存できます。</p>
+      <div id="report-candidates" class="report-candidates"></div>
+      <p class="form-error" id="report-error" role="alert" hidden></p>
+    </div>
+    <div class="dialog-footer">
+      <span class="selection-count" id="report-selection-count">0/2件選択</span>
+      <button class="button button-quiet" type="button" data-close-dialog>キャンセル</button>
+      <button class="button button-primary" id="report-print-button" type="button" disabled>帳票を開く</button>
+    </div>
+  </dialog>
+
+  <dialog id="storage-dialog" class="app-dialog small-dialog">
+    <div class="dialog-header">
+      <div><p class="eyebrow">STORAGE</p><h2>保存設定</h2></div>
+      <button class="icon-button" type="button" data-close-dialog aria-label="閉じる">×</button>
+    </div>
+    <div class="dialog-body">
+      <div class="storage-meter"><div><span>端末の使用量</span><strong id="storage-detail">計算中…</strong></div><progress id="storage-progress" max="100" value="0"></progress></div>
+      <p>写真はブラウザの専用保存領域に入り、完了時は「対応中」から「完了保管庫」へ移動します。</p>
+      <button class="button button-secondary full-width" id="persistent-storage-button" type="button">保存領域を保護する</button>
+      <p class="microcopy" id="persistent-storage-note">端末の容量整理でデータが消えにくくなるよう、ブラウザに保護を依頼します。</p>
+    </div>
+    <div class="dialog-footer"><button class="button button-primary" type="button" data-close-dialog>閉じる</button></div>
+  </dialog>
+
+  <dialog id="confirm-dialog" class="app-dialog small-dialog confirm-dialog">
+    <div class="dialog-body">
+      <span class="confirm-mark" aria-hidden="true">✓</span>
+      <h2 id="confirm-title">是正を完了しますか？</h2>
+      <p id="confirm-message">完了後は対応中から消え、完了保管庫へ移動します。</p>
+    </div>
+    <div class="dialog-footer">
+      <button class="button button-quiet" id="confirm-cancel" type="button">キャンセル</button>
+      <button class="button button-success" id="confirm-accept" type="button">完了して保管</button>
+    </div>
+  </dialog>
+
+  <datalist id="trade-list">
+    <option value="杭工事"><option value="土工事"><option value="鉄筋工事"><option value="型枠工事">
+    <option value="コンクリート工事"><option value="鉄骨工事"><option value="防水工事"><option value="仕上工事">
+    <option value="電気工事"><option value="設備工事"><option value="外構工事">
+  </datalist>
+
+  <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

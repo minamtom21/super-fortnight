@@ -1,0 +1,10 @@
+{
+  "name": "naosu-correction-photo-manager",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "建設現場向け是正写真管理PWA",
+  "scripts": {
+    "check": "node --check js/app.js && node --check js/db.js && node --check js/images.js && node --check js/zip.js"
+  }
+}
