@@ -1,0 +1,19 @@
+{
+  "name": "NAOSU｜是正写真管理",
+  "short_name": "NAOSU",
+  "description": "建設現場の是正前・是正後写真を管理し、完了データを別保管するアプリ",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eeeff0",
+  "theme_color": "#b3261e",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
