@@ -1,163 +1,127 @@
 HomeScreen As screen:
-    Fill: =RGBA(255, 248, 240, 1)
+    Fill: =RGBA(245,247,250,1)
     Height: =Max(App.Height, App.DesignHeight)
     Width: =Max(App.Width, App.DesignWidth)
 
-    HeaderRect As label:
-        Height: =72
+    Header As label:
+        Height: =64
         Width: =Parent.Width
-        X: =0
-        Y: =0
-        Fill: =RGBA(200, 57, 47, 1)
-        Text: =""
+        Fill: =RGBA(184,24,35,1)
+        Text: ="新しい是正を登録"
+        Color: =RGBA(255,255,255,1)
+        Size: =20
+        FontWeight: =FontWeight.Bold
+        PaddingLeft: =20
 
-    BrandLabel As label:
-        Height: =48
-        Size: =22
-        Text: ="🍕 みなとみらいピッツァ"
-        Color: =RGBA(255, 255, 255, 1)
-        Width: =Parent.Width - 32
-        X: =16
+    Back As button:
+        X: =Parent.Width-100
         Y: =12
-        ZIndex: =2
-
-    SubHeading As label:
-        Height: =28
-        Size: =11
-        Text: ="読み込み済み: 商品" & CountRows(colProducts) & "件 / サイズ" & CountRows(colSizes) & "種 / クーポン" & CountRows(colCoupons) & "種"
-        Color: =RGBA(122, 110, 99, 1)
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =84
-        ZIndex: =3
-
-    PromoLabel As label:
-        Height: =32
-        Size: =13
-        FontWeight: =FontWeight.Bold
-        Text: ="🌊 みなとみらい21エリア限定デリバリー"
-        Color: =RGBA(200, 57, 47, 1)
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =120
-        ZIndex: =4
-
-    ProductsHeading As label:
-        Height: =28
-        Size: =14
-        FontWeight: =FontWeight.Bold
-        Text: ="メニュー（一部）"
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =164
-        ZIndex: =5
-
-    Product1 As label:
-        Height: =48
-        Size: =13
-        Text: =LookUp(colProducts, ProductID = "minato").Emoji & " " & LookUp(colProducts, ProductID = "minato").Name & "  M ¥" & LookUp(colProducts, ProductID = "minato").PriceM
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =200
-        ZIndex: =6
-
-    Product2 As label:
-        Height: =48
-        Size: =13
-        Text: =LookUp(colProducts, ProductID = "margherita").Emoji & " " & LookUp(colProducts, ProductID = "margherita").Name & "  M ¥" & LookUp(colProducts, ProductID = "margherita").PriceM
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =252
-        ZIndex: =7
-
-    Product3 As label:
-        Height: =48
-        Size: =13
-        Text: =LookUp(colProducts, ProductID = "seafood").Emoji & " " & LookUp(colProducts, ProductID = "seafood").Name & "  M ¥" & LookUp(colProducts, ProductID = "seafood").PriceM
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =304
-        ZIndex: =8
-
-    Product4 As label:
-        Height: =48
-        Size: =13
-        Text: =LookUp(colProducts, ProductID = "diavola").Emoji & " " & LookUp(colProducts, ProductID = "diavola").Name & "  M ¥" & LookUp(colProducts, ProductID = "diavola").PriceM
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =356
-        ZIndex: =9
-
-    SizeLabel As label:
-        Height: =28
-        Size: =11
-        Text: ="サイズ: " & Concat(colSizes, Label, " / ")
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =412
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =10
-
-    CrustLabel As label:
-        Height: =28
-        Size: =11
-        Text: ="生地: " & Concat(colCrusts, Name, " / ")
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =444
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =11
-
-    ToppingLabel As label:
-        Height: =44
-        Size: =11
-        Text: ="トッピング: " & Concat(colToppings, Name, " / ")
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =476
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =12
-
-    AreaLabel As label:
-        Height: =44
-        Size: =11
-        Text: ="配達エリア: " & Concat(colDeliveryAreas, AreaName, " / ")
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =528
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =13
-
-    CouponLabel As label:
-        Height: =44
-        Size: =11
-        Text: ="クーポン: " & Concat(colCoupons, Code & " (" & Label & ")", " / ")
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =580
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =14
-
-    FooterLabel As label:
+        Width: =80
         Height: =40
-        Size: =10
-        Text: ="© 2026 みなとみらいピッツァ – Studio で画面を編集してください"
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =640
-        Align: =Align.Center
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =15
+        Text: ="戻る"
+        Fill: =RGBA(120,125,130,1)
+        OnSelect: =Back()
 
-    OrderCta As label:
-        Height: =56
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =688
-        Text: ="🛒 Power Apps Studioでカート/注文画面を実装してください"
-        Fill: =RGBA(200, 57, 47, 1)
-        Color: =RGBA(255, 255, 255, 1)
-        Size: =13
-        FontWeight: =FontWeight.Bold
-        Align: =Align.Center
-        ZIndex: =16
+    SiteLabel As label:
+        X: =20
+        Y: =82
+        Width: =120
+        Height: =30
+        Text: ="工事名"
+    SiteInput As text:
+        X: =20
+        Y: =112
+        Width: =Parent.Width-40
+        Height: =44
+        Default: =""
+        HintText: ="例：横浜駅東口計画"
+
+    LocationLabel As label:
+        X: =20
+        Y: =170
+        Width: =120
+        Height: =30
+        Text: ="場所"
+    LocationInput As text:
+        X: =20
+        Y: =200
+        Width: =Parent.Width-40
+        Height: =44
+        Default: =""
+        HintText: ="例：3階 東側廊下"
+
+    TradeLabel As label:
+        X: =20
+        Y: =258
+        Width: =120
+        Height: =30
+        Text: ="工種"
+    TradeInput As text:
+        X: =20
+        Y: =288
+        Width: =Parent.Width-40
+        Height: =44
+        Default: =""
+        HintText: ="例：内装"
+
+    IssueLabel As label:
+        X: =20
+        Y: =346
+        Width: =160
+        Height: =30
+        Text: ="指摘内容"
+    IssueInput As text:
+        X: =20
+        Y: =376
+        Width: =Parent.Width-40
+        Height: =88
+        Mode: =TextMode.MultiLine
+        Default: =""
+        HintText: ="是正内容を入力"
+
+    DueLabel As label:
+        X: =20
+        Y: =478
+        Width: =160
+        Height: =30
+        Text: ="是正期限"
+    DueInput As datepicker:
+        X: =20
+        Y: =508
+        Width: =Parent.Width-40
+        Height: =44
+        DefaultDate: =Today()+3
+
+    SaveBtn As button:
+        X: =20
+        Y: =584
+        Width: =Parent.Width-40
+        Height: =60
+        Text: ="登録する"
+        Fill: =RGBA(184,24,35,1)
+        Color: =RGBA(255,255,255,1)
+        Size: =17
+        OnSelect: |-
+            =If(
+                IsBlank(SiteInput.Text) || IsBlank(LocationInput.Text) || IsBlank(IssueInput.Text),
+                Notify("工事名・場所・指摘内容を入力してください", NotificationType.Error),
+                Collect(colActive,
+                    {
+                        ID: "N-" & Text(CountRows(colActive)+CountRows(colCompleted)+1,"000"),
+                        Site: SiteInput.Text,
+                        Location: LocationInput.Text,
+                        Trade: TradeInput.Text,
+                        Issue: IssueInput.Text,
+                        DueDate: DueInput.SelectedDate,
+                        Status: "対応中",
+                        BeforePhoto: Blank(),
+                        AfterPhoto: Blank(),
+                        Action: "",
+                        CreatedAt: Now(),
+                        CompletedAt: Blank()
+                    }
+                );
+                Notify("登録しました", NotificationType.Success);
+                Reset(SiteInput); Reset(LocationInput); Reset(TradeInput); Reset(IssueInput); Reset(DueInput);
+                Navigate(SizesScreen, ScreenTransition.Fade)
+            )

@@ -1,106 +1,95 @@
 SizesScreen As screen:
-    Fill: =RGBA(255, 248, 240, 1)
+    Fill: =RGBA(245,247,250,1)
     Height: =Max(App.Height, App.DesignHeight)
     Width: =Max(App.Width, App.DesignWidth)
 
-    SzHeader As label:
-        Height: =56
+    Header As label:
+        Height: =64
         Width: =Parent.Width
-        X: =0
-        Y: =0
-        Fill: =RGBA(200, 57, 47, 1)
-        Text: ="📏 サイズ・生地・トッピング"
-        Color: =RGBA(255, 255, 255, 1)
-        Size: =16
+        Fill: =RGBA(34,92,145,1)
+        Text: ="対応中の是正  " & CountRows(colActive) & "件"
+        Color: =RGBA(255,255,255,1)
+        Size: =20
         FontWeight: =FontWeight.Bold
+        PaddingLeft: =20
 
-    SzSizesH As label:
-        Height: =28
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =72
-        Text: ="サイズ"
-        Size: =14
-        FontWeight: =FontWeight.Bold
+    HomeBtn As button:
+        X: =Parent.Width-100
+        Y: =12
+        Width: =80
+        Height: =40
+        Text: ="ホーム"
+        Fill: =RGBA(90,98,106,1)
+        OnSelect: =Navigate(StoreSelectScreen, ScreenTransition.Fade)
 
-    SzSize1 As label:
-        Height: =28
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =104
-        Text: ="• " & First(Filter(colSizes, SizeID="S")).Label & "（直径 " & First(Filter(colSizes, SizeID="S")).Diameter & "cm）"
-        Size: =12
+    SearchInput As text:
+        X: =20
+        Y: =82
+        Width: =Parent.Width-40
+        Height: =44
+        Default: =""
+        HintText: ="工事名・場所・工種・指摘内容で検索"
 
-    SzSize2 As label:
-        Height: =28
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =132
-        Text: ="• " & First(Filter(colSizes, SizeID="M")).Label & "（直径 " & First(Filter(colSizes, SizeID="M")).Diameter & "cm）"
-        Size: =12
+    ActiveGallery As gallery.vertical:
+        X: =20
+        Y: =142
+        Width: =Parent.Width-40
+        Height: =Parent.Height-162
+        TemplateSize: =170
+        Items: =Filter(colActive, IsBlank(SearchInput.Text) || SearchInput.Text in Site || SearchInput.Text in Location || SearchInput.Text in Trade || SearchInput.Text in Issue)
 
-    SzSize3 As label:
-        Height: =28
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =160
-        Text: ="• " & First(Filter(colSizes, SizeID="L")).Label & "（直径 " & First(Filter(colSizes, SizeID="L")).Diameter & "cm）"
-        Size: =12
+        Card As label:
+            X: =0
+            Y: =4
+            Width: =Parent.TemplateWidth
+            Height: =156
+            Fill: =RGBA(255,255,255,1)
+            Text: =""
+            BorderColor: =RGBA(215,220,225,1)
+            BorderThickness: =1
 
-    SzCrustsH As label:
-        Height: =28
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =200
-        Text: ="生地"
-        Size: =14
-        FontWeight: =FontWeight.Bold
+        Title As label:
+            X: =12
+            Y: =12
+            Width: =Parent.TemplateWidth-24
+            Height: =30
+            Text: =ThisItem.ID & "  " & ThisItem.Site
+            FontWeight: =FontWeight.Bold
+            Size: =14
 
-    SzCrust1 As label:
-        Height: =28
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =232
-        Text: ="• " & First(Filter(colCrusts, CrustID="regular")).Name & "（追加料金 ¥" & First(Filter(colCrusts, CrustID="regular")).ExtraPrice & "）"
-        Size: =12
+        Detail As label:
+            X: =12
+            Y: =44
+            Width: =Parent.TemplateWidth-24
+            Height: =62
+            Text: =ThisItem.Location & "／" & ThisItem.Trade & Char(10) & ThisItem.Issue
+            Size: =12
 
-    SzCrust2 As label:
-        Height: =28
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =260
-        Text: ="• " & First(Filter(colCrusts, CrustID="thin")).Name & "（追加料金 ¥" & First(Filter(colCrusts, CrustID="thin")).ExtraPrice & "）"
-        Size: =12
+        Due As label:
+            X: =12
+            Y: =108
+            Width: =180
+            Height: =34
+            Text: ="期限：" & Text(ThisItem.DueDate,"yyyy/mm/dd")
+            Color: =If(ThisItem.DueDate<Today(),RGBA(184,24,35,1),RGBA(70,78,86,1))
+            FontWeight: =FontWeight.Bold
 
-    SzCrust3 As label:
-        Height: =28
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =288
-        Text: ="• " & First(Filter(colCrusts, CrustID="thick")).Name & "（追加料金 ¥" & First(Filter(colCrusts, CrustID="thick")).ExtraPrice & "）"
-        Size: =12
-
-    SzCrust4 As label:
-        Height: =28
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =316
-        Text: ="• " & First(Filter(colCrusts, CrustID="gluten-free")).Name & "（追加料金 ¥" & First(Filter(colCrusts, CrustID="gluten-free")).ExtraPrice & "）"
-        Size: =12
-
-    SzToppingsH As label:
-        Height: =28
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =356
-        Text: ="追加トッピング"
-        Size: =14
-        FontWeight: =FontWeight.Bold
-
-    SzToppings As label:
-        Height: =120
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =388
-        Text: =Concat(colToppings, "• " & Name & "（+¥" & ExtraPrice & "）", Char(10))
-        Size: =12
+        CompleteBtn As button:
+            X: =Parent.TemplateWidth-132
+            Y: =106
+            Width: =120
+            Height: =40
+            Text: ="是正完了"
+            Fill: =RGBA(34,140,87,1)
+            OnSelect: |-
+                =Collect(colCompleted,
+                    Patch(ThisItem,
+                        {
+                            Status: "完了",
+                            Action: "是正完了（簡易登録）",
+                            CompletedAt: Now()
+                        }
+                    )
+                );
+                Remove(colActive, ThisItem);
+                Notify("完了保管庫へ移動しました", NotificationType.Success)
