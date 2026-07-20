@@ -3,7 +3,7 @@ SizesScreen As screen:
     Height: =Max(App.Height, App.DesignHeight)
     Width: =Max(App.Width, App.DesignWidth)
 
-    Header As label:
+    AS_Header As label:
         Height: =64
         Width: =Parent.Width
         Fill: =RGBA(34,92,145,1)
@@ -13,7 +13,7 @@ SizesScreen As screen:
         FontWeight: =FontWeight.Bold
         PaddingLeft: =20
 
-    HomeBtn As button:
+    AS_HomeBtn As button:
         X: =Parent.Width-100
         Y: =12
         Width: =80
@@ -22,7 +22,7 @@ SizesScreen As screen:
         Fill: =RGBA(90,98,106,1)
         OnSelect: =Navigate(StoreSelectScreen, ScreenTransition.Fade)
 
-    SearchInput As text:
+    AS_SearchInput As text:
         X: =20
         Y: =82
         Width: =Parent.Width-40
@@ -30,15 +30,15 @@ SizesScreen As screen:
         Default: =""
         HintText: ="工事名・場所・工種・指摘内容で検索"
 
-    ActiveGallery As gallery.vertical:
+    AS_ActiveGallery As gallery.vertical:
         X: =20
         Y: =142
         Width: =Parent.Width-40
         Height: =Parent.Height-162
         TemplateSize: =170
-        Items: =Filter(colActive, IsBlank(SearchInput.Text) || SearchInput.Text in Site || SearchInput.Text in Location || SearchInput.Text in Trade || SearchInput.Text in Issue)
+        Items: =Filter(colActive, IsBlank(AS_SearchInput.Text) || AS_SearchInput.Text in Site || AS_SearchInput.Text in Location || AS_SearchInput.Text in Trade || AS_SearchInput.Text in Issue)
 
-        Card As label:
+        AS_Card As label:
             X: =0
             Y: =4
             Width: =Parent.TemplateWidth
@@ -48,7 +48,7 @@ SizesScreen As screen:
             BorderColor: =RGBA(215,220,225,1)
             BorderThickness: =1
 
-        Title As label:
+        AS_Title As label:
             X: =12
             Y: =12
             Width: =Parent.TemplateWidth-24
@@ -57,7 +57,7 @@ SizesScreen As screen:
             FontWeight: =FontWeight.Bold
             Size: =14
 
-        Detail As label:
+        AS_Detail As label:
             X: =12
             Y: =44
             Width: =Parent.TemplateWidth-24
@@ -65,7 +65,7 @@ SizesScreen As screen:
             Text: =ThisItem.Location & "／" & ThisItem.Trade & Char(10) & ThisItem.Issue
             Size: =12
 
-        Due As label:
+        AS_Due As label:
             X: =12
             Y: =108
             Width: =180
@@ -74,7 +74,7 @@ SizesScreen As screen:
             Color: =If(ThisItem.DueDate<Today(),RGBA(184,24,35,1),RGBA(70,78,86,1))
             FontWeight: =FontWeight.Bold
 
-        CompleteBtn As button:
+        AS_CompleteBtn As button:
             X: =Parent.TemplateWidth-132
             Y: =106
             Width: =120
