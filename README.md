@@ -54,16 +54,24 @@ Power Apps への取り込み用に2セット用意しています。
 - `powerapps/data.json` で全テーブル1ファイル統合
 - `powerapps/formulas.pfx` にカート・クーポン・注文確定のサンプル式
 
-### B. `.msapp` をそのまま使いたい場合 → [`pac-source/`](pac-source/README.md)
-**ビルド済みの `pac-source/MinatomiraiPizza.msapp` を同梱しています。** `make.powerapps.com` → アプリ → インポート から直接取り込めます。
+### B. `.msapp` をそのまま使いたい場合 → **[`MinatomiraiPizza.msapp`](MinatomiraiPizza.msapp)**（トップ階層に同梱）
+`make.powerapps.com` → **アプリ** → **インポート** → **キャンバス アプリ** から直接取り込めます。同じファイルは `pac-source/MinatomiraiPizza.msapp` にも配置しています。
 
+**同梱内容**
+- 4 画面（StoreSelect / Home / Sizes / Delivery）
+- App.OnStart に以下 9 コレクション・計 62 レコードのマスターデータを組み込み済み:
+  `colStores` (8) / `colProducts` (20) / `colSizes` (3) / `colCrusts` (4) /
+  `colToppings` (8) / `colCoupons` (4) / `colDeliveryAreas` (8) /
+  `colPaymentMethods` (3) / `colDeliveryTimes` (4)
+
+**ソースから再ビルドする場合（任意）**
 ```bash
-# ソースから再ビルドする場合のみ
+# Power Platform CLI (pac) を用意
 dotnet tool install --global Microsoft.PowerApps.CLI.Tool --version 1.34.4
+export PATH="$PATH:$HOME/.dotnet/tools"
+
 cd pac-source && ./build.sh   # → MinatomiraiPizza.msapp 再生成
 ```
-
-4 画面（StoreSelect / Home / Sizes / Delivery）と App.OnStart に colStores 含む全マスターデータを含みます。
 # 南部市場エリア 出前アプリ（Power Apps 対応）
 
 横浜市金沢区・南部市場駅周辺で使える出前アプリのPower Appsキャンバスアプリ一式です。
