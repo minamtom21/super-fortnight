@@ -3,7 +3,7 @@ SizesScreen As screen:
     Height: =Max(App.Height, App.DesignHeight)
     Width: =Max(App.Width, App.DesignWidth)
 
-    AS_Header As label:
+    ActiveHeader As label:
         Height: =64
         Width: =Parent.Width
         Fill: =RGBA(34,92,145,1)
@@ -13,7 +13,7 @@ SizesScreen As screen:
         FontWeight: =FontWeight.Bold
         PaddingLeft: =20
 
-    AS_HomeBtn As button:
+    ActiveHomeBtn As button:
         X: =Parent.Width-100
         Y: =12
         Width: =80
@@ -22,74 +22,46 @@ SizesScreen As screen:
         Fill: =RGBA(90,98,106,1)
         OnSelect: =Navigate(StoreSelectScreen, ScreenTransition.Fade)
 
-    AS_SearchInput As text:
+    ActiveInfo As label:
         X: =20
-        Y: =82
+        Y: =100
         Width: =Parent.Width-40
-        Height: =44
-        Default: =""
-        HintText: ="工事名・場所・工種・指摘内容で検索"
+        Height: =220
+        Fill: =RGBA(255,255,255,1)
+        BorderColor: =RGBA(215,220,225,1)
+        BorderThickness: =1
+        PaddingLeft: =16
+        PaddingTop: =16
+        Size: =14
+        Text: =If(IsEmpty(colActive),"対応中の是正はありません。",First(colActive).ID & "  " & First(colActive).Site & Char(10) & First(colActive).Location & "／" & First(colActive).Trade & Char(10) & First(colActive).Issue & Char(10) & "期限：" & Text(First(colActive).DueDate,"yyyy/mm/dd"))
 
-    AS_ActiveGallery As gallery.vertical:
+    ActiveCompleteBtn As button:
         X: =20
-        Y: =142
+        Y: =350
         Width: =Parent.Width-40
-        Height: =Parent.Height-162
-        TemplateSize: =170
-        Items: =Filter(colActive, IsBlank(AS_SearchInput.Text) || AS_SearchInput.Text in Site || AS_SearchInput.Text in Location || AS_SearchInput.Text in Trade || AS_SearchInput.Text in Issue)
+        Height: =60
+        Text: ="先頭の是正を完了にする"
+        Fill: =RGBA(34,140,87,1)
+        Color: =RGBA(255,255,255,1)
+        DisplayMode: =If(IsEmpty(colActive),DisplayMode.Disabled,DisplayMode.Edit)
+        OnSelect: |-
+            =Collect(colCompleted,
+                Patch(First(colActive),
+                    {
+                        Status: "完了",
+                        Action: "是正完了（簡易登録）",
+                        CompletedAt: Now()
+                    }
+                )
+            );
+            Remove(colActive, First(colActive));
+            Notify("完了保管庫へ移動しました", NotificationType.Success)
 
-        AS_Card As label:
-            X: =0
-            Y: =4
-            Width: =Parent.TemplateWidth
-            Height: =156
-            Fill: =RGBA(255,255,255,1)
-            Text: =""
-            BorderColor: =RGBA(215,220,225,1)
-            BorderThickness: =1
-
-        AS_Title As label:
-            X: =12
-            Y: =12
-            Width: =Parent.TemplateWidth-24
-            Height: =30
-            Text: =ThisItem.ID & "  " & ThisItem.Site
-            FontWeight: =FontWeight.Bold
-            Size: =14
-
-        AS_Detail As label:
-            X: =12
-            Y: =44
-            Width: =Parent.TemplateWidth-24
-            Height: =62
-            Text: =ThisItem.Location & "／" & ThisItem.Trade & Char(10) & ThisItem.Issue
-            Size: =12
-
-        AS_Due As label:
-            X: =12
-            Y: =108
-            Width: =180
-            Height: =34
-            Text: ="期限：" & Text(ThisItem.DueDate,"yyyy/mm/dd")
-            Color: =If(ThisItem.DueDate<Today(),RGBA(184,24,35,1),RGBA(70,78,86,1))
-            FontWeight: =FontWeight.Bold
-
-        AS_CompleteBtn As button:
-            X: =Parent.TemplateWidth-132
-            Y: =106
-            Width: =120
-            Height: =40
-            Text: ="是正完了"
-            Fill: =RGBA(34,140,87,1)
-            OnSelect: |-
-                =Collect(colCompleted,
-                    Patch(ThisItem,
-                        {
-                            Status: "完了",
-                            Action: "是正完了（簡易登録）",
-                            CompletedAt: Now()
-                        }
-                    )
-                );
-                Remove(colActive, ThisItem);
-                Notify("完了保管庫へ移動しました", NotificationType.Success)
+    ActiveHint As label:
+        X: =20
+        Y: =430
+        Width: =Parent.Width-40
+        Height: =100
+        Text: ="この安定版では、対応中データを登録順に表示します。SharePoint接続版では一覧表示と写真管理へ拡張できます。"
+        Size: =13
+        Color: =RGBA(90,98,106,1)
