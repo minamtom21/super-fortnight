@@ -95,11 +95,12 @@ rows = [
                      "マイルストーン(着工・上棟・検査・竣工など)は開始日=終了日にして「MS」列に○を入れると、"
                      "工程表上に赤い▼で表示されます。"),
     ("③ 全体工程表", "自動生成。表示開始月は「設定」シートで変更できます(24か月表示)。"
-                     "最下部に予定出来高曲線(S字カーブ)とグラフを自動表示します。"),
+                     "最下部に予定出来高曲線(自動計算)と実績出来高の入力行(黄色)があり、"
+                     "グラフに赤=予定/青=実績の2本のS字カーブを表示します。実績は毎月末に累計%を入力してください。"),
     ("④ 月間工程表", "黄色セルで対象の年・月を選ぶと、その月に掛かる作業だけを自動抽出して日単位のガントを表示します。"),
     ("⑤ 日割り工程表", "黄色セルに基準日を入力すると、その日から14日間の日別工程と日ごとの稼働作業数を表示します。"),
     ("", ""),
-    ("■ バーの見方", "水色=予定 / 濃青=進捗率に応じた実績(完了分) / 赤▼=マイルストーン"),
+    ("■ バーの見方", "水色=予定 / 濃青=進捗率に応じた実績(完了分) / 赤▼=マイルストーン / 黄色列=本日"),
     ("■ 土日祝", "月間・日割り工程表では 土曜=青系、日曜・祝日=赤系 に自動で色分けされます。"
                  "祝日は「設定」シートのリストを編集してください。"),
     ("", ""),
@@ -466,21 +467,52 @@ for c in range(FIRST_COL, LAST_COL + 1):
 style(ws, f"H{CUM_ROW}:{LAST_L}{CUM_ROW}", font=f_small, border=b_all,
       align=al_c, numfmt="0%")
 
+# 実績出来高(黄色セルに毎月末の実績累計%を入力 → 青線でグラフに反映)
+ACT_ROW = CUM_ROW + 1
+ws.cell(row=ACT_ROW, column=3, value="実績出来高(累計%)※毎月末に入力").font = f_label
+style(ws, f"H{ACT_ROW}:{LAST_L}{ACT_ROW}", font=f_small, fill=fill_input,
+      border=b_all, align=al_c, numfmt="0%")
+ws.cell(row=ACT_ROW, column=FIRST_COL, value=0.06)  # 入力例(2026年7月)
+
+# 凡例
+ws["U2"] = "凡例:"
+ws["U2"].font = f_label
+ws["V2"] = "予定"
+ws["V2"].fill = PatternFill("solid", fgColor=C_PLAN)
+ws["V2"].font = f_base
+ws["V2"].alignment = al_c
+ws["W2"] = "実績"
+ws["W2"].fill = PatternFill("solid", fgColor=C_DONE)
+ws["W2"].font = Font(name=FONT, size=9, color="FFFFFF")
+ws["W2"].alignment = al_c
+ws["X2"] = "▼ MS"
+ws["X2"].font = f_ms
+
+from openpyxl.drawing.line import LineProperties
+from openpyxl.chart.series import SeriesLabel
+
 chart = LineChart()
-chart.title = "予定出来高曲線(S字カーブ)"
+chart.title = "出来高曲線(赤=予定 / 青=実績)"
 chart.style = 12
 chart.height = 7
 chart.width = 30
 chart.y_axis.numFmt = "0%"
 chart.y_axis.title = None
 chart.x_axis.title = None
-data = Reference(ws, min_col=FIRST_COL, max_col=LAST_COL, min_row=CUM_ROW, max_row=CUM_ROW)
+plan = Reference(ws, min_col=FIRST_COL, max_col=LAST_COL, min_row=CUM_ROW, max_row=CUM_ROW)
+act = Reference(ws, min_col=FIRST_COL, max_col=LAST_COL, min_row=ACT_ROW, max_row=ACT_ROW)
 cats = Reference(ws, min_col=FIRST_COL, max_col=LAST_COL, min_row=5, max_row=5)
-chart.add_data(data, from_rows=True, titles_from_data=False)
+chart.add_data(plan, from_rows=True, titles_from_data=False)
+chart.add_data(act, from_rows=True, titles_from_data=False)
 chart.set_categories(cats)
+chart.series[0].tx = SeriesLabel(v="予定")
 chart.series[0].smooth = True
-chart.legend = None
-ws.add_chart(chart, f"B{CUM_ROW + 2}")
+chart.series[0].graphicalProperties.line = LineProperties(solidFill="C00000", w=22000)
+chart.series[1].tx = SeriesLabel(v="実績")
+chart.series[1].smooth = True
+chart.series[1].graphicalProperties.line = LineProperties(solidFill="2F5597", w=22000)
+chart.legend.position = "b"
+ws.add_chart(chart, f"B{ACT_ROW + 2}")
 
 ws.freeze_panes = "H6"
 ws.page_setup.orientation = "landscape"
@@ -488,7 +520,7 @@ ws.page_setup.paperSize = 8  # A3
 ws.page_setup.fitToWidth = 1
 ws.page_setup.fitToHeight = 1
 ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
-ws.print_area = f"A1:{LAST_L}{CUM_ROW}"
+ws.print_area = f"A1:{LAST_L}{ACT_ROW}"
 
 # ================================================================ 5. 月間工程表
 ws = wb.create_sheet("月間工程表")
@@ -531,6 +563,23 @@ ws["E2"] = "← 黄色セルを変更すると自動で切替"
 ws["E2"].font = f_small
 ws[f"{IDX_L}1"] = "=DATE($B$2,$D$2,1)"
 ws[f"{IDX_L}2"] = f"=EOMONTH(${IDX_L}$1,0)"
+
+ws["N2"] = "凡例:"
+ws["N2"].font = f_label
+ws["O2"] = "予定"
+ws["O2"].fill = PatternFill("solid", fgColor=C_PLAN)
+ws["O2"].font = f_base
+ws["O2"].alignment = al_c
+ws["P2"] = "実績"
+ws["P2"].fill = PatternFill("solid", fgColor=C_DONE)
+ws["P2"].font = Font(name=FONT, size=9, color="FFFFFF")
+ws["P2"].alignment = al_c
+ws["Q2"] = "▼MS"
+ws["Q2"].font = f_ms
+ws["R2"] = "本日"
+ws["R2"].fill = PatternFill("solid", fgColor="FFD966")
+ws["R2"].font = f_base
+ws["R2"].alignment = al_c
 
 dv_y = DataValidation(type="whole", operator="between", formula1=2020, formula2=2045)
 dv_y.add("B2")
@@ -604,6 +653,9 @@ f_hd_black = Font(name=FONT, size=9, bold=True, color="000000")
 for rng, hd in ((f"H4:{LAST_L}5", True), (f"H{T_FIRST}:{LAST_L}{CNT_ROW}", False)):
     fnt = f_hd_black if hd else None
     ws.conditional_formatting.add(
+        rng, FormulaRule(formula=['AND(H$3<>"",H$3=TODAY())'], stopIfTrue=True,
+                         fill=PatternFill("solid", bgColor="FFD966"), font=fnt))
+    ws.conditional_formatting.add(
         rng, FormulaRule(formula=[f'AND(H$3<>"",COUNTIF(祝日リスト,H$3)>0)'],
                          stopIfTrue=True, fill=PatternFill("solid", bgColor=C_SUN), font=fnt))
     ws.conditional_formatting.add(
@@ -655,6 +707,23 @@ ws["B2"].font = f_base
 ws["B2"].alignment = al_c
 ws["C2"] = "← 黄色セルに日付を入力すると14日間を表示"
 ws["C2"].font = f_small
+
+ws["N2"] = "凡例:"
+ws["N2"].font = f_label
+ws["O2"] = "予定"
+ws["O2"].fill = PatternFill("solid", fgColor=C_PLAN)
+ws["O2"].font = f_base
+ws["O2"].alignment = al_c
+ws["P2"] = "実績"
+ws["P2"].fill = PatternFill("solid", fgColor=C_DONE)
+ws["P2"].font = Font(name=FONT, size=9, color="FFFFFF")
+ws["P2"].alignment = al_c
+ws["Q2"] = "▼MS"
+ws["Q2"].font = f_ms
+ws["R2"] = "本日"
+ws["R2"].fill = PatternFill("solid", fgColor="FFD966")
+ws["R2"].font = f_base
+ws["R2"].alignment = al_c
 
 dv_d = DataValidation(type="date", operator="between",
                       formula1=dt.date(2020, 1, 1), formula2=dt.date(2045, 12, 31))
@@ -721,6 +790,9 @@ ws.conditional_formatting.add(
 f_hd_black = Font(name=FONT, size=9, bold=True, color="000000")
 for rng, hd in ((f"H4:{LAST_L}5", True), (f"H{T_FIRST}:{LAST_L}{CNT_ROW}", False)):
     fnt = f_hd_black if hd else None
+    ws.conditional_formatting.add(
+        rng, FormulaRule(formula=['H$3=TODAY()'], stopIfTrue=True,
+                         fill=PatternFill("solid", bgColor="FFD966"), font=fnt))
     ws.conditional_formatting.add(
         rng, FormulaRule(formula=['COUNTIF(祝日リスト,H$3)>0'],
                          stopIfTrue=True, fill=PatternFill("solid", bgColor=C_SUN), font=fnt))
