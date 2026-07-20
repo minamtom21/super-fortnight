@@ -3,7 +3,7 @@ StoreSelectScreen As screen:
     Height: =Max(App.Height, App.DesignHeight)
     Width: =Max(App.Width, App.DesignWidth)
 
-    Header As label:
+    SS_Header As label:
         Height: =72
         Width: =Parent.Width
         Fill: =RGBA(184,24,35,1)
@@ -13,7 +13,7 @@ StoreSelectScreen As screen:
         FontWeight: =FontWeight.Bold
         PaddingLeft: =20
 
-    Summary As label:
+    SS_Summary As label:
         X: =20
         Y: =92
         Width: =Parent.Width-40
@@ -23,7 +23,7 @@ StoreSelectScreen As screen:
         FontWeight: =FontWeight.Bold
         Color: =RGBA(45,55,65,1)
 
-    BtnNew As button:
+    SS_BtnNew As button:
         X: =20
         Y: =170
         Width: =Parent.Width-40
@@ -34,7 +34,7 @@ StoreSelectScreen As screen:
         Size: =18
         OnSelect: =Navigate(HomeScreen, ScreenTransition.Fade)
 
-    BtnActive As button:
+    SS_BtnActive As button:
         X: =20
         Y: =262
         Width: =Parent.Width-40
@@ -45,7 +45,7 @@ StoreSelectScreen As screen:
         Size: =18
         OnSelect: =Navigate(SizesScreen, ScreenTransition.Fade)
 
-    BtnCompleted As button:
+    SS_BtnCompleted As button:
         X: =20
         Y: =354
         Width: =Parent.Width-40
@@ -56,7 +56,7 @@ StoreSelectScreen As screen:
         Size: =18
         OnSelect: =Navigate(DeliveryScreen, ScreenTransition.Fade)
 
-    Note As label:
+    SS_Note As label:
         X: =20
         Y: =460
         Width: =Parent.Width-40

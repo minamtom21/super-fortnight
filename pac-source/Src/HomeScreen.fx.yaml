@@ -3,7 +3,7 @@ HomeScreen As screen:
     Height: =Max(App.Height, App.DesignHeight)
     Width: =Max(App.Width, App.DesignWidth)
 
-    Header As label:
+    HS_Header As label:
         Height: =64
         Width: =Parent.Width
         Fill: =RGBA(184,24,35,1)
@@ -13,7 +13,7 @@ HomeScreen As screen:
         FontWeight: =FontWeight.Bold
         PaddingLeft: =20
 
-    Back As button:
+    HS_Back As button:
         X: =Parent.Width-100
         Y: =12
         Width: =80
@@ -22,13 +22,13 @@ HomeScreen As screen:
         Fill: =RGBA(120,125,130,1)
         OnSelect: =Back()
 
-    SiteLabel As label:
+    HS_SiteLabel As label:
         X: =20
         Y: =82
         Width: =120
         Height: =30
         Text: ="工事名"
-    SiteInput As text:
+    HS_SiteInput As text:
         X: =20
         Y: =112
         Width: =Parent.Width-40
@@ -36,13 +36,13 @@ HomeScreen As screen:
         Default: =""
         HintText: ="例：横浜駅東口計画"
 
-    LocationLabel As label:
+    HS_LocationLabel As label:
         X: =20
         Y: =170
         Width: =120
         Height: =30
         Text: ="場所"
-    LocationInput As text:
+    HS_LocationInput As text:
         X: =20
         Y: =200
         Width: =Parent.Width-40
@@ -50,13 +50,13 @@ HomeScreen As screen:
         Default: =""
         HintText: ="例：3階 東側廊下"
 
-    TradeLabel As label:
+    HS_TradeLabel As label:
         X: =20
         Y: =258
         Width: =120
         Height: =30
         Text: ="工種"
-    TradeInput As text:
+    HS_TradeInput As text:
         X: =20
         Y: =288
         Width: =Parent.Width-40
@@ -64,13 +64,13 @@ HomeScreen As screen:
         Default: =""
         HintText: ="例：内装"
 
-    IssueLabel As label:
+    HS_IssueLabel As label:
         X: =20
         Y: =346
         Width: =160
         Height: =30
         Text: ="指摘内容"
-    IssueInput As text:
+    HS_IssueInput As text:
         X: =20
         Y: =376
         Width: =Parent.Width-40
@@ -79,20 +79,20 @@ HomeScreen As screen:
         Default: =""
         HintText: ="是正内容を入力"
 
-    DueLabel As label:
+    HS_DueLabel As label:
         X: =20
         Y: =478
         Width: =160
         Height: =30
         Text: ="是正期限"
-    DueInput As datepicker:
+    HS_DueInput As datepicker:
         X: =20
         Y: =508
         Width: =Parent.Width-40
         Height: =44
         DefaultDate: =Today()+3
 
-    SaveBtn As button:
+    HS_SaveBtn As button:
         X: =20
         Y: =584
         Width: =Parent.Width-40
@@ -103,16 +103,16 @@ HomeScreen As screen:
         Size: =17
         OnSelect: |-
             =If(
-                IsBlank(SiteInput.Text) || IsBlank(LocationInput.Text) || IsBlank(IssueInput.Text),
+                IsBlank(HS_SiteInput.Text) || IsBlank(HS_LocationInput.Text) || IsBlank(HS_IssueInput.Text),
                 Notify("工事名・場所・指摘内容を入力してください", NotificationType.Error),
                 Collect(colActive,
                     {
                         ID: "N-" & Text(CountRows(colActive)+CountRows(colCompleted)+1,"000"),
-                        Site: SiteInput.Text,
-                        Location: LocationInput.Text,
-                        Trade: TradeInput.Text,
-                        Issue: IssueInput.Text,
-                        DueDate: DueInput.SelectedDate,
+                        Site: HS_SiteInput.Text,
+                        Location: HS_LocationInput.Text,
+                        Trade: HS_TradeInput.Text,
+                        Issue: HS_IssueInput.Text,
+                        DueDate: HS_DueInput.SelectedDate,
                         Status: "対応中",
                         BeforePhoto: Blank(),
                         AfterPhoto: Blank(),
@@ -122,6 +122,6 @@ HomeScreen As screen:
                     }
                 );
                 Notify("登録しました", NotificationType.Success);
-                Reset(SiteInput); Reset(LocationInput); Reset(TradeInput); Reset(IssueInput); Reset(DueInput);
+                Reset(HS_SiteInput); Reset(HS_LocationInput); Reset(HS_TradeInput); Reset(HS_IssueInput); Reset(HS_DueInput);
                 Navigate(SizesScreen, ScreenTransition.Fade)
             )
