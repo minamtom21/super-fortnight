@@ -99,6 +99,11 @@ rows = [
                      "グラフに赤=予定/青=実績の2本のS字カーブを表示します。実績は毎月末に累計%を入力してください。"),
     ("④ 月間工程表", "黄色セルで対象の年・月を選ぶと、その月に掛かる作業だけを自動抽出して日単位のガントを表示します。"),
     ("⑤ 日割り工程表", "黄色セルに基準日を入力すると、その日から14日間の日別工程と日ごとの稼働作業数を表示します。"),
+    ("⑥ ネットワーク工程表", "工程マスタの「先行1〜3」列に先行作業のNo(自分より小さいNoのみ)を入力すると、"
+                     "CPM(クリティカルパス法)で最早開始/完了・最遅開始/完了・余裕日数を自動計算し、"
+                     "週単位のタイムラインに自動配置します。赤=クリティカルパス(遅らせると竣工が遅れる作業)、"
+                     "青=余裕のある作業、黄=フロート(遅らせられる幅)、数字=作業No。"
+                     "先行のない作業は工期(自)を開始日として計算します。不正な先行Noは工程マスタ上で赤く警告されます。"),
     ("", ""),
     ("■ バーの見方", "水色=予定 / 濃青=進捗率に応じた実績(完了分) / 赤▼=マイルストーン / 黄色列=本日"),
     ("■ 土日祝", "月間・日割り工程表では 土曜=青系、日曜・祝日=赤系 に自動で色分けされます。"
@@ -234,7 +239,8 @@ wb.defined_names.add(DefinedName("祝日リスト", attr_text="設定!$D$5:$D$60
 ws = wb.create_sheet("工程マスタ")
 ws.sheet_properties.tabColor = "ED7D31"
 widths = {"A": 5, "B": 14, "C": 30, "D": 16, "E": 11, "F": 11,
-          "G": 6, "H": 8, "I": 5, "J": 24, "K": 10, "L": 10, "M": 10}
+          "G": 6, "H": 8, "I": 5, "J": 24, "K": 10, "L": 10, "M": 10,
+          "N": 6, "O": 6, "P": 6}
 for col, w in widths.items():
     ws.column_dimensions[col].width = w
 for col in ("K", "L", "M"):
@@ -242,11 +248,13 @@ for col in ("K", "L", "M"):
 
 ws["A1"] = "工程マスタ(作業の入力はこのシートだけ)"
 ws["A1"].font = f_title
-ws["A2"] = "黄色列に入力 → 全体/月間/日割り工程表へ自動反映。マイルストーンは開始日=終了日+MS列○。"
+ws["A2"] = ("黄色列に入力 → 全体/月間/日割り/ネットワーク工程表へ自動反映。マイルストーンは開始日=終了日+MS列○。"
+            "先行1〜3にはその作業より前に行う作業のNo(自分より小さいNoのみ)を入力。")
 ws["A2"].font = f_small
 
 headers = ["No", "工種", "作業名", "担当業者", "開始日", "終了日",
-           "日数", "進捗率", "MS", "備考", "(開始)", "(終了)", "(実績境界)"]
+           "日数", "進捗率", "MS", "備考", "(開始)", "(終了)", "(実績境界)",
+           "先行1", "先行2", "先行3"]
 for i, h in enumerate(headers, start=1):
     c = ws.cell(row=4, column=i, value=h)
     c.font = f_head
@@ -305,6 +313,15 @@ tasks = [
     ("マイルストーン", "竣工・引渡し", "", D(2027, 3, 31), D(2027, 3, 31), None, "○", ""),
 ]
 
+
+# ネットワーク工程表用の先行関係サンプル (作業No: [先行No])
+PREDS = {2: [1], 3: [1], 4: [3], 5: [4], 6: [2, 3, 5], 7: [6], 8: [7], 9: [8],
+         10: [9], 11: [10], 12: [11], 13: [2], 14: [12, 13], 15: [12],
+         16: [14, 15], 17: [16], 18: [17], 19: [17], 20: [18, 19], 21: [20],
+         22: [20], 23: [22], 24: [23], 25: [24], 26: [25], 27: [26], 28: [27],
+         29: [20], 30: [21, 29], 31: [30], 32: [25], 33: [31], 34: [33],
+         35: [31, 32], 36: [32], 37: [28], 38: [37], 39: [34, 35, 36],
+         40: [39], 41: [39], 42: [40, 41], 43: [42], 44: [38, 43], 45: [43, 44]}
 for r in range(MASTER_FIRST, MASTER_LAST + 1):
     i = r - MASTER_FIRST
     ws.cell(row=r, column=1, value=f'=IF($C{r}="","",ROW()-4)')
@@ -321,12 +338,15 @@ for r in range(MASTER_FIRST, MASTER_LAST + 1):
             ws.cell(row=r, column=9, value=ms)
         if note:
             ws.cell(row=r, column=10, value=note)
+        for j, pv in enumerate(PREDS.get(i + 1, [])[:3]):
+            ws.cell(row=r, column=14 + j, value=pv)
     ws.cell(row=r, column=7, value=f'=IF(OR($E{r}="",$F{r}=""),0,$F{r}-$E{r}+1)')
     ws.cell(row=r, column=11, value=f'=IF($E{r}="",0,$E{r})')
     ws.cell(row=r, column=12, value=f'=IF($F{r}="",0,$F{r})')
     ws.cell(row=r, column=13, value=f'=IF(OR($G{r}=0,$H{r}=""),$K{r},MIN($L{r}+1,$K{r}+$G{r}*$H{r}))')
 
-style(ws, f"A{MASTER_FIRST}:M{MASTER_LAST}", font=f_base, border=b_all)
+style(ws, f"A{MASTER_FIRST}:P{MASTER_LAST}", font=f_base, border=b_all)
+style(ws, f"N{MASTER_FIRST}:P{MASTER_LAST}", fill=fill_input, align=al_c)
 style(ws, f"A{MASTER_FIRST}:A{MASTER_LAST}", fill=fill_calc, align=al_c)
 style(ws, f"B{MASTER_FIRST}:F{MASTER_LAST}", fill=fill_input)
 style(ws, f"E{MASTER_FIRST}:F{MASTER_LAST}", numfmt="yyyy/m/d", align=al_c)
@@ -346,6 +366,18 @@ dv_prog = DataValidation(type="decimal", operator="between", formula1=0, formula
                          error="0〜1(0%〜100%)で入力してください")
 dv_prog.add(f"H{MASTER_FIRST}:H{MASTER_LAST}")
 ws.add_data_validation(dv_prog)
+dv_pred = DataValidation(type="whole", operator="between", formula1=1, formula2=150,
+                         allow_blank=True, errorTitle="先行作業",
+                         error="先行作業のNoを入力してください(自分より小さいNoのみ)")
+dv_pred.add(f"N{MASTER_FIRST}:P{MASTER_LAST}")
+ws.add_data_validation(dv_pred)
+# 不正な先行(自分以降のNo・空行参照)を赤で警告
+ws.conditional_formatting.add(
+    f"N{MASTER_FIRST}:P{MASTER_LAST}",
+    FormulaRule(formula=[f'AND(N{MASTER_FIRST}<>"",OR(N{MASTER_FIRST}>=$A{MASTER_FIRST},'
+                         f'INDEX($C$5:$C${MASTER_LAST},N{MASTER_FIRST})=""))'],
+                stopIfTrue=True, fill=PatternFill("solid", bgColor="C00000"),
+                font=Font(name=FONT, size=9, bold=True, color="FFFFFF")))
 
 ws.freeze_panes = "A5"
 ws.page_setup.orientation = "landscape"
@@ -353,7 +385,7 @@ ws.page_setup.paperSize = 9
 ws.page_setup.fitToWidth = 1
 ws.page_setup.fitToHeight = 0
 ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
-ws.print_area = f"A1:J{MASTER_LAST}"
+ws.print_area = f"A1:P{MASTER_LAST}"
 
 # ================================================================ 4. 全体工程表
 ws = wb.create_sheet("全体工程表")
@@ -810,6 +842,166 @@ ws.page_setup.fitToWidth = 1
 ws.page_setup.fitToHeight = 1
 ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
 ws.print_area = f"A1:V{CNT_ROW}"
+
+
+# ================================================================ 7. ネットワーク工程表
+ws = wb.create_sheet("ネットワーク工程表")
+ws.sheet_properties.tabColor = "7030A0"
+N_WEEK = 52
+FIRST_COL = 11                      # K
+LAST_COL = FIRST_COL + N_WEEK - 1   # BJ (62)
+LAST_L = get_column_letter(LAST_COL)
+T_FIRST = 7
+T_LAST = T_FIRST + (MASTER_LAST - MASTER_FIRST)  # 156
+C_CP = "E06666"      # クリティカルバー(赤)
+C_FLOAT = "FFE599"   # フロート(余裕幅)
+
+widths = {"A": 4, "B": 24, "C": 5, "D": 8, "E": 7, "F": 7, "G": 7, "H": 7,
+          "I": 5, "J": 4}
+for col, w in widths.items():
+    ws.column_dimensions[col].width = w
+for c in range(FIRST_COL, LAST_COL + 1):
+    ws.column_dimensions[get_column_letter(c)].width = 2.8
+ws.row_dimensions[3].hidden = True
+
+ws["A1"] = '=設定!$B$3&"　ネットワーク工程表(CPM)"'
+ws["A1"].font = f_title
+ws["A2"] = "表示開始日"
+ws["A2"].font = f_label
+ws["B2"] = "=設定!$B$8"
+ws["B2"].number_format = "yyyy/m/d"
+ws["B2"].fill = fill_input
+ws["B2"].border = b_all
+ws["B2"].font = f_base
+ws["B2"].alignment = al_c
+ws["C2"] = "← 週単位で52週表示。先行のない作業は工期(自)から開始"
+ws["C2"].font = f_small
+ws["N2"] = "凡例:"
+ws["N2"].font = f_label
+ws["O2"] = "クリティカル"
+ws.merge_cells("O2:R2")
+ws["O2"].fill = PatternFill("solid", fgColor=C_CP)
+ws["O2"].font = f_small
+ws["O2"].alignment = al_c
+ws["S2"] = "余裕あり"
+ws.merge_cells("S2:V2")
+ws["S2"].fill = PatternFill("solid", fgColor=C_PLAN)
+ws["S2"].font = f_small
+ws["S2"].alignment = al_c
+ws["W2"] = "フロート"
+ws.merge_cells("W2:Z2")
+ws["W2"].fill = PatternFill("solid", fgColor=C_FLOAT)
+ws["W2"].font = f_small
+ws["W2"].alignment = al_c
+ws["AA2"] = "▼MS"
+ws.merge_cells("AA2:AC2")
+ws["AA2"].font = f_ms
+ws["AD2"] = "数字=作業No"
+ws.merge_cells("AD2:AH2")
+ws["AD2"].font = f_small
+
+# 週ヘッダー (行3=週開始日シリアル(非表示), 行4=年月, 行5=日)
+for j in range(N_WEEK):
+    col = FIRST_COL + j
+    L = get_column_letter(col)
+    prev = get_column_letter(col - 1)
+    if j == 0:
+        ws.cell(row=3, column=col, value="=$B$2")
+    else:
+        ws.cell(row=3, column=col, value=f"={prev}$3+7")
+    ws.cell(row=4, column=col,
+            value=f'=IF(OR(COLUMN()={FIRST_COL},MONTH({L}$3)<>MONTH({L}$3-7)),TEXT({L}$3,"m月"),"")')
+    ws.cell(row=5, column=col, value=f"=DAY({L}$3)")
+
+hdrs = ["No", "作業名", "日数", "先行", "最早開始", "最早完了", "最遅開始", "最遅完了", "余裕", "CP"]
+for i, h in enumerate(hdrs, start=1):
+    ws.cell(row=6, column=i, value=h)
+style(ws, f"A4:{LAST_L}6", font=f_head, fill=fill_head, border=b_head, align=al_c)
+style(ws, f"A4:J5", fill=fill_head)
+
+for r in range(T_FIRST, T_LAST + 1):
+    m = r - 2          # 対応する工程マスタ行
+    ws.cell(row=r, column=1, value=f'=IF(工程マスタ!$C{m}="","",工程マスタ!$A{m})')
+    ws.cell(row=r, column=2, value=f'=IF($A{r}="","",工程マスタ!$C{m})')
+    ws.cell(row=r, column=3, value=f'=IF($A{r}="","",MAX(1,工程マスタ!$G{m}))')
+    ws.cell(row=r, column=4,
+            value=f'=IF($A{r}="","",_xlfn.TEXTJOIN(",",TRUE,工程マスタ!$N{m}:$P{m}))')
+    ws.cell(row=r, column=5,
+            value=(f'=IF($A{r}="","",IF(COUNT(工程マスタ!$N{m}:$P{m})=0,設定!$B$8,'
+                   f'MAX(IF(工程マスタ!$N{m}="",0,INDEX($F$7:$F${T_LAST},工程マスタ!$N{m})),'
+                   f'IF(工程マスタ!$O{m}="",0,INDEX($F$7:$F${T_LAST},工程マスタ!$O{m})),'
+                   f'IF(工程マスタ!$P{m}="",0,INDEX($F$7:$F${T_LAST},工程マスタ!$P{m})))+1))'))
+    ws.cell(row=r, column=6, value=f'=IF($A{r}="","",$E{r}+$C{r}-1)')
+    if m + 1 <= MASTER_LAST:
+        cnt = (f'SUMPRODUCT((工程マスタ!$N${m + 1}:$N${MASTER_LAST}=$A{r})*1)+'
+               f'SUMPRODUCT((工程マスタ!$O${m + 1}:$O${MASTER_LAST}=$A{r})*1)+'
+               f'SUMPRODUCT((工程マスタ!$P${m + 1}:$P${MASTER_LAST}=$A{r})*1)')
+        mn = (f'MIN(IF((工程マスタ!$N${m + 1}:$N${MASTER_LAST}=$A{r})+'
+              f'(工程マスタ!$O${m + 1}:$O${MASTER_LAST}=$A{r})+'
+              f'(工程マスタ!$P${m + 1}:$P${MASTER_LAST}=$A{r}),$G{r + 1}:$G${T_LAST}))-1')
+        ws.cell(row=r, column=8, value=ArrayFormula(
+            f"H{r}", f'=IF($A{r}="","",IF({cnt}=0,MAX($F$7:$F${T_LAST}),{mn}))'))
+    else:
+        ws.cell(row=r, column=8, value=f'=IF($A{r}="","",MAX($F$7:$F${T_LAST}))')
+    ws.cell(row=r, column=7, value=f'=IF($A{r}="","",$H{r}-$C{r}+1)')
+    ws.cell(row=r, column=9, value=f'=IF($A{r}="","",$G{r}-$E{r})')
+    ws.cell(row=r, column=10, value=f'=IF($A{r}="","",IF($I{r}<=0,"●",""))')
+    for c in range(FIRST_COL, LAST_COL + 1):
+        L = get_column_letter(c)
+        ws.cell(row=r, column=c,
+                value=(f'=IF($A{r}="","",'
+                       f'IF(AND(INDEX(工程マスタ!$I$5:$I${MASTER_LAST},$A{r})="○",'
+                       f'$E{r}>={L}$3,$E{r}<={L}$3+6),"▼",'
+                       f'IF(AND($E{r}>={L}$3,$E{r}<={L}$3+6),$A{r},"")))'))
+
+style(ws, f"A{T_FIRST}:J{T_LAST}", font=f_base, border=b_all)
+style(ws, f"A{T_FIRST}:A{T_LAST}", align=al_c)
+style(ws, f"C{T_FIRST}:C{T_LAST}", align=al_c)
+style(ws, f"D{T_FIRST}:D{T_LAST}", align=al_c)
+style(ws, f"E{T_FIRST}:H{T_LAST}", numfmt="m/d", align=al_c)
+style(ws, f"I{T_FIRST}:J{T_LAST}", align=al_c)
+style(ws, f"K{T_FIRST}:{LAST_L}{T_LAST}",
+      font=Font(name=FONT, size=7, color="44546A"), border=b_all, align=al_c)
+
+# 条件付き書式
+ws.conditional_formatting.add(
+    f"A{T_FIRST}:J{T_LAST}",
+    FormulaRule(formula=[f'AND($A{T_FIRST}<>"",$J{T_FIRST}="●")'],
+                stopIfTrue=False, fill=PatternFill("solid", bgColor=C_SUN)))
+ws.conditional_formatting.add(
+    f"K{T_FIRST}:{LAST_L}{T_LAST}",
+    FormulaRule(formula=[f'AND($A{T_FIRST}<>"",'
+                         f'INDEX(工程マスタ!$I$5:$I${MASTER_LAST},$A{T_FIRST})="○",'
+                         f'$E{T_FIRST}>=K$3,$E{T_FIRST}<=K$3+6)'],
+                stopIfTrue=False,
+                font=Font(name=FONT, size=7, bold=True, color=C_MS)))
+ws.conditional_formatting.add(
+    f"K{T_FIRST}:{LAST_L}{T_LAST}",
+    FormulaRule(formula=[f'AND($A{T_FIRST}<>"",$J{T_FIRST}="●",'
+                         f'$E{T_FIRST}<=K$3+6,$F{T_FIRST}>=K$3)'],
+                stopIfTrue=False, fill=PatternFill("solid", bgColor=C_CP)))
+ws.conditional_formatting.add(
+    f"K{T_FIRST}:{LAST_L}{T_LAST}",
+    FormulaRule(formula=[f'AND($A{T_FIRST}<>"",$J{T_FIRST}<>"●",'
+                         f'$E{T_FIRST}<=K$3+6,$F{T_FIRST}>=K$3)'],
+                stopIfTrue=True, fill=PatternFill("solid", bgColor=C_PLAN)))
+ws.conditional_formatting.add(
+    f"K{T_FIRST}:{LAST_L}{T_LAST}",
+    FormulaRule(formula=[f'AND($A{T_FIRST}<>"",$H{T_FIRST}>$F{T_FIRST},'
+                         f'$F{T_FIRST}+1<=K$3+6,$H{T_FIRST}>=K$3)'],
+                stopIfTrue=True, fill=PatternFill("solid", bgColor=C_FLOAT)))
+ws.conditional_formatting.add(
+    f"K4:{LAST_L}{T_LAST}",
+    FormulaRule(formula=['AND(K$3<=TODAY(),TODAY()<=K$3+6)'],
+                stopIfTrue=False, fill=PatternFill("solid", bgColor=C_TODAY)))
+
+ws.freeze_panes = "K7"
+ws.page_setup.orientation = "landscape"
+ws.page_setup.paperSize = 8
+ws.page_setup.fitToWidth = 1
+ws.page_setup.fitToHeight = 1
+ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
+ws.print_area = f"A1:{LAST_L}{T_FIRST + 99}"
 
 # ================================================================ 保存
 out = "工事工程表アプリ.xlsx"
