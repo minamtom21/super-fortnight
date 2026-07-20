@@ -2,162 +2,127 @@ HomeScreen As screen:
     Fill: =RGBA(255, 248, 240, 1)
     Height: =Max(App.Height, App.DesignHeight)
     Width: =Max(App.Width, App.DesignWidth)
+    OnVisible: =If(IsBlank(varSelectedStore), Navigate(StoreSelectScreen))
 
-    HeaderRect As label:
-        Height: =72
-        Width: =Parent.Width
+    HmHeaderBar As rectangle:
         X: =0
         Y: =0
+        Width: =Parent.Width
+        Height: =88
         Fill: =RGBA(200, 57, 47, 1)
-        Text: =""
 
-    BrandLabel As label:
-        Height: =48
-        Size: =22
+    HmBrand As label:
+        X: =16
+        Y: =10
+        Width: =Parent.Width - 130
+        Height: =32
         Text: ="🍕 みなとみらいピッツァ"
         Color: =RGBA(255, 255, 255, 1)
-        Width: =Parent.Width - 32
+        Size: =17
+        FontWeight: =FontWeight.Bold
+
+    HmStoreLabel As label:
         X: =16
+        Y: =44
+        Width: =Parent.Width - 130
+        Height: =34
+        Text: =If(IsBlank(varSelectedStore), "店舗未選択", varSelectedStore.Emoji & " " & varSelectedStore.Name & " からお届け")
+        Color: =RGBA(255, 236, 224, 1)
+        Size: =12
+
+    HmChangeStoreBtn As button:
+        X: =Parent.Width - 112
         Y: =12
-        ZIndex: =2
-
-    SubHeading As label:
-        Height: =28
-        Size: =11
-        Text: ="読み込み済み: 商品" & CountRows(colProducts) & "件 / サイズ" & CountRows(colSizes) & "種 / クーポン" & CountRows(colCoupons) & "種"
-        Color: =RGBA(122, 110, 99, 1)
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =84
-        ZIndex: =3
-
-    PromoLabel As label:
+        Width: =96
         Height: =32
-        Size: =13
-        FontWeight: =FontWeight.Bold
-        Text: ="🌊 みなとみらい21エリア限定デリバリー"
-        Color: =RGBA(200, 57, 47, 1)
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =120
-        ZIndex: =4
+        Text: ="店舗変更"
+        Fill: =RGBA(245, 181, 74, 1)
+        Color: =RGBA(43, 33, 24, 1)
+        Size: =12
+        OnSelect: =Navigate(StoreSelectScreen, ScreenTransition.UnCover)
 
-    ProductsHeading As label:
-        Height: =28
-        Size: =14
-        FontWeight: =FontWeight.Bold
-        Text: ="メニュー（一部）"
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =164
-        ZIndex: =5
-
-    Product1 As label:
-        Height: =48
-        Size: =13
-        Text: =LookUp(colProducts, ProductID = "minato").Emoji & " " & LookUp(colProducts, ProductID = "minato").Name & "  M ¥" & LookUp(colProducts, ProductID = "minato").PriceM
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =200
-        ZIndex: =6
-
-    Product2 As label:
-        Height: =48
-        Size: =13
-        Text: =LookUp(colProducts, ProductID = "margherita").Emoji & " " & LookUp(colProducts, ProductID = "margherita").Name & "  M ¥" & LookUp(colProducts, ProductID = "margherita").PriceM
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =252
-        ZIndex: =7
-
-    Product3 As label:
-        Height: =48
-        Size: =13
-        Text: =LookUp(colProducts, ProductID = "seafood").Emoji & " " & LookUp(colProducts, ProductID = "seafood").Name & "  M ¥" & LookUp(colProducts, ProductID = "seafood").PriceM
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =304
-        ZIndex: =8
-
-    Product4 As label:
-        Height: =48
-        Size: =13
-        Text: =LookUp(colProducts, ProductID = "diavola").Emoji & " " & LookUp(colProducts, ProductID = "diavola").Name & "  M ¥" & LookUp(colProducts, ProductID = "diavola").PriceM
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =356
-        ZIndex: =9
-
-    SizeLabel As label:
-        Height: =28
-        Size: =11
-        Text: ="サイズ: " & Concat(colSizes, Label, " / ")
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =412
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =10
-
-    CrustLabel As label:
-        Height: =28
-        Size: =11
-        Text: ="生地: " & Concat(colCrusts, Name, " / ")
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =444
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =11
-
-    ToppingLabel As label:
-        Height: =44
-        Size: =11
-        Text: ="トッピング: " & Concat(colToppings, Name, " / ")
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =476
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =12
-
-    AreaLabel As label:
-        Height: =44
-        Size: =11
-        Text: ="配達エリア: " & Concat(colDeliveryAreas, AreaName, " / ")
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =528
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =13
-
-    CouponLabel As label:
-        Height: =44
-        Size: =11
-        Text: ="クーポン: " & Concat(colCoupons, Code & " (" & Label & ")", " / ")
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =580
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =14
-
-    FooterLabel As label:
-        Height: =40
-        Size: =10
-        Text: ="© 2026 みなとみらいピッツァ – Studio で画面を編集してください"
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =640
-        Align: =Align.Center
-        Color: =RGBA(122, 110, 99, 1)
-        ZIndex: =15
-
-    OrderCta As label:
-        Height: =56
-        Width: =Parent.Width - 32
-        X: =16
-        Y: =688
-        Text: ="🛒 Power Apps Studioでカート/注文画面を実装してください"
-        Fill: =RGBA(200, 57, 47, 1)
+    HmCartBtn As button:
+        X: =Parent.Width - 112
+        Y: =48
+        Width: =96
+        Height: =32
+        Text: ="🛒 カート " & Sum(colCart, Quantity)
+        Fill: =RGBA(43, 33, 24, 1)
         Color: =RGBA(255, 255, 255, 1)
-        Size: =13
-        FontWeight: =FontWeight.Bold
-        Align: =Align.Center
-        ZIndex: =16
+        Size: =12
+        OnSelect: =Navigate(CartScreen, ScreenTransition.Cover)
+
+    HmMenuGallery As gallery.galleryVertical:
+        X: =16
+        Y: =100
+        Width: =Parent.Width - 32
+        Height: =Parent.Height - 116
+        TemplateSize: =110
+        TemplatePadding: =8
+        Items: =colProducts
+
+        HmCardBg As rectangle:
+            X: =0
+            Y: =0
+            Width: =Parent.TemplateWidth
+            Height: =102
+            Fill: =RGBA(255, 255, 255, 1)
+            BorderColor: =RGBA(233, 220, 203, 1)
+            BorderThickness: =1
+
+        HmItemEmoji As label:
+            X: =12
+            Y: =12
+            Width: =56
+            Height: =56
+            Text: =ThisItem.Emoji
+            Size: =30
+            Align: =Align.Center
+
+        HmItemName As label:
+            X: =76
+            Y: =12
+            Width: =Parent.TemplateWidth - 200
+            Height: =26
+            Text: =ThisItem.Name
+            Size: =14
+            FontWeight: =FontWeight.Bold
+
+        HmItemDesc As label:
+            X: =76
+            Y: =40
+            Width: =Parent.TemplateWidth - 200
+            Height: =50
+            Text: =ThisItem.Description
+            Size: =10
+            Color: =RGBA(122, 110, 99, 1)
+
+        HmItemPrice As label:
+            X: =Parent.TemplateWidth - 120
+            Y: =14
+            Width: =108
+            Height: =26
+            Text: =If(ThisItem.Category = "Pizza", "M ¥" & ThisItem.PriceM, "¥" & ThisItem.Price)
+            Size: =14
+            FontWeight: =FontWeight.Bold
+            Color: =RGBA(200, 57, 47, 1)
+            Align: =Align.Right
+
+        HmAddBtn As button:
+            X: =Parent.TemplateWidth - 120
+            Y: =56
+            Width: =108
+            Height: =36
+            Text: ="＋ 追加"
+            Fill: =RGBA(200, 57, 47, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Size: =13
+            OnSelect: |-
+                =With(
+                    { p: If(ThisItem.Category = "Pizza", ThisItem.PriceM, ThisItem.Price) },
+                    If(
+                        CountRows(Filter(colCart, ProductID = ThisItem.ProductID)) > 0,
+                        UpdateIf(colCart, ProductID = ThisItem.ProductID, { Quantity: Quantity + 1, LineTotal: (Quantity + 1) * UnitPrice }),
+                        Collect(colCart, { ProductID: ThisItem.ProductID, Name: ThisItem.Name, Emoji: ThisItem.Emoji, Category: ThisItem.Category, UnitPrice: p, Quantity: 1, LineTotal: p })
+                    )
+                )

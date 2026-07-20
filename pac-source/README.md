@@ -27,19 +27,15 @@
 
 合計 **62 件のマスターレコード**が App 起動時に自動で `ClearCollect` されます。
 
-### 画面構成（4 画面、情報表示のみ）
-- `StoreSelectScreen` — **8 店舗を一覧表示。最初に開く画面**。Studio で Button + `Set(varSelectedStore, ThisItem); Navigate(HomeScreen)` を組むと店舗選択 → メニューの遷移が完成
-- `HomeScreen` — ブランド・人気商品・サイズ/生地/トッピング/配達エリア/クーポンの一覧
-- `SizesScreen` — サイズ・生地・トッピングの詳細と追加料金
-- `DeliveryScreen` — 配達エリア・お届け時間・支払い方法・クーポン詳細
+### 画面構成（4 画面・ボタン操作でそのまま注文できる完全フロー）
+1. `StoreSelectScreen` — **最初に開く画面**。8 店舗を Gallery 表示し、各行の「この店舗で注文する →」**ボタン**で `Set(varSelectedStore, ThisItem); Navigate(HomeScreen)`
+2. `HomeScreen` — メニュー Gallery。各商品の「＋ 追加」**ボタン**で `colCart` に追加（同一商品は数量+1）。ヘッダーに選択店舗名、「🛒 カート」ボタン（点数バッジ付き）と「店舗変更」ボタン
+3. `CartScreen` — カート Gallery。行ごとに「− / ＋」数量ボタンと「削除」ボタン、合計金額を表示。「注文を確定する」**ボタン**で注文番号を採番して確認画面へ（カート空・店舗未選択時は自動で無効化）
+4. `ConfirmScreen` — 注文完了。注文番号・店舗・合計を表示し、「最初の画面に戻る」**ボタン**でカートをクリアして店舗選択に戻る
 
-> **注:** Power Platform CLI `pac canvas pack` の v1.34 系プレビュー版では、Gallery やインタラクティブな TextInput/Dropdown/Button などの **ウィジェット系コントロール**を含むソースを一発でパックすると `NullReferenceException` が出ることが多いため、本バンドルは **Label のみ（情報表示用）** で構成しています。
->
-> **カート / カスタマイズ / 注文確定の対話的フロー**は、インポート後に Power Apps Studio 内で:
-> 1. 既存の Gallery / TextInput / Dropdown / Button コントロールを画面に追加
-> 2. `../powerapps/formulas.pfx` の Power Fx 式をコピペ
->
-> という流れで構築してください。App.OnStart に全マスターデータがすでに読み込まれているため、コントロールの `Items` プロパティに `colProducts` 等を指定するだけで動きます。
+すべて**実際にタップできる Button / Gallery コントロール**で構成しており、インポート後すぐに店舗選択 → メニュー追加 → カート増減 → 注文確定まで動作します（外部データソース不要、App.OnStart のコレクションのみで完結）。
+
+> **技術メモ:** 対話コントロール（button / gallery）は Microsoft 公式の widget テンプレート（`ControlTemplates.json` + `pkgs/*.xml`）を同梱することで `pac canvas pack` が正しく解決します。`pkgs/` を削除するとパック時に `NullReferenceException` になるため消さないでください。
 
 ## ソースから再ビルドする
 

@@ -86,4 +86,8 @@ App As appinfo:
         Set(varSelectedSize, "M");
         Set(varSelectedCrustId, "regular");
         Set(varSelectedQty, 1);
-        Set(varSelectedStore, Blank())
+        Set(varSelectedStore, Blank());
+        Clear(colCart);
+        Collect(colCart, { ProductID: "_seed", Name: "", Emoji: "", Category: "", UnitPrice: 0, Quantity: 0, LineTotal: 0 });
+        Clear(colCart);
+        Set(varOrderNo, "")

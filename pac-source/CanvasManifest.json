@@ -59,7 +59,7 @@
   "ScreenOrder": [
     "StoreSelectScreen",
     "HomeScreen",
-    "SizesScreen",
-    "DeliveryScreen"
+    "CartScreen",
+    "ConfirmScreen"
   ]
 }

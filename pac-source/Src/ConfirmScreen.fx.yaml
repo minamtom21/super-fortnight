@@ -1,0 +1,85 @@
+ConfirmScreen As screen:
+    Fill: =RGBA(255, 248, 240, 1)
+    Height: =Max(App.Height, App.DesignHeight)
+    Width: =Max(App.Width, App.DesignWidth)
+
+    CfCard As rectangle:
+        X: =24
+        Y: =96
+        Width: =Parent.Width - 48
+        Height: =Parent.Height - 220
+        Fill: =RGBA(255, 255, 255, 1)
+        BorderColor: =RGBA(233, 220, 203, 1)
+        BorderThickness: =1
+
+    CfIcon As label:
+        X: =24
+        Y: =128
+        Width: =Parent.Width - 48
+        Height: =72
+        Text: ="🎉"
+        Size: =44
+        Align: =Align.Center
+
+    CfHeading As label:
+        X: =24
+        Y: =204
+        Width: =Parent.Width - 48
+        Height: =40
+        Text: ="ご注文ありがとうございました！"
+        Size: =18
+        FontWeight: =FontWeight.Bold
+        Color: =RGBA(200, 57, 47, 1)
+        Align: =Align.Center
+
+    CfOrderNo As label:
+        X: =24
+        Y: =252
+        Width: =Parent.Width - 48
+        Height: =30
+        Text: ="注文番号: " & varOrderNo
+        Size: =14
+        FontWeight: =FontWeight.Bold
+        Align: =Align.Center
+
+    CfStore As label:
+        X: =24
+        Y: =288
+        Width: =Parent.Width - 48
+        Height: =30
+        Text: =If(IsBlank(varSelectedStore), "", varSelectedStore.Emoji & " " & varSelectedStore.Name & " からお届けします")
+        Size: =12
+        Align: =Align.Center
+        Color: =RGBA(122, 110, 99, 1)
+
+    CfTotal As label:
+        X: =24
+        Y: =324
+        Width: =Parent.Width - 48
+        Height: =36
+        Text: ="ご請求 ¥" & Sum(colCart, LineTotal)
+        Size: =18
+        FontWeight: =FontWeight.Bold
+        Align: =Align.Center
+
+    CfEta As label:
+        X: =24
+        Y: =368
+        Width: =Parent.Width - 48
+        Height: =30
+        Text: ="最短30分ほどでお届け予定です。"
+        Size: =12
+        Align: =Align.Center
+        Color: =RGBA(122, 110, 99, 1)
+
+    CfHomeBtn As button:
+        X: =24
+        Y: =Parent.Height - 104
+        Width: =Parent.Width - 48
+        Height: =56
+        Text: ="最初の画面に戻る"
+        Fill: =RGBA(200, 57, 47, 1)
+        Color: =RGBA(255, 255, 255, 1)
+        Size: =16
+        FontWeight: =FontWeight.Bold
+        OnSelect: =Clear(colCart); Set(varSelectedStore, Blank()); Set(varOrderNo, ""); Navigate(StoreSelectScreen, ScreenTransition.Fade)

@@ -1,0 +1,180 @@
+CartScreen As screen:
+    Fill: =RGBA(255, 248, 240, 1)
+    Height: =Max(App.Height, App.DesignHeight)
+    Width: =Max(App.Width, App.DesignWidth)
+
+    CtHeaderBar As rectangle:
+        X: =0
+        Y: =0
+        Width: =Parent.Width
+        Height: =64
+        Fill: =RGBA(200, 57, 47, 1)
+
+    CtBackBtn As button:
+        X: =8
+        Y: =14
+        Width: =92
+        Height: =36
+        Text: ="← メニュー"
+        Fill: =RGBA(43, 33, 24, 1)
+        Color: =RGBA(255, 255, 255, 1)
+        Size: =12
+        OnSelect: =Navigate(HomeScreen, ScreenTransition.UnCover)
+
+    CtTitle As label:
+        X: =108
+        Y: =16
+        Width: =Parent.Width - 124
+        Height: =32
+        Text: ="🛒 カート"
+        Color: =RGBA(255, 255, 255, 1)
+        Size: =18
+        FontWeight: =FontWeight.Bold
+
+    CtEmpty As label:
+        X: =16
+        Y: =88
+        Width: =Parent.Width - 32
+        Height: =40
+        Text: ="カートは空です。メニューから商品を追加してください。"
+        Color: =RGBA(122, 110, 99, 1)
+        Align: =Align.Center
+        Visible: =CountRows(colCart) = 0
+
+    CtGallery As gallery.galleryVertical:
+        X: =16
+        Y: =72
+        Width: =Parent.Width - 32
+        Height: =Parent.Height - 240
+        TemplateSize: =92
+        TemplatePadding: =6
+        Items: =colCart
+        Visible: =CountRows(colCart) > 0
+
+        CtRowBg As rectangle:
+            X: =0
+            Y: =0
+            Width: =Parent.TemplateWidth
+            Height: =84
+            Fill: =RGBA(255, 255, 255, 1)
+            BorderColor: =RGBA(233, 220, 203, 1)
+            BorderThickness: =1
+
+        CtRowEmoji As label:
+            X: =12
+            Y: =12
+            Width: =48
+            Height: =48
+            Text: =ThisItem.Emoji
+            Size: =26
+            Align: =Align.Center
+
+        CtRowName As label:
+            X: =68
+            Y: =10
+            Width: =Parent.TemplateWidth - 84
+            Height: =24
+            Text: =ThisItem.Name
+            Size: =13
+            FontWeight: =FontWeight.Bold
+
+        CtRowUnit As label:
+            X: =68
+            Y: =34
+            Width: =160
+            Height: =20
+            Text: ="単価 ¥" & ThisItem.UnitPrice
+            Size: =10
+            Color: =RGBA(122, 110, 99, 1)
+
+        CtMinusBtn As button:
+            X: =68
+            Y: =54
+            Width: =32
+            Height: =28
+            Text: ="−"
+            Fill: =RGBA(233, 220, 203, 1)
+            Color: =RGBA(43, 33, 24, 1)
+            OnSelect: =If(ThisItem.Quantity <= 1, Remove(colCart, ThisItem), UpdateIf(colCart, ProductID = ThisItem.ProductID, { Quantity: Quantity - 1, LineTotal: (Quantity - 1) * UnitPrice }))
+
+        CtQtyLabel As label:
+            X: =100
+            Y: =54
+            Width: =40
+            Height: =28
+            Text: =ThisItem.Quantity
+            Align: =Align.Center
+            Size: =14
+            FontWeight: =FontWeight.Bold
+
+        CtPlusBtn As button:
+            X: =140
+            Y: =54
+            Width: =32
+            Height: =28
+            Text: ="＋"
+            Fill: =RGBA(233, 220, 203, 1)
+            Color: =RGBA(43, 33, 24, 1)
+            OnSelect: =UpdateIf(colCart, ProductID = ThisItem.ProductID, { Quantity: Quantity + 1, LineTotal: (Quantity + 1) * UnitPrice })
+
+        CtRemoveBtn As button:
+            X: =184
+            Y: =54
+            Width: =60
+            Height: =28
+            Text: ="削除"
+            Fill: =RGBA(0, 0, 0, 0)
+            Color: =RGBA(122, 110, 99, 1)
+            Size: =11
+            OnSelect: =Remove(colCart, ThisItem)
+
+        CtLineTotal As label:
+            X: =Parent.TemplateWidth - 110
+            Y: =28
+            Width: =98
+            Height: =28
+            Text: ="¥" & ThisItem.LineTotal
+            Align: =Align.Right
+            Size: =15
+            FontWeight: =FontWeight.Bold
+            Color: =RGBA(200, 57, 47, 1)
+
+    CtSummaryBar As rectangle:
+        X: =0
+        Y: =Parent.Height - 160
+        Width: =Parent.Width
+        Height: =160
+        Fill: =RGBA(255, 255, 255, 1)
+        BorderColor: =RGBA(233, 220, 203, 1)
+        BorderThickness: =1
+
+    CtStoreLine As label:
+        X: =16
+        Y: =Parent.Height - 148
+        Width: =Parent.Width - 32
+        Height: =24
+        Text: =If(IsBlank(varSelectedStore), "店舗未選択", "お届け店舗: " & varSelectedStore.Emoji & " " & varSelectedStore.Name)
+        Size: =12
+        Color: =RGBA(122, 110, 99, 1)
+
+    CtTotalLabel As label:
+        X: =16
+        Y: =Parent.Height - 118
+        Width: =Parent.Width - 32
+        Height: =36
+        Text: ="合計  ¥" & Sum(colCart, LineTotal)
+        Size: =20
+        FontWeight: =FontWeight.Bold
+
+    CtOrderBtn As button:
+        X: =16
+        Y: =Parent.Height - 72
+        Width: =Parent.Width - 32
+        Height: =56
+        Text: ="注文を確定する"
+        Fill: =RGBA(200, 57, 47, 1)
+        Color: =RGBA(255, 255, 255, 1)
+        Size: =16
+        FontWeight: =FontWeight.Bold
+        DisplayMode: =If(CountRows(colCart) = 0 Or IsBlank(varSelectedStore), DisplayMode.Disabled, DisplayMode.Edit)
+        OnSelect: =Set(varOrderNo, "MM-" & Text(Now(), "yyyymmdd") & "-" & Text(RandBetween(1000, 9999))); Navigate(ConfirmScreen, ScreenTransition.Fade)
