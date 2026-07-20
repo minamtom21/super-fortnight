@@ -1,0 +1,50 @@
+App As app:
+    StartScreen: =HomeScreen
+    OnStart: |-
+        =ClearCollect(colCategories,
+          {CategoryID:"C001", CategoryName:"弁当・定食", Icon:"🍱"},
+          {CategoryID:"C002", CategoryName:"寿司・和食", Icon:"🍣"},
+          {CategoryID:"C003", CategoryName:"ラーメン・麺", Icon:"🍜"},
+          {CategoryID:"C004", CategoryName:"ピザ・洋食", Icon:"🍕"},
+          {CategoryID:"C005", CategoryName:"スイーツ", Icon:"🍰"},
+          {CategoryID:"C006", CategoryName:"中華", Icon:"🥟"},
+          {CategoryID:"C007", CategoryName:"おにぎり", Icon:"🍙"},
+          {CategoryID:"C008", CategoryName:"カレー", Icon:"🍛"}
+        );
+        ClearCollect(colStores,
+          {StoreID:"S001", StoreName:"南部市場食堂", CategoryName:"弁当・定食", CategoryID:"C001", IsOpen:true, Rating:4.3, DeliveryTimeMin:20, DeliveryTimeMax:35, DeliveryFee:200, MinimumOrder:800, OpenTime:"10:00", CloseTime:"20:00"},
+          {StoreID:"S002", StoreName:"横浜金沢鮨処", CategoryName:"寿司・和食", CategoryID:"C002", IsOpen:true, Rating:4.5, DeliveryTimeMin:30, DeliveryTimeMax:45, DeliveryFee:300, MinimumOrder:1500, OpenTime:"11:00", CloseTime:"21:00"},
+          {StoreID:"S003", StoreName:"横濱家系ラーメン", CategoryName:"ラーメン・麺", CategoryID:"C003", IsOpen:true, Rating:4.1, DeliveryTimeMin:25, DeliveryTimeMax:40, DeliveryFee:200, MinimumOrder:700, OpenTime:"11:00", CloseTime:"22:00"},
+          {StoreID:"S004", StoreName:"ピッツァ金沢", CategoryName:"ピザ・洋食", CategoryID:"C004", IsOpen:true, Rating:4.0, DeliveryTimeMin:35, DeliveryTimeMax:50, DeliveryFee:350, MinimumOrder:1200, OpenTime:"11:30", CloseTime:"21:30"},
+          {StoreID:"S005", StoreName:"金沢中華楼", CategoryName:"中華", CategoryID:"C006", IsOpen:true, Rating:4.2, DeliveryTimeMin:20, DeliveryTimeMax:35, DeliveryFee:250, MinimumOrder:1000, OpenTime:"11:00", CloseTime:"21:00"},
+          {StoreID:"S006", StoreName:"金沢カレー屋", CategoryName:"カレー", CategoryID:"C008", IsOpen:false, Rating:3.9, DeliveryTimeMin:30, DeliveryTimeMax:45, DeliveryFee:200, MinimumOrder:900, OpenTime:"11:30", CloseTime:"20:30"}
+        );
+        ClearCollect(colMenuItems,
+          {ItemID:"M001", StoreID:"S001", ItemName:"幕の内弁当", Description:"南部市場直送の新鮮食材使用。ご飯・主菜・副菜の充実セット", Price:850, IsAvailable:true},
+          {ItemID:"M002", StoreID:"S001", ItemName:"焼魚定食", Description:"本日の鮮魚を使った焼魚。ご飯・味噌汁・小鉢2品付き", Price:950, IsAvailable:true},
+          {ItemID:"M003", StoreID:"S001", ItemName:"唐揚げ弁当", Description:"サクサクジューシーな唐揚げ5個入り。ご飯大盛り対応", Price:780, IsAvailable:true},
+          {ItemID:"M004", StoreID:"S001", ItemName:"海鮮丼", Description:"市場直送の新鮮魚介。マグロ・サーモン・イカ・エビ入り", Price:1200, IsAvailable:true},
+          {ItemID:"M005", StoreID:"S002", ItemName:"特選にぎり10貫", Description:"旬の地魚を中心とした職人握り10貫。ガリ・醤油付き", Price:2200, IsAvailable:true},
+          {ItemID:"M006", StoreID:"S002", ItemName:"ちらし寿司", Description:"彩り豊かな散らし寿司。イクラ・ウニ・マグロ・エビなど贅沢11種", Price:1600, IsAvailable:true},
+          {ItemID:"M007", StoreID:"S002", ItemName:"鉄火巻き＆かっぱ巻きセット", Description:"マグロ鉄火巻き6個＋きゅうりかっぱ巻き6個のセット", Price:1100, IsAvailable:true},
+          {ItemID:"M008", StoreID:"S003", ItemName:"醤油ラーメン", Description:"濃厚豚骨醤油スープ。チャーシュー・メンマ・のり・ネギ入り", Price:800, IsAvailable:true},
+          {ItemID:"M009", StoreID:"S003", ItemName:"塩ラーメン", Description:"すっきり塩スープ。鶏チャーシューとゆず風味で上品な一杯", Price:800, IsAvailable:true},
+          {ItemID:"M010", StoreID:"S003", ItemName:"つけ麺（大盛り）", Description:"濃厚魚介つけ汁。太麺大盛りで食べ応えたっぷり", Price:950, IsAvailable:true},
+          {ItemID:"M011", StoreID:"S003", ItemName:"チャーシュー麺", Description:"柔らかトロトロチャーシュー5枚入り。醤油・塩から選べます", Price:1050, IsAvailable:true},
+          {ItemID:"M012", StoreID:"S004", ItemName:"マルゲリータ", Description:"トマトソース・モッツァレラ・バジルのシンプル王道ピザ", Price:1100, IsAvailable:true},
+          {ItemID:"M013", StoreID:"S004", ItemName:"ペパロニ", Description:"ピリ辛ペパロニサラミとたっぷりチーズ。クセになる一枚", Price:1300, IsAvailable:true},
+          {ItemID:"M014", StoreID:"S004", ItemName:"クワトロフォルマッジ", Description:"4種チーズ（モッツァレラ・ゴルゴンゾーラ・パルメザン・リコッタ）", Price:1400, IsAvailable:true},
+          {ItemID:"M015", StoreID:"S005", ItemName:"麻婆豆腐定食", Description:"本格四川風麻婆豆腐。辛さ調整可。ご飯・スープ・漬物付き", Price:900, IsAvailable:true},
+          {ItemID:"M016", StoreID:"S005", ItemName:"酢豚定食", Description:"甘酢あんがけ酢豚。彩り野菜たっぷり。ご飯・スープ付き", Price:950, IsAvailable:true},
+          {ItemID:"M017", StoreID:"S005", ItemName:"エビチリ定食", Description:"プリプリエビの辛口チリソースあんかけ。ご飯・スープ付き", Price:1100, IsAvailable:true},
+          {ItemID:"M018", StoreID:"S005", ItemName:"中華三昧セット", Description:"ラーメン・餃子（5個）・炒飯の三点セット。ボリューム満点", Price:1300, IsAvailable:true},
+          {ItemID:"M019", StoreID:"S006", ItemName:"南部チキンカレー", Description:"スパイス香る本格チキンカレー。ライス大盛り無料", Price:900, IsAvailable:true},
+          {ItemID:"M020", StoreID:"S006", ItemName:"野菜カレー", Description:"旬野菜たっぷりヘルシーカレー。辛さ5段階から選択", Price:850, IsAvailable:true}
+        );
+        ClearCollect(colOrders);
+        ClearCollect(colCart, {ItemID:"",ItemName:"",UnitPrice:0,Quantity:0,Subtotal:0,StoreID:"",StoreName:""});
+        Clear(colCart);
+        Set(gblCurrentStore, Blank());
+        Set(gblTotalAmount, 0);
+        Set(gblSortMode, "rating");
+        Set(gblPaymentMethod, "クレジットカード")

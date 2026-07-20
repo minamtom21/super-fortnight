@@ -1,0 +1,162 @@
+StoreListScreen As screen.screen:
+    Fill: =RGBA(245, 247, 250, 1)
+
+    rectHeaderSL As rectangle:
+        Fill: =RGBA(41, 128, 185, 1)
+        X: =0
+        Y: =0
+        Width: =Parent.Width
+        Height: =80
+
+    btnBack As button:
+        Text: ="← 戻る"
+        Fill: =RGBA(0, 0, 0, 0)
+        Color: =RGBA(255, 255, 255, 1)
+        BorderThickness: =0
+        Size: =14
+        X: =5
+        Y: =22
+        Width: =80
+        Height: =36
+        OnSelect: =Navigate(HomeScreen, ScreenTransition.Fade)
+
+    lblScreenTitle As label:
+        Text: =If(IsBlank(gblSelectedCategory), "全てのお店", gblSelectedCategory.CategoryName)
+        Size: =18
+        FontWeight: =FontWeight.Bold
+        Color: =RGBA(255, 255, 255, 1)
+        X: =90
+        Y: =22
+        Width: =Parent.Width - 180
+        Height: =36
+        Align: =Align.Center
+
+    txtFilter As textInput:
+        Default: =""
+        HintText: ="店名・料理名で絞り込み"
+        Size: =13
+        BorderColor: =RGBA(200, 200, 200, 1)
+        BorderThickness: =1
+        BorderRadius: =20
+        X: =15
+        Y: =88
+        Width: =Parent.Width - 30
+        Height: =36
+
+    btnSortRating As button:
+        Text: ="評価順"
+        Fill: =If(gblSortMode="rating", RGBA(41,128,185,1), RGBA(240,240,240,1))
+        Color: =If(gblSortMode="rating", RGBA(255,255,255,1), RGBA(80,80,80,1))
+        BorderThickness: =0
+        BorderRadius: =14
+        Size: =12
+        X: =15
+        Y: =132
+        Width: =75
+        Height: =28
+        OnSelect: =Set(gblSortMode, "rating")
+
+    btnSortDelivery As button:
+        Text: ="配達時間"
+        Fill: =If(gblSortMode="delivery", RGBA(41,128,185,1), RGBA(240,240,240,1))
+        Color: =If(gblSortMode="delivery", RGBA(255,255,255,1), RGBA(80,80,80,1))
+        BorderThickness: =0
+        BorderRadius: =14
+        Size: =12
+        X: =95
+        Y: =132
+        Width: =80
+        Height: =28
+        OnSelect: =Set(gblSortMode, "delivery")
+
+    btnSortFee As button:
+        Text: ="送料順"
+        Fill: =If(gblSortMode="fee", RGBA(41,128,185,1), RGBA(240,240,240,1))
+        Color: =If(gblSortMode="fee", RGBA(255,255,255,1), RGBA(80,80,80,1))
+        BorderThickness: =0
+        BorderRadius: =14
+        Size: =12
+        X: =180
+        Y: =132
+        Width: =75
+        Height: =28
+        OnSelect: =Set(gblSortMode, "fee")
+
+    galStores As gallery.BrowseLayout:
+        Items: |-
+            =Sort(
+              Filter(
+                colStores,
+                IsOpen = true,
+                If(IsBlank(gblSelectedCategory), true, CategoryID = gblSelectedCategory.CategoryID),
+                If(IsBlank(txtFilter.Text), true, StoreName in txtFilter.Text || CategoryName in txtFilter.Text)
+              ),
+              Switch(gblSortMode, "rating", Rating, "delivery", DeliveryTimeMin, "fee", DeliveryFee, Rating),
+              If(gblSortMode = "rating", SortOrder.Descending, SortOrder.Ascending)
+            )
+        TemplateSize: =130
+        X: =0
+        Y: =168
+        Width: =Parent.Width
+        Height: =Parent.Height - 168
+
+        rectCard As rectangle:
+            Fill: =RGBA(255, 255, 255, 1)
+            BorderColor: =RGBA(230, 230, 230, 1)
+            BorderThickness: =1
+            BorderRadius: =10
+            X: =10
+            Y: =5
+            Width: =Parent.Width - 20
+            Height: =118
+
+        lblName As label:
+            Text: =ThisItem.StoreName
+            Size: =14
+            FontWeight: =FontWeight.Bold
+            Color: =RGBA(30, 30, 30, 1)
+            X: =120
+            Y: =12
+            Width: =Parent.Width - 140
+            Height: =24
+
+        lblCat As label:
+            Text: =ThisItem.CategoryName
+            Size: =12
+            Color: =RGBA(100, 100, 100, 1)
+            X: =120
+            Y: =38
+            Width: =Parent.Width - 140
+            Height: =20
+
+        lblDelivery As label:
+            Text: |-
+                ="配達 " & ThisItem.DeliveryTimeMin & "〜" & ThisItem.DeliveryTimeMax & "分  送料 " & If(ThisItem.DeliveryFee=0, "無料", Text(ThisItem.DeliveryFee,"#,##0") & "円")
+            Size: =11
+            Color: =RGBA(80, 80, 80, 1)
+            X: =120
+            Y: =60
+            Width: =Parent.Width - 140
+            Height: =20
+
+        lblRatingStar As label:
+            Text: |-
+                ="★ " & Text(ThisItem.Rating, "0.0") & "  最低 " & Text(ThisItem.MinimumOrder, "#,##0") & "円"
+            Size: =12
+            Color: =RGBA(230, 126, 34, 1)
+            X: =120
+            Y: =82
+            Width: =Parent.Width - 140
+            Height: =24
+
+        btnSelectStore As button:
+            Text: =""
+            Fill: =RGBA(0, 0, 0, 0)
+            BorderThickness: =0
+            X: =10
+            Y: =5
+            Width: =Parent.Width - 20
+            Height: =118
+            OnSelect: |-
+                =Set(gblCurrentStore, ThisItem);
+                Navigate(MenuScreen, ScreenTransition.Fade)

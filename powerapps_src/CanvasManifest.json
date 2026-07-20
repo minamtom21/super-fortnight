@@ -1,0 +1,39 @@
+{
+  "FormatVersion": "0.30",
+  "Header": {
+    "DocVersion": "1.294",
+    "MinVersionToLoad": "1.294",
+    "MSAppStructureVersion": "2.0"
+  },
+  "Properties": {
+    "Author": "Power Apps User",
+    "Name": "NanbuIchibaDelivery",
+    "Id": "51e4bb89-08b3-45ee-94d4-3288ef05b603",
+    "FileID": "ee1f3ea3-b44e-41fa-bf7e-e81155df945a",
+    "LocalConnectionReferences": "{}",
+    "LocalDatabaseReferences": "{}",
+    "DocumentLayoutWidth": 640.0,
+    "DocumentLayoutHeight": 1136.0,
+    "DocumentLayoutOrientation": "portrait",
+    "DocumentLayoutLockOrientation": true,
+    "DocumentLayoutMaintainAspectRatio": true,
+    "DocumentAppType": 1,
+    "AppCreationSource": "AppFromScratch",
+    "AppDescription": "南部市場エリア 出前アプリ",
+    "AppPreviewFlagsKey": [],
+    "DefaultConnectedDataSourceMaxGetRowsCount": 500.0
+  },
+  "PublishInfo": {
+    "Description": "南部市場エリア 出前アプリ",
+    "AppInsightsInstrumentationKey": ""
+  },
+  "ScreenOrder": [
+    "HomeScreen",
+    "StoreListScreen",
+    "MenuScreen",
+    "CartScreen",
+    "OrderConfirmScreen",
+    "OrderCompleteScreen",
+    "OrderHistoryScreen"
+  ]
+}

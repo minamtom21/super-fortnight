@@ -1,0 +1,184 @@
+OrderConfirmScreen As screen.screen:
+    Fill: =RGBA(245, 247, 250, 1)
+
+    rectHeaderConf As rectangle:
+        Fill: =RGBA(41, 128, 185, 1)
+        X: =0
+        Y: =0
+        Width: =Parent.Width
+        Height: =80
+
+    btnBackConfirm As button:
+        Text: ="← カート"
+        Fill: =RGBA(0, 0, 0, 0)
+        Color: =RGBA(255, 255, 255, 1)
+        BorderThickness: =0
+        Size: =14
+        X: =5
+        Y: =22
+        Width: =90
+        Height: =36
+        OnSelect: =Navigate(CartScreen, ScreenTransition.Fade)
+
+    lblConfirmTitle As label:
+        Text: ="注文確認"
+        Size: =20
+        FontWeight: =FontWeight.Bold
+        Color: =RGBA(255, 255, 255, 1)
+        X: =100
+        Y: =22
+        Width: =200
+        Height: =36
+
+    lblNameLabel As label:
+        Text: ="お名前"
+        Size: =13
+        Color: =RGBA(60, 60, 60, 1)
+        X: =20
+        Y: =96
+        Width: =100
+        Height: =24
+
+    txtCustomerName As textInput:
+        Default: =""
+        HintText: ="例：山田 太郎"
+        Size: =14
+        BorderColor: =RGBA(200, 200, 200, 1)
+        BorderThickness: =1
+        BorderRadius: =6
+        X: =20
+        Y: =122
+        Width: =Parent.Width - 40
+        Height: =40
+
+    lblPhoneLabel As label:
+        Text: ="電話番号"
+        Size: =13
+        Color: =RGBA(60, 60, 60, 1)
+        X: =20
+        Y: =170
+        Width: =100
+        Height: =24
+
+    txtCustomerPhone As textInput:
+        Default: =""
+        HintText: ="例：090-1234-5678"
+        Size: =14
+        BorderColor: =RGBA(200, 200, 200, 1)
+        BorderThickness: =1
+        BorderRadius: =6
+        X: =20
+        Y: =196
+        Width: =Parent.Width - 40
+        Height: =40
+
+    lblAddressLabel As label:
+        Text: ="配達先住所"
+        Size: =13
+        Color: =RGBA(60, 60, 60, 1)
+        X: =20
+        Y: =244
+        Width: =150
+        Height: =24
+
+    txtDeliveryAddress As textInput:
+        Default: =""
+        HintText: ="神奈川県横浜市金沢区..."
+        Size: =14
+        BorderColor: =RGBA(200, 200, 200, 1)
+        BorderThickness: =1
+        BorderRadius: =6
+        X: =20
+        Y: =270
+        Width: =Parent.Width - 40
+        Height: =40
+
+    lblNoteLabel As label:
+        Text: ="備考（アレルギーなど）"
+        Size: =13
+        Color: =RGBA(60, 60, 60, 1)
+        X: =20
+        Y: =318
+        Width: =200
+        Height: =24
+
+    txtNote As textInput:
+        Default: =""
+        HintText: ="例：卵アレルギーあり"
+        Size: =13
+        Mode: =TextInputMode.MultiLine
+        BorderColor: =RGBA(200, 200, 200, 1)
+        BorderThickness: =1
+        BorderRadius: =6
+        X: =20
+        Y: =344
+        Width: =Parent.Width - 40
+        Height: =60
+
+    lblPayTitle As label:
+        Text: ="支払い方法"
+        Size: =14
+        FontWeight: =FontWeight.Bold
+        Color: =RGBA(60, 60, 60, 1)
+        X: =20
+        Y: =420
+        Width: =200
+        Height: =28
+
+    dropPayment As dropDown:
+        Items: =["クレジットカード", "PayPay", "LINE Pay", "現金（配達時）"]
+        Size: =14
+        BorderColor: =RGBA(200, 200, 200, 1)
+        BorderThickness: =1
+        X: =20
+        Y: =452
+        Width: =Parent.Width - 40
+        Height: =44
+        OnChange: =Set(gblPaymentMethod, Self.SelectedText.Value)
+
+    lblFinalTotal As label:
+        Text: |-
+            ="注文合計: " & Char(165) & Text(gblTotalAmount + gblCurrentStore.DeliveryFee, "#,##0")
+        Size: =15
+        FontWeight: =FontWeight.Bold
+        Color: =RGBA(41, 128, 185, 1)
+        X: =20
+        Y: =512
+        Width: =Parent.Width - 40
+        Height: =40
+        Align: =Align.Center
+
+    btnPlaceOrder As button:
+        Text: ="注文を確定する"
+        Fill: =If(And(txtCustomerName.Text <> "", txtCustomerPhone.Text <> "", txtDeliveryAddress.Text <> ""), RGBA(46, 204, 113, 1), RGBA(190, 190, 190, 1))
+        Color: =RGBA(255, 255, 255, 1)
+        BorderThickness: =0
+        BorderRadius: =12
+        Size: =16
+        FontWeight: =FontWeight.Bold
+        X: =15
+        Y: =570
+        Width: =Parent.Width - 30
+        Height: =55
+        DisplayMode: =If(And(txtCustomerName.Text <> "", txtCustomerPhone.Text <> "", txtDeliveryAddress.Text <> ""), DisplayMode.Edit, DisplayMode.Disabled)
+        OnSelect: |-
+            =Set(gblOrderID, "ORD" & Text(Now(), "yyyymmddHHmmss"));
+            Collect(
+              colOrders,
+              {
+                OrderID: gblOrderID,
+                CustomerName: txtCustomerName.Text,
+                CustomerPhone: txtCustomerPhone.Text,
+                DeliveryAddress: txtDeliveryAddress.Text,
+                StoreID: gblCurrentStore.StoreID,
+                StoreName: gblCurrentStore.StoreName,
+                OrderDate: Text(Now(), "yyyy-MM-dd HH:mm:ss"),
+                TotalItemAmount: gblTotalAmount,
+                DeliveryFee: gblCurrentStore.DeliveryFee,
+                TotalAmount: gblTotalAmount + gblCurrentStore.DeliveryFee,
+                Status: "注文受付",
+                PaymentMethod: gblPaymentMethod,
+                Note: txtNote.Text
+              }
+            );
+            Navigate(OrderCompleteScreen, ScreenTransition.Fade)

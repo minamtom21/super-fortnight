@@ -1,0 +1,13 @@
+{
+  "LocalConnectionReferences": "{}",
+  "LocalDataModelReferences": "{}",
+  "LocalDatabaseReferences": "{}",
+  "id": "00000000-0000-0000-0000-000000000001",
+  "Name": "NanbuIchibaDelivery",
+  "DocumentLayoutWidth": 640,
+  "DocumentLayoutHeight": 1136,
+  "DocumentLayoutOrientation": "portrait",
+  "DocumentAppType": "Phone",
+  "Author": "Power Apps User",
+  "LastSavedDateTimeUTC": "2026-06-16T10:00:00Z"
+}

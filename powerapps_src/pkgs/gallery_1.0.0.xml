@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget xmlns="http://openajax.org/metadata"
+        xmlns:appMagic="http://schemas.microsoft.com/appMagic"
+        name="gallery"
+        id="http://microsoft.com/appmagic/gallery"
+        version="1.0.0">
+  <properties/>
+  <appMagic:nestedWidgets>
+    <appMagic:dataControlWidget name="galleryTemplate"
+                                id="http://microsoft.com/appmagic/galleryTemplate"
+                                version="1.0.0">
+      <properties/>
+    </appMagic:dataControlWidget>
+  </appMagic:nestedWidgets>
+</widget>

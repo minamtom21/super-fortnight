@@ -1,0 +1,15 @@
+{
+  "ControlCount": 0,
+  "IndexedConnections": [],
+  "IndexedDataSources": {},
+  "ActiveScreen": "HomeScreen",
+  "ScreenOrder": [
+    "HomeScreen",
+    "StoreListScreen",
+    "MenuScreen",
+    "CartScreen",
+    "OrderConfirmScreen",
+    "OrderCompleteScreen",
+    "OrderHistoryScreen"
+  ]
+}

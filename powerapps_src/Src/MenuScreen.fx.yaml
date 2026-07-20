@@ -1,0 +1,153 @@
+MenuScreen As screen.screen:
+    Fill: =RGBA(245, 247, 250, 1)
+
+    rectHeaderMenu As rectangle:
+        Fill: =RGBA(41, 128, 185, 1)
+        X: =0
+        Y: =0
+        Width: =Parent.Width
+        Height: =100
+
+    btnBackMenu As button:
+        Text: ="← 戻る"
+        Fill: =RGBA(0, 0, 0, 0)
+        Color: =RGBA(255, 255, 255, 1)
+        BorderThickness: =0
+        Size: =14
+        X: =5
+        Y: =15
+        Width: =80
+        Height: =36
+        OnSelect: =Navigate(StoreListScreen, ScreenTransition.Fade)
+
+    lblMenuStoreName As label:
+        Text: =gblCurrentStore.StoreName
+        Size: =17
+        FontWeight: =FontWeight.Bold
+        Color: =RGBA(255, 255, 255, 1)
+        X: =90
+        Y: =12
+        Width: =Parent.Width - 100
+        Height: =32
+
+    lblMenuMeta As label:
+        Text: |-
+            ="配達 " & gblCurrentStore.DeliveryTimeMin & "〜" & gblCurrentStore.DeliveryTimeMax & "分  ★ " & Text(gblCurrentStore.Rating, "0.0") & "  最低 " & Text(gblCurrentStore.MinimumOrder, "#,##0") & "円"
+        Size: =12
+        Color: =RGBA(200, 230, 255, 1)
+        X: =90
+        Y: =48
+        Width: =Parent.Width - 100
+        Height: =22
+
+    lblMenuOpenStatus As label:
+        Text: =If(gblCurrentStore.IsOpen, "営業中  " & gblCurrentStore.OpenTime & " 〜 " & gblCurrentStore.CloseTime, "準備中")
+        Size: =12
+        Color: =RGBA(200, 255, 200, 1)
+        X: =90
+        Y: =72
+        Width: =Parent.Width - 100
+        Height: =22
+
+    galMenu As gallery.BrowseLayout:
+        Items: =Filter(colMenuItems, StoreID = gblCurrentStore.StoreID, IsAvailable = true)
+        TemplateSize: =115
+        X: =0
+        Y: =100
+        Width: =Parent.Width
+        Height: =Parent.Height - 175
+
+        rectMenuCard As rectangle:
+            Fill: =RGBA(255, 255, 255, 1)
+            BorderColor: =RGBA(235, 235, 235, 1)
+            BorderThickness: =1
+            BorderRadius: =10
+            X: =10
+            Y: =5
+            Width: =Parent.Width - 20
+            Height: =103
+
+        lblItemName As label:
+            Text: =ThisItem.ItemName
+            Size: =14
+            FontWeight: =FontWeight.Bold
+            Color: =RGBA(30, 30, 30, 1)
+            X: =110
+            Y: =10
+            Width: =Parent.Width - 220
+            Height: =24
+
+        lblItemDesc As label:
+            Text: =ThisItem.Description
+            Size: =11
+            Color: =RGBA(110, 110, 110, 1)
+            X: =110
+            Y: =36
+            Width: =Parent.Width - 220
+            Height: =32
+            Overflow: =Overflow.Hidden
+
+        lblItemPrice As label:
+            Text: |-
+                =Char(165) & Text(ThisItem.Price, "#,##0")
+            Size: =16
+            FontWeight: =FontWeight.Bold
+            Color: =RGBA(41, 128, 185, 1)
+            X: =110
+            Y: =72
+            Width: =100
+            Height: =24
+
+        btnAddToCart As button:
+            Text: ="＋ カートへ"
+            Fill: =RGBA(41, 128, 185, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            BorderThickness: =0
+            BorderRadius: =20
+            Size: =12
+            X: =Parent.Width - 108
+            Y: =72
+            Width: =95
+            Height: =28
+            OnSelect: |-
+                =If(
+                  CountIf(colCart, ItemID = ThisItem.ItemID) > 0,
+                  UpdateIf(colCart, ItemID = ThisItem.ItemID, {Quantity: Quantity + 1, Subtotal: (Quantity + 1) * UnitPrice}),
+                  Collect(colCart, {ItemID: ThisItem.ItemID, ItemName: ThisItem.ItemName, UnitPrice: ThisItem.Price, Quantity: 1, Subtotal: ThisItem.Price, StoreID: ThisItem.StoreID, StoreName: gblCurrentStore.StoreName})
+                );
+                Set(gblTotalAmount, Sum(colCart, Subtotal))
+
+    rectCartBar As rectangle:
+        Visible: =CountRows(colCart) > 0
+        Fill: =RGBA(41, 128, 185, 1)
+        X: =0
+        Y: =Parent.Height - 75
+        Width: =Parent.Width
+        Height: =75
+
+    lblCartSummary As label:
+        Visible: =CountRows(colCart) > 0
+        Text: |-
+            =" " & CountRows(colCart) & "種類  合計 " & Char(165) & Text(gblTotalAmount + gblCurrentStore.DeliveryFee, "#,##0")
+        Size: =13
+        Color: =RGBA(255, 255, 255, 1)
+        X: =15
+        Y: =Parent.Height - 70
+        Width: =Parent.Width - 30
+        Height: =28
+        Align: =Align.Center
+
+    btnGoToCart As button:
+        Visible: =CountRows(colCart) > 0
+        Text: ="カートを確認する"
+        Fill: =RGBA(255, 255, 255, 1)
+        Color: =RGBA(41, 128, 185, 1)
+        BorderThickness: =0
+        BorderRadius: =8
+        Size: =14
+        FontWeight: =FontWeight.Bold
+        X: =15
+        Y: =Parent.Height - 42
+        Width: =Parent.Width - 30
+        Height: =35
+        OnSelect: =Navigate(CartScreen, ScreenTransition.Fade)
