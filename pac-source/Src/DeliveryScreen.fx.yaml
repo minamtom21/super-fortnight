@@ -3,7 +3,7 @@ DeliveryScreen As screen:
     Height: =Max(App.Height, App.DesignHeight)
     Width: =Max(App.Width, App.DesignWidth)
 
-    Header As label:
+    CompletedHeader As label:
         Height: =64
         Width: =Parent.Width
         Fill: =RGBA(75,82,90,1)
@@ -13,7 +13,7 @@ DeliveryScreen As screen:
         FontWeight: =FontWeight.Bold
         PaddingLeft: =20
 
-    HomeBtn As button:
+    CompletedHomeBtn As button:
         X: =Parent.Width-100
         Y: =12
         Width: =80
@@ -22,72 +22,45 @@ DeliveryScreen As screen:
         Fill: =RGBA(120,125,130,1)
         OnSelect: =Navigate(StoreSelectScreen, ScreenTransition.Fade)
 
-    SearchInput As text:
+    CompletedInfo As label:
         X: =20
-        Y: =82
+        Y: =100
         Width: =Parent.Width-40
-        Height: =44
-        Default: =""
-        HintText: ="完了データを検索"
+        Height: =220
+        Fill: =RGBA(255,255,255,1)
+        BorderColor: =RGBA(215,220,225,1)
+        BorderThickness: =1
+        PaddingLeft: =16
+        PaddingTop: =16
+        Size: =14
+        Text: =If(IsEmpty(colCompleted),"完了データはありません。",First(colCompleted).ID & "  " & First(colCompleted).Site & Char(10) & First(colCompleted).Location & "／" & First(colCompleted).Trade & Char(10) & First(colCompleted).Issue & Char(10) & "完了：" & Text(First(colCompleted).CompletedAt,"yyyy/mm/dd hh:mm"))
 
-    CompletedGallery As gallery.vertical:
+    CompletedRestoreBtn As button:
         X: =20
-        Y: =142
+        Y: =350
         Width: =Parent.Width-40
-        Height: =Parent.Height-162
-        TemplateSize: =180
-        Items: =Filter(colCompleted, IsBlank(SearchInput.Text) || SearchInput.Text in Site || SearchInput.Text in Location || SearchInput.Text in Trade || SearchInput.Text in Issue)
+        Height: =60
+        Text: ="先頭データを対応中へ戻す"
+        Fill: =RGBA(34,92,145,1)
+        Color: =RGBA(255,255,255,1)
+        DisplayMode: =If(IsEmpty(colCompleted),DisplayMode.Disabled,DisplayMode.Edit)
+        OnSelect: |-
+            =Collect(colActive,
+                Patch(First(colCompleted),
+                    {
+                        Status: "対応中",
+                        CompletedAt: Blank()
+                    }
+                )
+            );
+            Remove(colCompleted, First(colCompleted));
+            Notify("対応中へ戻しました", NotificationType.Success)
 
-        Card As label:
-            X: =0
-            Y: =4
-            Width: =Parent.TemplateWidth
-            Height: =166
-            Fill: =RGBA(255,255,255,1)
-            Text: =""
-            BorderColor: =RGBA(215,220,225,1)
-            BorderThickness: =1
-
-        Title As label:
-            X: =12
-            Y: =12
-            Width: =Parent.TemplateWidth-24
-            Height: =30
-            Text: =ThisItem.ID & "  " & ThisItem.Site
-            FontWeight: =FontWeight.Bold
-            Size: =14
-
-        Detail As label:
-            X: =12
-            Y: =44
-            Width: =Parent.TemplateWidth-24
-            Height: =62
-            Text: =ThisItem.Location & "／" & ThisItem.Trade & Char(10) & ThisItem.Issue
-            Size: =12
-
-        CompletedDate As label:
-            X: =12
-            Y: =108
-            Width: =220
-            Height: =34
-            Text: ="完了：" & Text(ThisItem.CompletedAt,"yyyy/mm/dd hh:mm")
-            Color: =RGBA(70,78,86,1)
-
-        RestoreBtn As button:
-            X: =Parent.TemplateWidth-132
-            Y: =108
-            Width: =120
-            Height: =40
-            Text: ="対応中へ戻す"
-            Fill: =RGBA(34,92,145,1)
-            OnSelect: |-
-                =Collect(colActive,
-                    Patch(ThisItem,
-                        {
-                            Status: "対応中",
-                            CompletedAt: Blank()
-                        }
-                    )
-                );
-                Remove(colCompleted, ThisItem);
-                Notify("対応中へ戻しました", NotificationType.Success)
+    CompletedHint As label:
+        X: =20
+        Y: =430
+        Width: =Parent.Width-40
+        Height: =100
+        Text: ="完了データは登録順に確認できます。運用版ではSharePointの完了保管リストへ保存します。"
+        Size: =13
+        Color: =RGBA(90,98,106,1)
