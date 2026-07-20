@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - agent/correction-photo-manager
+      - agent/build-naosu-msapp
   pull_request:
   workflow_dispatch:
 
@@ -18,12 +19,28 @@ jobs:
       - name: Install Power Platform CLI
         run: dotnet tool install --global Microsoft.PowerApps.CLI.Tool --version 1.34.4
       - name: Pack canvas app
+        id: pack
+        continue-on-error: true
         run: |
           export PATH="$PATH:$HOME/.dotnet/tools"
-          pac canvas pack --sources pac-source --msapp NAOSU.msapp
+          find pac-source -maxdepth 3 -type f | sort > source-files.txt
+          pac canvas pack --sources pac-source --msapp NAOSU.msapp > pack.log 2>&1
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: NAOSU-build-diagnostics
+          path: |
+            pack.log
+            source-files.txt
+          if-no-files-found: warn
       - name: Upload msapp
+        if: steps.pack.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: NAOSU-msapp
           path: NAOSU.msapp
           if-no-files-found: error
+      - name: Fail when pack failed
+        if: steps.pack.outcome != 'success'
+        run: exit 1
