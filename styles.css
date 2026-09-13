@@ -66,6 +66,8 @@ button { font: inherit; cursor: pointer; }
 .brand-mark { font-size: 32px; }
 .brand-text h1 { margin: 0; font-size: 18px; }
 .brand-text p { margin: 0; color: var(--color-muted); font-size: 12px; letter-spacing: 0.05em; }
+.brand-text .practice-label { color: var(--color-text); font-size: 13px; font-weight: 700; letter-spacing: normal; }
+.brand-text .practice-note { color: var(--color-muted); font-size: 10px; letter-spacing: normal; }
 .header-nav { display: flex; align-items: center; gap: 14px; }
 .header-nav a { color: var(--color-text); font-weight: 600; font-size: 14px; }
 .header-nav a:hover { color: var(--color-primary); }
