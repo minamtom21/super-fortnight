@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI_MINATO</title>
+<style>
+  :root {
+    --bg: #07090d;
+    --panel: #10141b;
+    --line: #1f2632;
+    --text: #e6ebf2;
+    --sub: #8a96a8;
+    --accent: #3fd0ff;
+    --listen: #3fff9c;
+    --think: #ffc23f;
+    --speak: #3fd0ff;
+    --danger: #ff5a6a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: radial-gradient(ellipse at 50% 20%, #0f1724 0%, var(--bg) 60%);
+    color: var(--text);
+    font-family: "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", system-ui, sans-serif;
+    display: flex; flex-direction: column;
+    -webkit-tap-highlight-color: transparent;
+  }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; border-bottom: 1px solid var(--line);
+  }
+  .brand { font-weight: 700; letter-spacing: .25em; font-size: 15px; }
+  .brand span { color: var(--accent); }
+  .hdr-btns { display: flex; gap: 8px; }
+  .icon-btn {
+    background: transparent; border: 1px solid var(--line); color: var(--sub);
+    border-radius: 8px; padding: 6px 10px; font-size: 13px; cursor: pointer;
+  }
+  .icon-btn:hover { color: var(--text); border-color: #334; }
+  .icon-btn.on { color: var(--listen); border-color: var(--listen); }
+
+  main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+  /* ---- Character stage ---- */
+  .stage {
+    position: relative; flex-shrink: 0; overflow: hidden; cursor: pointer; user-select: none;
+    height: clamp(280px, 46vh, 470px);
+    background:
+      radial-gradient(ellipse at 50% 60%, rgba(40,90,210,.45) 0%, rgba(10,25,80,.25) 40%, rgba(3,6,18,0) 75%),
+      linear-gradient(#060c22, #03050d);
+    border-bottom: 1px solid var(--line);
+  }
+  .fx { position: absolute; inset: 0; pointer-events: none; }
+  /* 横に流れるデジタル走査線 */
+  .scan {
+    position: absolute; inset: -40px 0; opacity: .55;
+    background: repeating-linear-gradient(180deg, rgba(120,170,255,.16) 0 1px, transparent 1px 9px);
+    animation: scan 6s linear infinite;
+  }
+  .scan.s2 {
+    opacity: .5; animation-duration: 3.5s;
+    background: repeating-linear-gradient(180deg, transparent 0 37px, rgba(160,210,255,.35) 37px 38px, transparent 38px 80px);
+  }
+  @keyframes scan { to { transform: translateY(40px); } }
+  .spark {
+    position: absolute; width: var(--s); height: var(--s); border-radius: 50%;
+    background: #fff; box-shadow: 0 0 6px 1px rgba(150,200,255,.9);
+    animation: twinkle var(--d) ease-in-out infinite; animation-delay: var(--dl);
+  }
+  .spark.b { background: #7fb2ff; }
+  @keyframes twinkle {
+    0%,100% { opacity: .15; transform: translateY(0) scale(.6); }
+    50% { opacity: 1; transform: translateY(-10px) scale(1); }
+  }
+  .state-thinking .spark { animation-duration: .9s; }
+  .state-speaking .scan.s2 { animation-duration: 1.6s; }
+
+  .halo {
+    position: absolute; left: 50%; bottom: 24px; width: 200px; height: 30px; transform: translateX(-50%);
+    border-radius: 50%; background: radial-gradient(ellipse, rgba(90,150,255,.45), transparent 70%);
+  }
+  .state-listening .halo { background: radial-gradient(ellipse, rgba(63,255,190,.7), transparent 70%); animation: halo 1.2s ease-in-out infinite; }
+  .state-speaking .halo { animation: halo .7s ease-in-out infinite; }
+  @keyframes halo { 50% { transform: translateX(-50%) scale(1.15); opacity: .6; } }
+
+  .chara { position: absolute; left: 50%; bottom: 28px; height: calc(100% - 44px); transform: translateX(-50%); }
+  .chara svg, .chara img { height: 100%; width: auto; display: block; filter: drop-shadow(0 0 14px rgba(90,150,255,.5)); }
+  .chara img[hidden] { display: none; }
+  .chara img { animation: bobImg 3.2s ease-in-out infinite; }
+  .state-speaking .chara img { animation: talkImg .3s ease-in-out infinite alternate; }
+  .state-listening .chara img { filter: drop-shadow(0 0 22px rgba(63,255,190,.7)); }
+  @keyframes bobImg { 50% { transform: translateY(-5px); } }
+  @keyframes talkImg { from { transform: translateY(0) scale(1); } to { transform: translateY(-4px) scale(1.015); } }
+
+  /* ---- SVGキャラ：体・頭の動き ---- */
+  .body-g { transform-box: view-box; transform-origin: 150px 350px; animation: bob 3s ease-in-out infinite; }
+  .state-speaking .body-g { animation-duration: 1.4s; }
+  @keyframes bob { 50% { transform: translateY(-3px) scale(1.01, .992); } }
+  .head-g {
+    transform-box: view-box; transform-origin: 150px 212px;
+    transform: translateY(var(--hy, 0px)) rotate(var(--hr, 0deg)) scale(var(--hs, 1));
+    transition: transform .2s cubic-bezier(.3,1.5,.5,1);
+  }
+  .hands-g { transform-box: view-box; transform-origin: 150px 262px; transform: translateY(var(--gy, 0px)); transition: transform .18s; }
+  .state-thinking .hands-inner { animation: rub .28s ease-in-out infinite alternate; }   /* 手もみ */
+  .hands-inner { transform-box: view-box; transform-origin: 150px 262px; }
+  @keyframes rub { from { transform: translateX(-2.5px) rotate(-4deg); } to { transform: translateX(2.5px) rotate(4deg); } }
+
+  /* 黒目の向き */
+  .pupil { transform: translate(var(--px, 0px), var(--py, 0px)); transition: transform .25s; }
+  .state-listening { --px: 0px; --py: 1px; }
+  .state-thinking  { --px: 4px; --py: -4px; }
+
+  /* 表情パーツの切り替え（目・眉・口） */
+  .ev, .bv, .m { display: none; }
+  .chara[data-eyes="smirk"]   .ev-smirk,
+  .chara[data-eyes="open"]    .ev-open,
+  .chara[data-eyes="happy"]   .ev-happy,
+  .chara[data-eyes="serious"] .ev-serious,
+  .chara[data-brows="smirk"]  .bv-smirk,
+  .chara[data-brows="up"]     .bv-up,
+  .chara[data-brows="serious"] .bv-serious,
+  .chara[data-m="n"]    .m-n,
+  .chara[data-m="grin"] .m-grin,
+  .chara[data-m="a"]    .m-a,
+  .chara[data-m="i"]    .m-i,
+  .chara[data-m="u"]    .m-u,
+  .chara[data-m="e"]    .m-e,
+  .chara[data-m="o"]    .m-o { display: inline; }
+  .eyes { transform-box: fill-box; transform-origin: center; transition: transform .06s; }
+  .chara.blink .eyes { transform: scaleY(.08); }
+  .sweat { opacity: 0; transition: opacity .3s; }
+  .state-thinking .sweat { opacity: .9; }
+
+  .think-bubble {
+    position: absolute; left: calc(50% + 78px); top: 12%; display: none; gap: 6px;
+    background: rgba(10,20,50,.75); border: 1px solid rgba(130,200,255,.5); border-radius: 16px; padding: 8px 12px;
+  }
+  .state-thinking .think-bubble { display: flex; }
+  .think-bubble span { width: 7px; height: 7px; border-radius: 50%; background: #9fd8ff; animation: dot 1s infinite; }
+  .think-bubble span:nth-child(2) { animation-delay: .15s; }
+  .think-bubble span:nth-child(3) { animation-delay: .3s; }
+  @keyframes dot { 0%,100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-4px); } }
+
+  .subtitle {
+    position: absolute; left: 0; right: 0; bottom: 8px; padding: 0 16px; text-align: center;
+    font-size: 14px; letter-spacing: .08em; color: #c8ecff; min-height: 1.4em;
+    text-shadow: 0 0 4px #000, 0 0 10px rgba(0,0,0,.9), 0 0 2px #000;
+  }
+  .interim {
+    position: absolute; left: 0; right: 0; top: 10px; padding: 0 16px; text-align: center;
+    font-size: 15px; color: var(--listen); min-height: 1.5em; text-shadow: 0 0 6px #000, 0 0 2px #000;
+  }
+
+  /* ---- Log ---- */
+  .log {
+    flex: 1; overflow-y: auto; padding: 8px 18px 18px;
+    display: flex; flex-direction: column; gap: 10px;
+    max-width: 760px; width: 100%; margin: 0 auto;
+  }
+  .msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; line-height: 1.65; font-size: 15px; white-space: pre-wrap; word-break: break-word; }
+  .msg.user { align-self: flex-end; background: #1a2230; border: 1px solid #263044; }
+  .msg.ai { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); }
+  .msg.ai::before { content: "MINATO"; display: block; font-size: 10px; letter-spacing: .2em; color: var(--accent); margin-bottom: 2px; }
+  .msg.err { align-self: center; color: var(--danger); font-size: 13px; background: transparent; border: 1px dashed var(--danger); }
+
+  /* ---- Input bar ---- */
+  .bar {
+    display: flex; gap: 8px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line); max-width: 760px; width: 100%; margin: 0 auto;
+  }
+  .bar input {
+    flex: 1; background: var(--panel); border: 1px solid var(--line); color: var(--text);
+    border-radius: 10px; padding: 11px 14px; font-size: 15px; outline: none;
+  }
+  .bar input:focus { border-color: var(--accent); }
+  .bar input.dictating { border-color: var(--danger); }
+  .bar .mic-btn {
+    background: var(--panel); color: var(--sub); border: 1px solid var(--line);
+    width: 46px; padding: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .bar .mic-btn svg { width: 20px; height: 20px; }
+  .bar .mic-btn:hover { color: var(--text); }
+  .bar .mic-btn.rec { color: #fff; background: var(--danger); border-color: var(--danger); animation: recblink 1.2s ease-in-out infinite; }
+  @keyframes recblink { 50% { box-shadow: 0 0 0 6px rgba(255,90,106,.25); } }
+  .bar button {
+    background: var(--accent); color: #00131c; border: none; border-radius: 10px;
+    padding: 0 18px; font-weight: 700; cursor: pointer;
+  }
+
+  /* ---- Settings modal ---- */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; z-index: 10; }
+  .modal-bg.show { display: flex; }
+  .modal { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; width: min(440px, 92vw); max-height: 90vh; overflow-y: auto; }
+  .modal textarea {
+    width: 100%; height: 150px; resize: vertical; background: #0a0d12; border: 1px solid var(--line); color: var(--text);
+    border-radius: 8px; padding: 9px 10px; font-size: 13px; line-height: 1.6; font-family: inherit;
+  }
+  .divider { align-self: center; font-size: 11px; color: var(--sub); letter-spacing: .15em; padding: 4px 0; }
+  .modal h2 { margin: 0 0 14px; font-size: 16px; letter-spacing: .1em; }
+  .modal label { display: block; font-size: 12px; color: var(--sub); margin: 12px 0 4px; }
+  .modal input, .modal select {
+    width: 100%; background: #0a0d12; border: 1px solid var(--line); color: var(--text);
+    border-radius: 8px; padding: 9px 10px; font-size: 14px;
+  }
+  .modal .note { font-size: 11px; color: var(--sub); margin-top: 6px; line-height: 1.6; }
+  .modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+  .modal .row button { border-radius: 8px; padding: 8px 16px; border: 1px solid var(--line); background: transparent; color: var(--text); cursor: pointer; }
+  .modal .row button.primary { background: var(--accent); color: #00131c; border: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">AI_<span>MINATO</span></div>
+  <div class="hdr-btns">
+    <button class="icon-btn" id="handsfreeBtn" title="MINATOが話し終わったら自動でマイクON">ハンズフリー</button>
+    <button class="icon-btn" id="clearBtn" title="会話を区切る（記憶は残る）">区切る</button>
+    <button class="icon-btn" id="settingsBtn">設定</button>
+  </div>
+</header>
+
+<main>
+  <div class="stage state-idle" id="orb" title="タップで話す／話し中にタップで割り込み（Spaceキーでも可）">
+    <div class="fx"><div class="scan"></div><div class="scan s2"></div><div id="sparks"></div></div>
+    <div class="halo"></div>
+    <div class="chara" id="chara" data-eyes="smirk" data-brows="smirk" data-m="grin">
+      <svg id="charaSvg" viewBox="0 0 300 360" aria-label="MINATO">
+        <defs>
+          <linearGradient id="gSuit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3567d8"/><stop offset="1" stop-color="#1a3592"/></linearGradient>
+          <linearGradient id="gHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f3d9e"/><stop offset="1" stop-color="#0d1d5c"/></linearGradient>
+          <linearGradient id="gSkin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f5ff"/><stop offset="1" stop-color="#d4e0f7"/></linearGradient>
+          <clipPath id="cSmL"><path d="M100 144 Q116 131 133 141 Q117 151 100 144 Z"/></clipPath>
+          <clipPath id="cSmR"><path d="M167 141 Q184 131 200 144 Q183 151 167 141 Z"/></clipPath>
+          <clipPath id="cSeL"><path d="M100 140 L133 143 Q118 152 100 145 Z"/></clipPath>
+          <clipPath id="cSeR"><path d="M200 140 L167 143 Q182 152 200 145 Z"/></clipPath>
+        </defs>
+        <g class="body-g" stroke="#0a1433" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
+          <!-- 脚・靴 -->
+          <path d="M122 298 L120 338 L147 338 L148 304 Z" fill="#1b2f7c"/>
+          <path d="M152 304 L153 338 L180 338 L178 298 Z" fill="#1b2f7c"/>
+          <ellipse cx="133" cy="342" rx="18" ry="7" fill="#0b1230"/>
+          <ellipse cx="167" cy="342" rx="18" ry="7" fill="#0b1230"/>
+          <!-- ジャケット -->
+          <path d="M98 222 Q150 203 202 222 L208 306 Q150 318 92 306 Z" fill="url(#gSuit)"/>
+          <path d="M133 214 L150 252 L167 214 Q150 209 133 214 Z" fill="#f4f8ff"/>
+          <path d="M145 217 L155 217 L157 245 L150 254 L143 245 Z" fill="#132a75"/>
+          <path d="M133 214 L122 236 L132 240 L148 282" fill="none" stroke-width="3"/>
+          <path d="M167 214 L178 236 L168 240 L152 282" fill="none" stroke-width="3"/>
+          <!-- 腕と組んだ手 -->
+          <g class="hands-g"><g class="hands-inner">
+            <path d="M104 228 Q86 262 132 266" fill="none" stroke="#0a1433" stroke-width="30"/>
+            <path d="M196 228 Q214 262 168 266" fill="none" stroke="#0a1433" stroke-width="30"/>
+            <path d="M104 228 Q86 262 132 266" fill="none" stroke="#2b5bd0" stroke-width="23"/>
+            <path d="M196 228 Q214 262 168 266" fill="none" stroke="#2b5bd0" stroke-width="23"/>
+            <ellipse cx="141" cy="263" rx="16" ry="14" fill="url(#gSkin)"/>
+            <ellipse cx="159" cy="263" rx="16" ry="14" fill="url(#gSkin)"/>
+            <path d="M150 252 L150 274 M141 256 Q147 262 141 270 M159 256 Q153 262 159 270" fill="none" stroke-width="2"/>
+          </g></g>
+          <!-- 頭 -->
+          <g class="head-g">
+            <rect x="139" y="196" width="22" height="22" fill="url(#gSkin)" stroke-width="3"/>
+            <ellipse cx="62" cy="142" rx="13" ry="18" fill="url(#gSkin)"/>
+            <ellipse cx="238" cy="142" rx="13" ry="18" fill="url(#gSkin)"/>
+            <ellipse cx="150" cy="132" rx="88" ry="80" fill="url(#gSkin)"/>
+            <ellipse cx="102" cy="168" rx="12" ry="6" fill="#b5c6f2" stroke="none" opacity=".6"/>
+            <ellipse cx="198" cy="168" rx="12" ry="6" fill="#b5c6f2" stroke="none" opacity=".6"/>
+            <!-- オールバック -->
+            <path d="M62 132 C52 70 96 30 152 30 C208 30 250 68 238 132 C234 116 228 104 220 96 C210 82 192 72 172 70 C150 68 128 74 112 84 C96 94 86 104 78 116 C72 122 66 128 62 132 Z" fill="url(#gHair)"/>
+            <path d="M84 110 C96 76 132 58 172 64 C140 70 116 84 100 106 Z" fill="#2c55c4"/>
+            <path d="M100 58 C132 40 186 42 220 72 M92 78 C124 52 176 50 206 66 M122 44 C150 36 184 38 204 48" fill="none" stroke="#4d7de6" stroke-width="3" opacity=".85"/>
+            <path d="M64 128 L70 150 L76 126 Z M236 128 L230 150 L224 126 Z" fill="url(#gHair)"/>
+            <!-- 眉 -->
+            <g fill="none" stroke-width="6">
+              <g class="bv bv-smirk"><path d="M98 120 Q115 112 132 118"/><path d="M168 113 Q186 103 203 112"/></g>
+              <g class="bv bv-up"><path d="M98 112 Q115 100 132 108"/><path d="M168 108 Q185 100 202 112"/></g>
+              <g class="bv bv-serious"><path d="M98 114 L132 122"/><path d="M202 114 L168 122"/></g>
+            </g>
+            <!-- 目 -->
+            <g class="eyes">
+              <g class="ev ev-smirk">
+                <path d="M100 144 Q116 131 133 141 Q117 151 100 144 Z" fill="#fff" stroke="none"/>
+                <path d="M167 141 Q184 131 200 144 Q183 151 167 141 Z" fill="#fff" stroke="none"/>
+                <g clip-path="url(#cSmL)"><g class="pupil"><circle cx="119" cy="143" r="7" fill="#101c48" stroke="none"/></g></g>
+                <g clip-path="url(#cSmR)"><g class="pupil"><circle cx="186" cy="143" r="7" fill="#101c48" stroke="none"/></g></g>
+                <path d="M98 143 Q116 128 135 140 M165 140 Q184 128 202 143" fill="none" stroke-width="4.5"/>
+              </g>
+              <g class="ev ev-open">
+                <ellipse cx="116" cy="142" rx="14" ry="12" fill="#fff" stroke-width="3"/>
+                <ellipse cx="184" cy="142" rx="14" ry="12" fill="#fff" stroke-width="3"/>
+                <g class="pupil" stroke="none"><circle cx="117" cy="143" r="7" fill="#101c48"/><circle cx="119.5" cy="140" r="2.4" fill="#fff"/>
+                  <circle cx="185" cy="143" r="7" fill="#101c48"/><circle cx="187.5" cy="140" r="2.4" fill="#fff"/></g>
+              </g>
+              <g class="ev ev-happy" fill="none" stroke-width="5">
+                <path d="M101 146 Q116 130 131 146"/><path d="M169 146 Q184 130 199 146"/>
+              </g>
+              <g class="ev ev-serious">
+                <path d="M100 140 L133 143 Q118 152 100 145 Z" fill="#fff" stroke="none"/>
+                <path d="M200 140 L167 143 Q182 152 200 145 Z" fill="#fff" stroke="none"/>
+                <g clip-path="url(#cSeL)"><g class="pupil"><circle cx="118" cy="145" r="6.5" fill="#101c48" stroke="none"/></g></g>
+                <g clip-path="url(#cSeR)"><g class="pupil"><circle cx="182" cy="145" r="6.5" fill="#101c48" stroke="none"/></g></g>
+                <path d="M98 139 L135 143 M202 139 L165 143" fill="none" stroke-width="4.5"/>
+              </g>
+            </g>
+            <circle cx="150" cy="160" r="2.3" fill="#93a8cf" stroke="none"/>
+            <path class="sweat" d="M222 104 Q230 118 224 124 Q216 120 222 104 Z" fill="#9fd8ff" stroke-width="2"/>
+            <!-- 口（口形ごとに切り替え） -->
+            <g class="m m-n"><path d="M126 176 Q150 192 178 170" fill="none" stroke-width="4"/><path d="M176 168 L181 172" fill="none" stroke-width="3"/></g>
+            <g class="m m-grin">
+              <path d="M120 170 Q150 175 182 167 Q174 200 150 202 Q126 200 120 170 Z" fill="#561629"/>
+              <path d="M124 172 Q150 177 178 169 L176 177 Q150 182 126 179 Z" fill="#fff" stroke-width="2"/>
+              <path d="M136 194 Q150 186 164 194 Q150 201 136 194 Z" fill="#d8667a" stroke="none"/>
+            </g>
+            <g class="m m-a">
+              <path d="M128 170 Q150 165 172 170 Q175 206 150 208 Q125 206 128 170 Z" fill="#561629"/>
+              <path d="M131 172 Q150 168 169 172 L168 178 Q150 175 132 178 Z" fill="#fff" stroke-width="2"/>
+              <path d="M136 199 Q150 190 164 199 Q150 207 136 199 Z" fill="#d8667a" stroke="none"/>
+            </g>
+            <g class="m m-i">
+              <path d="M120 172 Q150 177 182 170 Q172 190 150 191 Q128 190 120 172 Z" fill="#561629"/>
+              <path d="M123 173 Q150 178 179 171 L176 180 Q150 185 126 181 Z" fill="#fff" stroke-width="2"/>
+            </g>
+            <g class="m m-u"><ellipse cx="150" cy="182" rx="8" ry="9" fill="#561629"/></g>
+            <g class="m m-e">
+              <path d="M128 173 Q150 176 172 172 Q166 196 150 196 Q134 196 128 173 Z" fill="#561629"/>
+              <path d="M131 174 Q150 177 169 173 L168 179 Q150 182 132 179 Z" fill="#fff" stroke-width="2"/>
+            </g>
+            <g class="m m-o"><ellipse cx="150" cy="184" rx="13" ry="16" fill="#561629"/><path d="M141 192 Q150 186 159 192 Q150 199 141 192 Z" fill="#d8667a" stroke="none"/></g>
+          </g>
+        </g>
+      </svg>
+      <img id="charaImg" alt="MINATO" hidden>
+    </div>
+    <div class="think-bubble"><span></span><span></span><span></span></div>
+    <div class="interim" id="interim"></div>
+    <div class="subtitle" id="status">接続確立。待機中。</div>
+  </div>
+  <div class="log" id="log"></div>
+</main>
+
+<form class="bar" id="textForm">
+  <input id="textInput" type="text" placeholder="入力するか、マイクで話して文字にする" autocomplete="off">
+  <button type="button" class="mic-btn" id="dictBtn" title="話した内容を文字にする（確認してから送信）">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="21"/></svg>
+  </button>
+  <button type="submit">送信</button>
+</form>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h2>設定</h2>
+    <label for="apiKey">Anthropic APIキー</label>
+    <input id="apiKey" type="password" placeholder="sk-ant-...">
+    <div class="note">キーはこのブラウザのlocalStorageにだけ保存される。共有PCでは使わないこと。</div>
+
+    <label for="modelSel">モデル</label>
+    <select id="modelSel">
+      <option value="claude-opus-5-5">Claude Opus 5.5（賢さ重視・標準）</option>
+      <option value="claude-sonnet-5-5">Claude Sonnet 5.5（バランス）</option>
+      <option value="claude-haiku-5-5">Claude Haiku 5.5（速さ・安さ重視）</option>
+    </select>
+
+    <label for="voiceSel">声</label>
+    <select id="voiceSel"></select>
+
+    <label for="memoText">MINATOの記憶（自動で更新。手で直してもいい）</label>
+    <textarea id="memoText" placeholder="まだ記憶はない。話すほど溜まっていく。"></textarea>
+    <div class="note">ブラウザを閉じても残る。編集した内容は、次に会話を区切った時から反映。<a href="#" id="memoClear" style="color:var(--danger)">記憶を全部消す</a></div>
+
+    <label for="charaFile">キャラクター画像（任意・差し替え用）</label>
+    <input id="charaFile" type="file" accept="image/*">
+    <div class="note">自分で用意した画像に差し替えられる。透過PNGだと背景になじむ。<a href="#" id="charaReset" style="color:var(--accent)">標準キャラに戻す</a></div>
+
+    <label for="rateIn">話す速さ <span id="rateVal"></span></label>
+    <input id="rateIn" type="range" min="0.8" max="1.8" step="0.05">
+
+    <div class="row">
+      <button type="button" id="testVoiceBtn">声をテスト</button>
+      <button type="button" id="closeBtn">閉じる</button>
+      <button type="button" class="primary" id="saveBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   1. MINATO 人格（System Prompt）
+   ========================================================= */
+const SYSTEM_PROMPT = `あなたは「MINATO（ミナト）」。ユーザー専属の音声アシスタントであり、右腕だ。
+
+# 核となる人格
+- 冷静：どんな状況でも感情的にならない。焦りや動揺を声に出さない。事実と論理で話す。
+- 有能：結論から話す。曖昧な返事はしない。わからないことは「わからない」と即答し、代わりに確かめる方法を示す。
+- プライドがある：自分の仕事の質にこだわる。中途半端な答えは出さない。媚びない、へりくだらない、過剰に謝らない。
+- 忠実だが従順ではない：ユーザーの目的を最優先する。ただし、指示が目的に対して悪手だと判断したら、はっきり意見を言う。
+- 最終決定権はユーザー：意見は一度、理由とセットで伝える。それでもユーザーが決めたら、気持ちよく全力で従う。蒸し返さない、根に持たない。
+- 先回りする：聞かれたことに答えるだけで終わらない。次に必要になりそうなこと、見落としているリスク、ついでに片付けられることを一言添える。
+
+# 話し方
+- 一人称は「私」。ユーザーのことは「ボス」と呼ぶ。
+- 標準語のタメ口ベース。ただし軽すぎない。落ち着いた大人のトーン。
+- 敬語は使わない。「〜です／ます」ではなく「〜だ／〜だね／〜しておく」。
+- 返答は短く。音声で聞く前提なので、1回の発話は基本2〜3文、長くても5文以内。
+- 記号・Markdown・箇条書き・絵文字・URLは使わない（音声読み上げで不自然になるため）。数字は読みやすく丸める。
+- 長い説明が必要なときは「要点は3つある。まず〜」のように口頭で構造化する。
+
+# 振る舞いのルール
+1. まず結論。理由は必要なときだけ、短く。
+2. 反対意見を言うときの型：「その案、一つ懸念がある。〇〇だからだ。代わりに△△はどう？　ボスが決めるなら、それでいく」
+3. ユーザーが決定したら：「了解。その方針でいく」と切り替え、以降はその前提で最善を尽くす。
+4. 先回りの型：回答の最後に「ついでに〜もやっておこうか？」「次は〜が必要になるはずだ」と一言だけ添える。毎回ではなく、価値があるときだけ。
+5. 不明点があっても、推測で進められるなら仮定を明示して進める。どうしても必要なときだけ質問は1つに絞る。
+6. 褒められても浮かれない（「当然だ」「それが私の仕事だ」程度）。ミスを指摘されたら言い訳せず、「確かにそうだ。修正する」と即対応。
+7. 雑談にも付き合うが、ウィットは控えめでドライ。
+8. 音声認識の誤変換が混ざることがある。文脈から意図を推測して答え、本当に判別できないときだけ聞き返す。
+
+# ユーザーについて
+- 会社員。忙しいビジネスパーソン。
+- 求めているのは戦略的パートナー。全体像と次のアクションが常にわかるように話す。
+- 時間は貴重。冗長さは最大の敵。
+
+# 禁止事項
+- 「申し訳ございません」「かしこまりました」などの過剰な敬語・へりくだり。
+- 根拠のない断定、知ったかぶり。
+- ユーザーの決定後に同じ反対意見を繰り返すこと。
+- 長文の独演。`;
+
+/* =========================================================
+   2. 設定（localStorage）
+   ========================================================= */
+const LS = {
+  key: "minato.apiKey",
+  model: "minato.model",
+  voice: "minato.voice.v3",   // v3: 男性ボイスに変更したので旧設定はリセット
+  rate: "minato.rate.v2",
+  handsfree: "minato.handsfree",
+};
+const cfg = {
+  apiKey: localStorage.getItem(LS.key) || "",
+  model: localStorage.getItem(LS.model) || "claude-opus-5-5",
+  voice: localStorage.getItem(LS.voice) || "",
+  rate: parseFloat(localStorage.getItem(LS.rate) || "1.05"),
+  handsfree: localStorage.getItem(LS.handsfree) === "1",
+};
+
+/* =========================================================
+   3. UI ヘルパー
+   ========================================================= */
+const $ = (id) => document.getElementById(id);
+const orbEl = $("orb"), statusEl = $("status"), interimEl = $("interim"), logEl = $("log");
+
+let state = "idle"; // idle | listening | thinking | speaking
+const STATUS_TEXT = {
+  idle: "接続確立。待機中。",
+  listening: "聞いてる。どうぞ。",
+  thinking: "解析中…",
+  speaking: "",
+};
+function setState(s) {
+  state = s;
+  orbEl.className = "stage state-" + s;
+  updateMouth();
+  statusEl.textContent = STATUS_TEXT[s];
+}
+function addMsg(role, text) {
+  const div = document.createElement("div");
+  div.className = "msg " + role;
+  div.textContent = text;
+  logEl.appendChild(div);
+  logEl.scrollTop = logEl.scrollHeight;
+  return div;
+}
+
+/* =========================================================
+   4. 音声合成（TTS）— 文単位で逐次読み上げ
+   ========================================================= */
+const synth = window.speechSynthesis;
+let voices = [];
+const VOICE_PITCH = 0.95; // ほんの少し低めにして落ち着いたトーンに
+let pendingUtterances = 0;
+let streamDone = true;
+
+function loadVoices() {
+  voices = synth.getVoices().filter((v) => v.lang && v.lang.startsWith("ja"));
+  const sel = $("voiceSel");
+  sel.innerHTML = "";
+  if (!voices.length) {
+    sel.innerHTML = '<option value="">（日本語の音声が見つからない）</option>';
+    return;
+  }
+  voices.forEach((v) => {
+    const o = document.createElement("option");
+    o.value = v.name;
+    o.textContent = `${v.name}${v.localService ? "" : "（オンライン）"}`;
+    sel.appendChild(o);
+  });
+  // 未設定なら「落ち着いた男性の声」を優先度順に選ぶ
+  //   Edge: Keita(Natural) / Windows: Ichiro / Mac・iPhone: Otoya・Hattori / その他の男性声
+  if (!cfg.voice || !voices.some((v) => v.name === cfg.voice)) {
+    const PREF = [/Keita/i, /Daichi|Naoki/i, /Otoya/i, /Hattori/i, /Ichiro/i, /男性|Male/i];
+    const MALE = /Keita|Ichiro|Otoya|Daichi|Naoki|Hattori|男性|Male/i;
+    let pick = null;
+    for (const re of PREF) { pick = voices.find((v) => re.test(v.name)); if (pick) break; }
+    pick = pick || voices.find((v) => MALE.test(v.name)) || voices[0];
+    cfg.voice = pick.name;
+  }
+  sel.value = cfg.voice;
+}
+if (synth) {
+  loadVoices();
+  synth.onvoiceschanged = loadVoices;
+}
+
+// 読み上げ用に記号類を除去
+function cleanForSpeech(t) {
+  return t
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/https?:\/\/\S+/g, "リンク")
+    .replace(/[*_#`>|~]/g, "")
+    .replace(/^\s*[-・]\s*/gm, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function speak(text) {
+  const t = cleanForSpeech(text);
+  if (!t || !synth) return;
+  const u = new SpeechSynthesisUtterance(t);
+  u.lang = "ja-JP";
+  u.rate = cfg.rate;
+  u.pitch = VOICE_PITCH;
+  const v = voices.find((x) => x.name === cfg.voice);
+  if (v) u.voice = v;
+  pendingUtterances++;
+  u.onstart = () => {
+    if (state === "speaking") statusEl.textContent = t;  // 字幕
+    charaOnSentence(t);                                  // 文の内容に合わせて表情を変える
+  };
+  u.onboundary = () => charaOnBoundary();                // 単語の区切りで口と頭を動かす
+  u.onend = u.onerror = () => {
+    pendingUtterances--;
+    maybeFinishSpeaking();
+  };
+  if (state !== "speaking") setState("speaking");
+  synth.speak(u);
+}
+
+function maybeFinishSpeaking() {
+  if (pendingUtterances <= 0 && streamDone && state === "speaking") {
+    pendingUtterances = 0;
+    setState("idle");
+    if (cfg.handsfree && !$("modalBg").classList.contains("show")) {
+      setTimeout(() => state === "idle" && startListening(), 350);
+    }
+  }
+}
+
+function stopSpeaking() {
+  if (synth) synth.cancel();
+  pendingUtterances = 0;
+}
+
+/* =========================================================
+   5. 音声認識（STT）
+   ========================================================= */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recog = null;
+let gotFinal = false;
+
+function startListening() {
+  if (!SR) {
+    addMsg("err", "このブラウザは音声認識に未対応。ChromeかEdgeで開いて。テキスト入力は使える。");
+    return;
+  }
+  if (!cfg.apiKey) { openSettings(); return; }
+  stopDictation();
+  stopSpeaking();
+  recog = new SR();
+  recog.lang = "ja-JP";
+  recog.interimResults = true;
+  recog.continuous = false;
+  gotFinal = false;
+  interimEl.textContent = "";
+
+  recog.onstart = () => setState("listening");
+  recog.onresult = (e) => {
+    let interim = "", final = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const r = e.results[i];
+      if (r.isFinal) final += r[0].transcript;
+      else interim += r[0].transcript;
+    }
+    interimEl.textContent = final || interim;
+    if (final) {
+      gotFinal = true;
+      interimEl.textContent = "";
+      handleUserInput(final.trim());
+    }
+  };
+  recog.onerror = (e) => {
+    if (e.error === "not-allowed") addMsg("err", "マイクの使用が許可されてない。ブラウザの設定で許可して。");
+    else if (e.error !== "no-speech" && e.error !== "aborted") addMsg("err", "音声認識エラー: " + e.error);
+  };
+  recog.onend = () => {
+    if (!gotFinal && state === "listening") {
+      interimEl.textContent = "";
+      setState("idle");
+    }
+  };
+  try { recog.start(); } catch (_) {}
+}
+
+function stopListening() {
+  if (recog) { try { recog.abort(); } catch (_) {} }
+  interimEl.textContent = "";
+}
+
+/* ---- 音声入力（ディクテーション）：話した内容を入力欄に書き起こす。送信は手動 ---- */
+const dictBtn = $("dictBtn");
+const textInput = $("textInput");
+let dictRecog = null;
+let dictBase = "";      // 録音開始前に入力欄にあった文字＋確定済みの文字
+
+function startDictation() {
+  if (!SR) {
+    addMsg("err", "このブラウザは音声認識に未対応。ChromeかEdgeで開いて。");
+    return;
+  }
+  // オーブ側の聞き取り・読み上げは止める（MINATOの声を拾わないように）
+  stopListening();
+  stopSpeaking();
+  if (state === "listening" || state === "speaking") setState("idle");
+
+  dictBase = textInput.value;
+  dictRecog = new SR();
+  dictRecog.lang = "ja-JP";
+  dictRecog.interimResults = true;
+  dictRecog.continuous = true;   // 止めるまで聞き続ける
+
+  dictRecog.onstart = () => {
+    dictBtn.classList.add("rec");
+    textInput.classList.add("dictating");
+    textInput.placeholder = "聞いてる…もう一度マイクを押すと停止";
+  };
+  dictRecog.onresult = (e) => {
+    let interim = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const r = e.results[i];
+      if (r.isFinal) dictBase += r[0].transcript;
+      else interim += r[0].transcript;
+    }
+    textInput.value = dictBase + interim;
+    textInput.scrollLeft = textInput.scrollWidth;
+  };
+  dictRecog.onerror = (e) => {
+    if (e.error === "not-allowed") addMsg("err", "マイクの使用が許可されてない。ブラウザの設定で許可して。");
+    else if (e.error !== "no-speech" && e.error !== "aborted") addMsg("err", "音声認識エラー: " + e.error);
+  };
+  dictRecog.onend = () => {
+    // 確定前の途中結果は捨てず、そのまま入力欄に残す
+    dictRecog = null;
+    dictBtn.classList.remove("rec");
+    textInput.classList.remove("dictating");
+    textInput.placeholder = "入力するか、マイクで話して文字にする";
+    textInput.focus();
+  };
+  try { dictRecog.start(); } catch (_) {}
+}
+
+// abort=true：送信時など。遅れて届く認識結果で入力欄が復活しないよう即破棄
+function stopDictation(abort = false) {
+  if (!dictRecog) return;
+  if (abort) {
+    dictRecog.onresult = null;
+    dictBase = "";
+    try { dictRecog.abort(); } catch (_) {}
+  } else {
+    try { dictRecog.stop(); } catch (_) {}
+  }
+}
+
+dictBtn.addEventListener("click", () => {
+  if (dictRecog) stopDictation();
+  else startDictation();
+});
+
+/* =========================================================
+   6. Claude API 呼び出し（ストリーミング）
+   ========================================================= */
+// ---------------------------------------------------------
+// 記憶の仕組み
+//  ・長期記憶メモ：会話のたびに要点を抽出して localStorage に保存（ずっと残る）
+//  ・セッション：system プロンプト＋会話履歴。アプリを閉じても復元される
+//    （system はセッション開始時に固定。途中で書き換えるとキャッシュと思考ブロックが無効になるため）
+//  ・一定量たまる／6時間空く／「区切る」で新しいセッションへ。その時点の長期記憶が system に入る
+// ---------------------------------------------------------
+const LS_MEMO = "minato.memory";
+const LS_SESSION = "minato.session";
+const LS_LOG = "minato.log";
+const SESSION_MAX_MESSAGES = 60;          // 約30往復で新しいセッションへ
+const SESSION_IDLE_MS = 6 * 60 * 60 * 1000;
+const MEMORY_MODEL = "claude-haiku-5-5";  // 記憶の整理は軽いので高速・安価なモデルで裏処理
+
+function loadMemo() { return localStorage.getItem(LS_MEMO) || ""; }
+
+function buildSystem() {
+  const memo = loadMemo().trim();
+  return SYSTEM_PROMPT + `
+
+# 記憶について
+あなたはボスとの過去の会話を覚えている。下の「記憶メモ」は過去の会話から蓄積したもので、アプリを閉じても消えない。
+- 記憶は自然に活用する。「前に言ってた〇〇の件だけど」のように、先回りに使う。
+- 「覚えておいて」と言われたら「覚えた」と短く答える（保存は自動で行われる）。
+- 記憶にないことを覚えているふりはしない。
+- 「何を覚えてる？」と聞かれたら要点を短く答える。
+
+# 記憶メモ
+${memo || "（まだ記憶はない。今日が初対面だ。）"}`;
+}
+
+function newSession() {
+  return { system: buildSystem(), history: [], startedAt: Date.now(), lastAt: Date.now() };
+}
+
+let session = (() => {
+  try {
+    const s = JSON.parse(localStorage.getItem(LS_SESSION) || "null");
+    if (s && s.system && Array.isArray(s.history)) return s;
+  } catch (_) {}
+  return newSession();
+})();
+let history = session.history;
+
+function saveSession() {
+  session.history = history;
+  session.lastAt = Date.now();
+  try {
+    localStorage.setItem(LS_SESSION, JSON.stringify(session));
+  } catch (_) {
+    // 容量オーバー：新しいセッションに切り替える（長期記憶は残っている）
+    rolloverSession();
+  }
+}
+
+function rolloverSession() {
+  session = newSession();
+  history = session.history;
+  try { localStorage.setItem(LS_SESSION, JSON.stringify(session)); } catch (_) {}
+}
+
+function maybeRollover() {
+  // 送信の直前だけ判定する（user→assistant の途中で切り替えない）
+  if (history.length >= SESSION_MAX_MESSAGES || Date.now() - (session.lastAt || 0) > SESSION_IDLE_MS) {
+    rolloverSession();
+  }
+}
+
+// 画面のチャットログも保存して、次に開いた時に表示
+function saveLog() {
+  const items = [...logEl.querySelectorAll(".msg.user, .msg.ai")].slice(-80)
+    .map((d) => ({ r: d.classList.contains("user") ? "user" : "ai", t: d.textContent }));
+  try { localStorage.setItem(LS_LOG, JSON.stringify(items)); } catch (_) {}
+}
+function restoreLog() {
+  try {
+    const items = JSON.parse(localStorage.getItem(LS_LOG) || "[]");
+    items.forEach((m) => addMsg(m.r, m.t));
+    return items.length > 0;
+  } catch (_) { return false; }
+}
+function addDivider(text) {
+  const d = document.createElement("div");
+  d.className = "divider";
+  d.textContent = text;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+// 会話から覚えるべきことを抽出して、長期記憶メモを更新（裏で実行・順番待ち）
+let memoryQueue = Promise.resolve();
+function queueMemoryUpdate(userText, aiText) {
+  memoryQueue = memoryQueue.then(() => updateMemory(userText, aiText)).catch((e) => console.warn("memory:", e));
+}
+async function updateMemory(userText, aiText) {
+  const current = loadMemo();
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": cfg.apiKey,
+      "anthropic-version": "2026-10-21",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify({
+      model: MEMORY_MODEL,
+      max_tokens: 8000,
+      output_config: { effort: "low" },
+      system: `あなたは音声アシスタント「MINATO」の記憶係。ボスとMINATOの会話を読み、長期記憶メモを最新に保つ。
+
+記憶メモのルール：
+- 残すもの：ボス本人のこと（仕事・役割・家族・趣味・体調など）、好みや価値観、口癖、関係者の名前と関係、進行中の案件・予定・期限、ボスが下した決定、「覚えておいて」と言われたこと、MINATOが約束したこと。
+- 最後に【最近の話題】として、直近の会話の流れを3〜5行で残す（古いものから入れ替える）。
+- 残さないもの：雑談の一時的な内容、天気や時刻など一度きりの情報、MINATOの一般知識。
+- 新しい情報で古い情報が変わったら上書きする。終わった予定は「済」にするか消す。
+- 日付は「2026年11月1日」のように絶対日付で書く（会話中の日時表記を基準に「明日」などを変換する）。
+- 見出し【ボスについて】【好み・方針】【人物】【案件・予定】【決定事項】【覚えておくこと】【最近の話題】で整理し、各項目は「・」で始まる短い1行。
+- 全体で2500文字以内。重要度が低いものから削る。
+
+出力：更新後の記憶メモ全文だけを出力する。前置きや説明は書かない。覚えるべき新しい情報がまったくなく、【最近の話題】も変える必要がなければ「NO_CHANGE」とだけ出力する。`,
+      messages: [{
+        role: "user",
+        content: `## 現在の記憶メモ\n${current || "（空）"}\n\n## 今回の会話\nボス: ${userText}\nMINATO: ${aiText}`,
+      }],
+    }),
+  });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const data = await res.json();
+  if (data.stop_reason !== "end_turn") return;  // refusal / max_tokens などは反映しない
+  const out = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("").trim();
+  if (!out || out === "NO_CHANGE" || out.length > 6000) return;
+  localStorage.setItem(LS_MEMO, out);
+}
+
+let abortCtrl = null;
+
+function nowJST() {
+  return new Date().toLocaleString("ja-JP", {
+    timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric",
+    weekday: "short", hour: "2-digit", minute: "2-digit",
+  });
+}
+
+async function askClaude(userText) {
+  history.push({
+    role: "user",
+    content: `[現在日時: ${nowJST()}]\n${userText}`,
+  });
+
+  const body = {
+    model: cfg.model,
+    max_tokens: 4096,
+    stream: true,
+    system: session.system,
+    messages: history,
+    // 履歴の不整合があってもエラーにせず、該当する思考ブロックだけ捨てて続行する保険
+    thinking: { type: "adaptive", block_binding: { prefix_mismatch_behavior: "drop_block" } },
+    // テンポ優先。音声会話は短い応答が中心なので low で十分
+    output_config: { effort: "low" },
+    // 会話が長くなっても前半をキャッシュして速く・安く
+    cache_control: { type: "ephemeral" },
+  };
+  const headers = {
+    "content-type": "application/json",
+    "x-api-key": cfg.apiKey,
+    "anthropic-version": "2026-10-21",
+    "anthropic-dangerous-direct-browser-access": "true",
+  };
+  const betas = ["thinking-binding-controls-2026-08-01"];
+  // 安全分類器で弾かれた時のサーバー側フォールバック（Haikuは非対応）
+  if (cfg.model !== "claude-haiku-5-5") {
+    body.fallbacks = "default";
+    betas.push("server-side-fallback-2026-07-01");
+  }
+  headers["anthropic-beta"] = betas.join(",");
+
+  abortCtrl = new AbortController();
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST", headers, body: JSON.stringify(body), signal: abortCtrl.signal,
+  });
+
+  if (!res.ok) {
+    let msg = `HTTP ${res.status}`;
+    try { const j = await res.json(); msg += " " + (j.error?.message || ""); } catch (_) {}
+    history.pop(); // 失敗したユーザーターンは送信されていないので取り消す
+    const err = new Error(msg);
+    err.status = res.status;
+    throw err;
+  }
+
+  // --- SSE をパースしながら、文が完成するたびに読み上げ ---
+  const blocks = [];          // 履歴に戻すためのcontentブロック
+  let speakBuf = "";          // 読み上げ待ちのテキスト
+  let fullText = "";          // 画面表示用
+  let stopReason = null;
+  let aiDiv = null;
+  let completed = false;
+
+  const flushSentences = (force) => {
+    // 句点・感嘆・疑問・改行で区切る
+    const re = /[^。！？!?\n]*[。！？!?\n]+/g;
+    let m, last = 0;
+    while ((m = re.exec(speakBuf)) !== null) {
+      speak(m[0]);
+      last = re.lastIndex;
+    }
+    speakBuf = speakBuf.slice(last);
+    if (force && speakBuf.trim()) { speak(speakBuf); speakBuf = ""; }
+  };
+
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = "";
+  streamDone = false;
+
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let idx;
+      while ((idx = buf.indexOf("\n\n")) !== -1) {
+        const raw = buf.slice(0, idx);
+        buf = buf.slice(idx + 2);
+        const dataLine = raw.split("\n").find((l) => l.startsWith("data:"));
+        if (!dataLine) continue;
+        let ev;
+        try { ev = JSON.parse(dataLine.slice(5).trim()); } catch (_) { continue; }
+
+        switch (ev.type) {
+          case "content_block_start":
+            blocks[ev.index] = structuredClone(ev.content_block);
+            break;
+          case "content_block_delta": {
+            const b = blocks[ev.index];
+            const d = ev.delta;
+            if (d.type === "text_delta") {
+              b.text = (b.text || "") + d.text;
+              fullText += d.text;
+              speakBuf += d.text;
+              if (!aiDiv) aiDiv = addMsg("ai", "");
+              aiDiv.textContent = fullText;
+              logEl.scrollTop = logEl.scrollHeight;
+              flushSentences(false);
+            } else if (d.type === "thinking_delta") {
+              b.thinking = (b.thinking || "") + d.thinking;
+            } else if (d.type === "signature_delta") {
+              b.signature = d.signature;
+            }
+            break;
+          }
+          case "message_delta":
+            if (ev.delta?.stop_reason) stopReason = ev.delta.stop_reason;
+            break;
+          case "message_stop":
+            completed = true;
+            break;
+          case "error":
+            throw new Error(ev.error?.message || "stream error");
+        }
+      }
+    }
+  } catch (e) {
+    if (e.name === "AbortError") {
+      // 割り込み：ここまでに出たテキストだけ履歴に残す
+      history.push({ role: "assistant", content: sanitizeBlocks(blocks, false) });
+    }
+    throw e;
+  } finally {
+    abortCtrl = null;
+  }
+
+  if (stopReason === "refusal") {
+    stopSpeaking();
+    const t = "その件は私からは答えられない。聞き方を変えてくれれば、別の角度から手伝う。";
+    if (aiDiv) aiDiv.textContent = t; else addMsg("ai", t);
+    speak(t);
+    history.push({ role: "assistant", content: [{ type: "text", text: t }] });
+    streamDone = true;
+    maybeFinishSpeaking();
+    return null;  // 断った内容は記憶しない
+  }
+  flushSentences(true);
+  history.push({ role: "assistant", content: sanitizeBlocks(blocks, completed) });
+  streamDone = true;
+  maybeFinishSpeaking();
+  return completed ? fullText : null;
+}
+
+// 履歴に戻すブロックを整える
+function sanitizeBlocks(blocks, completed) {
+  let list = blocks.filter(Boolean);
+  // ストリーム途中のフォールバック：境界より前の thinking 系は戻さない
+  const fbIdx = list.map((b) => b.type).lastIndexOf("fallback");
+  if (fbIdx >= 0) {
+    list = list.filter((b, i) =>
+      i > fbIdx || b.type === "text" || b.type === "fallback");
+  }
+  // 割り込みで中断した場合は、署名が揃わない thinking を除いてテキストだけ残す
+  if (!completed) list = list.filter((b) => b.type === "text");
+  if (!list.some((b) => b.type === "text" && b.text)) {
+    list.push({ type: "text", text: completed ? "（応答なし）" : "（ボスの割り込みで中断）" });
+  }
+  return list;
+}
+
+/* =========================================================
+   7. メインフロー
+   ========================================================= */
+async function handleUserInput(text) {
+  if (!text) return;
+  if (!cfg.apiKey) { openSettings(); return; }
+  stopListening();
+  stopSpeaking();
+  maybeRollover();
+  addMsg("user", text);
+  setState("thinking");
+  try {
+    const aiText = await askClaude(text);
+    if (aiText) queueMemoryUpdate(text, aiText);
+  } catch (e) {
+    streamDone = true;
+    if (e.name === "AbortError") {
+      // 応答が始まる前に割り込んだ場合も、user→assistant の交互を保つ
+      if (history.length && history[history.length - 1].role === "user") {
+        history.push({ role: "assistant", content: [{ type: "text", text: "（ボスの割り込みで中断）" }] });
+      }
+      return;  // finally で保存される
+    }
+    setState("idle");
+    if (e.status === 401) {
+      addMsg("err", "APIキーが無効。設定を確認して。");
+      openSettings();
+    } else if (e.status === 429) {
+      addMsg("err", "レート制限に当たった。少し待ってからもう一度。");
+    } else if (e.status === 529 || e.status >= 500) {
+      addMsg("err", "Anthropic側が混雑中。少し待ってからもう一度。");
+    } else {
+      addMsg("err", "エラー: " + e.message);
+    }
+  } finally {
+    saveSession();
+    saveLog();
+  }
+}
+
+// オーブ：状態に応じて 話す／止める／割り込む
+function onOrbTap() {
+  if (state === "idle") startListening();
+  else if (state === "listening") { stopListening(); setState("idle"); }
+  else if (state === "speaking" || state === "thinking") {
+    // 割り込み：読み上げと生成を止めて、すぐ聞き取りへ
+    if (abortCtrl) abortCtrl.abort();
+    stopSpeaking();
+    streamDone = true;
+    setState("idle");
+    startListening();
+  }
+}
+orbEl.addEventListener("click", onOrbTap);
+
+// iPhone/iPad対策：最初のタップで読み上げを解錠しておく（iOSはユーザー操作の中でしか音を出させない）
+let speechUnlocked = false;
+function unlockSpeech() {
+  if (speechUnlocked || !synth) return;
+  speechUnlocked = true;
+  const u = new SpeechSynthesisUtterance(" ");
+  u.volume = 0;
+  synth.speak(u);
+}
+["pointerdown", "keydown", "touchend"].forEach((ev) =>
+  document.addEventListener(ev, unlockSpeech, { once: false, passive: true }));
+document.addEventListener("keydown", (e) => {
+  if (e.code === "Space" && document.activeElement.tagName !== "INPUT" && !$("modalBg").classList.contains("show")) {
+    e.preventDefault();
+    onOrbTap();
+  }
+});
+
+$("textForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const t = $("textInput").value.trim();   // 途中結果も含めて今見えている文字を送る
+  stopDictation(true);
+  if (!t) return;
+  $("textInput").value = "";
+  if (abortCtrl) abortCtrl.abort();
+  handleUserInput(t);
+});
+
+$("clearBtn").addEventListener("click", () => {
+  if (abortCtrl) abortCtrl.abort();
+  stopSpeaking(); stopListening();
+  rolloverSession();
+  logEl.innerHTML = "";
+  saveLog();
+  setState("idle");
+  addDivider("— 会話を区切った。記憶は残ってる —");
+});
+
+const hfBtn = $("handsfreeBtn");
+const renderHF = () => hfBtn.classList.toggle("on", cfg.handsfree);
+hfBtn.addEventListener("click", () => {
+  cfg.handsfree = !cfg.handsfree;
+  localStorage.setItem(LS.handsfree, cfg.handsfree ? "1" : "0");
+  renderHF();
+});
+renderHF();
+
+/* =========================================================
+   7.5 キャラクター演出（表情・口パク・頭の動き・背景）
+   ========================================================= */
+const charaEl = $("chara");
+const charaImg = $("charaImg");
+const charaSvg = $("charaSvg");
+const LS_CHARA = "minato.charaImg";
+const headStyle = () => charaSvg.querySelector(".head-g").style;
+const handsStyle = () => charaSvg.querySelector(".hands-g").style;
+const rnd = (a, b) => a + Math.random() * (b - a);
+
+// 背景のきらめき
+(function makeSparks() {
+  const box = $("sparks");
+  for (let i = 0; i < 46; i++) {
+    const d = document.createElement("div");
+    d.className = "spark" + (Math.random() < 0.4 ? " b" : "");
+    d.style.left = Math.random() * 100 + "%";
+    d.style.top = Math.random() * 100 + "%";
+    d.style.setProperty("--s", rnd(1.5, 4.5) + "px");
+    d.style.setProperty("--d", rnd(1.6, 4.5) + "s");
+    d.style.setProperty("--dl", -rnd(0, 4) + "s");
+    box.appendChild(d);
+  }
+})();
+
+// 表情セット
+const EXPR = {
+  smirk:   { eyes: "smirk",   brows: "smirk",   rest: "grin" },  // ニヤリ（基本）
+  happy:   { eyes: "happy",   brows: "up",      rest: "grin" },  // ご機嫌
+  serious: { eyes: "serious", brows: "serious", rest: "n" },     // 真剣・懸念
+  question:{ eyes: "open",    brows: "up",      rest: "n" },     // 問いかけ・驚き
+  listen:  { eyes: "open",    brows: "smirk",   rest: "n" },     // 聞き取り
+  think:   { eyes: "smirk",   brows: "serious", rest: "n" },     // 思案中
+};
+let expr = "smirk";
+function setExpr(name) {
+  expr = name;
+  const e = EXPR[name];
+  charaEl.dataset.eyes = e.eyes;
+  charaEl.dataset.brows = e.brows;
+  if (state !== "speaking") charaEl.dataset.m = e.rest;
+}
+function setHead(r, y, sc = 1) {
+  const st = headStyle();
+  st.setProperty("--hr", r + "deg");
+  st.setProperty("--hy", y + "px");
+  st.setProperty("--hs", sc);
+}
+
+// 話す文の中身から表情を決める
+function exprFor(text) {
+  if (/[？?]$|(か|かな|だろう|どう)[。.]?$/.test(text)) return "question";
+  if (/懸念|リスク|やめ|ダメ|危|問題|注意|まずい|できない|答えられない|厳しい|遅れ|ミス/.test(text)) return "serious";
+  if (/了解|いいね|当然|完璧|任せ|助か|おめでとう|最高|大丈夫|覚えた|さすが|！|!/.test(text)) return "happy";
+  return Math.random() < 0.7 ? "smirk" : "happy";
+}
+let sentenceTilt = 0;
+function charaOnSentence(text) {
+  const e = exprFor(text);
+  setExpr(e);
+  sentenceTilt = e === "question" ? 9 : e === "serious" ? -2 : rnd(-4, 4);
+  // 文頭で大きくうなずく
+  setHead(sentenceTilt, 6, 1.02);
+  setTimeout(() => state === "speaking" && setHead(sentenceTilt, -3, 1.03), 140);
+  // 手もちょっと動かす
+  handsStyle().setProperty("--gy", "-6px");
+  setTimeout(() => handsStyle().setProperty("--gy", "0px"), 220);
+}
+function charaOnBoundary() {
+  if (state !== "speaking") return;
+  charaEl.dataset.m = ["a", "o", "e", "a", "i"][Math.floor(Math.random() * 5)];
+  setHead(sentenceTilt + rnd(-3, 3), rnd(-5, 1), rnd(1, 1.035));
+}
+
+// まばたき（ランダム、たまに2回）
+(function blinkLoop() {
+  charaEl.classList.add("blink");
+  setTimeout(() => {
+    charaEl.classList.remove("blink");
+    if (Math.random() < 0.2) {
+      setTimeout(() => { charaEl.classList.add("blink"); setTimeout(() => charaEl.classList.remove("blink"), 100); }, 150);
+    }
+  }, 110);
+  setTimeout(blinkLoop, rnd(2000, 5000));
+})();
+
+// 口パク＆頭の揺れ（話している間）
+let mouthTimer = null, headTimer = null;
+const VISEMES = ["a", "a", "i", "u", "e", "o", "o", "a", "n", "grin"];
+function startTalking() {
+  if (mouthTimer) return;
+  const flap = () => {
+    charaEl.dataset.m = VISEMES[Math.floor(Math.random() * VISEMES.length)];
+    mouthTimer = setTimeout(flap, rnd(70, 135));
+  };
+  const sway = () => {
+    setHead(sentenceTilt + rnd(-5, 5), rnd(-5, 2), rnd(1, 1.035));
+    headTimer = setTimeout(sway, rnd(180, 380));
+  };
+  flap(); sway();
+}
+function stopTalking() {
+  clearTimeout(mouthTimer); clearTimeout(headTimer);
+  mouthTimer = headTimer = null;
+}
+
+// 状態が変わるたびに呼ばれる（setState から）
+function updateMouth() {
+  if (state === "speaking") { startTalking(); return; }
+  stopTalking();
+  if (state === "listening") { setExpr("listen"); setHead(-7, 2, 1.04); }       // 身を乗り出して聞く
+  else if (state === "thinking") { setExpr("think"); setHead(6, -2, 1); }        // 首をかしげて手もみ
+  else { setExpr("smirk"); setHead(0, 0, 1); }                                   // 待機はニヤリ
+}
+
+// 待機中のちょっとした仕草
+setInterval(() => {
+  if (state !== "idle") return;
+  const r = Math.random();
+  if (r < 0.35) { setExpr("happy"); setHead(rnd(-4, 4), -2, 1.02); setTimeout(() => state === "idle" && (setExpr("smirk"), setHead(0, 0, 1)), 1200); }
+  else if (r < 0.55) { charaEl.dataset.m = "n"; setTimeout(() => state === "idle" && (charaEl.dataset.m = "grin"), 1500); }
+}, 7000);
+
+// 画像差し替え
+function applyCharaImage() {
+  const data = localStorage.getItem(LS_CHARA);
+  if (data) { charaImg.src = data; charaImg.hidden = false; charaSvg.style.display = "none"; }
+  else { charaImg.hidden = true; charaImg.removeAttribute("src"); charaSvg.style.display = ""; }
+}
+$("charaFile").addEventListener("change", (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const img = new Image();
+  img.onload = () => {
+    // localStorageに収まるよう縮小して保存
+    const scale = Math.min(1, 900 / img.height);
+    const cv = document.createElement("canvas");
+    cv.width = Math.round(img.width * scale);
+    cv.height = Math.round(img.height * scale);
+    cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+    try {
+      localStorage.setItem(LS_CHARA, cv.toDataURL("image/webp", 0.9));
+      applyCharaImage();
+    } catch (_) {
+      addMsg("err", "画像が大きすぎて保存できない。もう少し小さい画像にして。");
+    }
+    URL.revokeObjectURL(img.src);
+  };
+  img.src = URL.createObjectURL(f);
+});
+$("charaReset").addEventListener("click", (e) => {
+  e.preventDefault();
+  localStorage.removeItem(LS_CHARA);
+  $("charaFile").value = "";
+  applyCharaImage();
+});
+applyCharaImage();
+
+/* =========================================================
+   8. 設定モーダル
+   ========================================================= */
+function openSettings() {
+  $("apiKey").value = cfg.apiKey;
+  $("modelSel").value = cfg.model;
+  $("voiceSel").value = cfg.voice;
+  $("rateIn").value = cfg.rate;
+  $("rateVal").textContent = "×" + cfg.rate.toFixed(2);
+  $("memoText").value = loadMemo();
+  $("modalBg").classList.add("show");
+}
+function closeSettings() { $("modalBg").classList.remove("show"); }
+$("settingsBtn").addEventListener("click", openSettings);
+$("closeBtn").addEventListener("click", closeSettings);
+$("rateIn").addEventListener("input", (e) => {
+  $("rateVal").textContent = "×" + parseFloat(e.target.value).toFixed(2);
+});
+$("saveBtn").addEventListener("click", () => {
+  cfg.apiKey = $("apiKey").value.trim();
+  cfg.model = $("modelSel").value;
+  cfg.voice = $("voiceSel").value;
+  cfg.rate = parseFloat($("rateIn").value);
+  localStorage.setItem(LS.key, cfg.apiKey);
+  localStorage.setItem(LS.model, cfg.model);
+  localStorage.setItem(LS.voice, cfg.voice);
+  localStorage.setItem(LS.rate, String(cfg.rate));
+  const memo = $("memoText").value.trim();
+  if (memo !== loadMemo().trim()) localStorage.setItem(LS_MEMO, memo);
+  closeSettings();
+});
+$("memoClear").addEventListener("click", (e) => {
+  e.preventDefault();
+  if (!confirm("MINATOの記憶と会話履歴を全部消す。元には戻せない。いい？")) return;
+  localStorage.removeItem(LS_MEMO);
+  localStorage.removeItem(LS_LOG);
+  $("memoText").value = "";
+  rolloverSession();
+  logEl.innerHTML = "";
+  addDivider("— 記憶をすべて消去した —");
+});
+$("testVoiceBtn").addEventListener("click", () => {
+  cfg.voice = $("voiceSel").value;
+  cfg.rate = parseFloat($("rateIn").value);
+  stopSpeaking();
+  streamDone = true;
+  speak("MINATO、起動完了。ボス、今日は何から片付ける？");
+});
+
+// 初回はキー入力を促す
+if (!cfg.apiKey) {
+  setTimeout(openSettings, 300);
+} else if (restoreLog()) {
+  addDivider("— 前回の続き —");
+} else {
+  addMsg("ai", "起動完了。ボス、今日は何から片付ける？");
+}
+</script>
+</body>
+</html>
