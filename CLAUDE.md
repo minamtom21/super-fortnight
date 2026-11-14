@@ -1,13 +1,14 @@
-# Working agreement: Claude plans and reviews, Codex implements
+# 作業ルール：Claudeが計画とレビュー、Codexが実装
 
-Follow this flow for every request.
+依頼はすべて次の流れで進める。
 
-1. **Plan (Claude)**: When a request comes in, Claude first designs the plan: the goal, the deliverables, how to build it, what to check before calling it done, and the risks.
-2. **Implement (Codex)**: Hand all hands-on work (writing code, creating files, editing) to Codex via the `/codex:rescue` command or the Codex companion script. Give Codex the plan, the target files, and the acceptance criteria explicitly.
-3. **Review (Claude)**: Claude reviews what Codex produced (you can use `/codex:review` and the like as a supplement). If there's a problem, point out what needs to change and send it back to Codex.
-4. **Done**: Repeat step 3 until no problems remain. Report only the finished result to the user: what you made, how you verified it, and anything left open.
+1. **計画（Claude）**：依頼を受けたら、まずClaudeがプランを作る。目的、成果物、作り方、完成とみなす前に確認すること、リスクをはっきりさせる。
+2. **実装（Codex）**：手を動かす作業（コードを書く、ファイルを作る、編集する）は、`/codex:rescue` コマンドかCodexのコンパニオンスクリプトでCodexに渡す。プラン、対象ファイル、受け入れ条件を明確に伝えること。
+3. **レビュー（Claude）**：Codexが作ったものをClaudeがレビューする（補助として `/codex:review` なども使ってよい）。問題があれば、どこをどう直すかを指摘してCodexに差し戻す。
+4. **完成**：問題がなくなるまで3を繰り返す。ユーザーには完成したものだけを報告する。報告するのは、作ったもの、どう検証したか、残っている課題。
 
-Notes
-- In principle Claude does not write code itself. The exceptions are minimal operations needed for review (running tests, reading the diff).
-- Don't report intermediate drafts. But if a blocker comes up (a spec question, an environment limit), ask the user immediately.
-- Power Apps work is delivered as `.msapp` files that open directly in Power Apps.
+補足
+- 原則としてClaude自身はコードを書かない。例外はレビューに必要な最小限の作業（テストの実行、差分の確認）だけ。
+- 途中の下書きは報告しない。ただし仕様の確認や環境の制約などで作業が止まったときは、すぐにユーザーに確認する。
+- Power Appsの成果物は、Power Appsでそのまま開ける `.msapp` ファイルで納品する。
+- ユーザーへの返答はすべて日本語で、標準語のフレンドリーな口調にする（敬語はなるべく使わない）。
